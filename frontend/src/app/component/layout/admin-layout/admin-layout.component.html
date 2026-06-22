@@ -1,160 +1,118 @@
-<div class="flex h-screen bg-gray-100 overflow-hidden">
+<mat-sidenav-container class="h-screen w-full">
 
-  <!-- ── Mobile backdrop ───────────────────────────────────────────── -->
-  <div
-    *ngIf="isMobile && sidebarOpen"
-    class="fixed inset-0 z-20 bg-black bg-opacity-50"
-    (click)="closeSidebar()">
-  </div>
+  <!-- ── Sidebar ─────────────────────────────────────────────────────── -->
+  <mat-sidenav
+    #drawer
+    [mode]="isMobile ? 'over' : 'side'"
+    [opened]="!isMobile"
+    [fixedInViewport]="isMobile"
+    class="sidenav">
 
-  <!-- ── Sidebar ───────────────────────────────────────────────────── -->
-  <aside
-    [ngClass]="sidebarClasses"
-    class="sidebar flex flex-col bg-blue-950 text-white flex-shrink-0 transition-all duration-300 ease-in-out overflow-hidden">
-
-    <!-- Logo strip -->
-    <div class="flex items-center gap-3 px-4 h-16 border-b border-blue-800 flex-shrink-0">
-      <div class="w-9 h-9 bg-yellow-400 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
-        <mat-icon class="text-blue-950" style="font-size:20px;width:20px;height:20px;line-height:20px">access_time</mat-icon>
+    <!-- Logo -->
+    <div
+      class="flex items-center gap-2.5 px-4 h-16 shrink-0 border-b border-white/[0.06]">
+      <div
+        class="w-9 h-9 bg-yellow-500 rounded-lg flex items-center justify-center shrink-0">
+        <mat-icon
+          style="color:#1b5e20;font-size:20px;width:20px;height:20px;line-height:20px">access_time</mat-icon>
       </div>
-      <div *ngIf="sidebarOpen" class="overflow-hidden leading-tight">
-        <p class="font-bold text-sm whitespace-nowrap">DTR System</p>
-        <p class="text-blue-400 text-xs whitespace-nowrap">Daily Time Records</p>
+      <div class="flex flex-col overflow-hidden">
+        <span
+          class="text-sm font-bold text-white whitespace-nowrap tracking-wide">DTR
+          System</span>
+        <span class="text-[11px] text-white/[0.45] whitespace-nowrap">Daily Time
+          Records</span>
       </div>
     </div>
 
-    <!-- Nav items -->
-    <nav class="flex-1 py-3 overflow-y-auto overflow-x-hidden sidebar-nav">
+    <!-- Navigation -->
+    <nav class="flex-1 py-2.5 overflow-y-auto">
       <a
-        *ngFor="let item of navItems"
-        [routerLink]="item.route"
-        routerLinkActive
-        #rla="routerLinkActive"
-        [matTooltip]="!sidebarOpen ? item.label : ''"
-        matTooltipPosition="right"
-        matTooltipShowDelay="200"
-        class="group relative flex items-center gap-3 mx-2 my-0.5 px-3 py-2.5 rounded-xl transition-all duration-200 cursor-pointer no-underline"
-        [class.nav-item--active]="rla.isActive"
-        [class.nav-item--inactive]="!rla.isActive">
-
-        <!-- Active left accent bar -->
-        <span
-          *ngIf="rla.isActive"
-          class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-yellow-400 rounded-r-full">
-        </span>
-
+        *ngFor="let item of modules"
+        [routerLink]="[item.route]"
+        (click)="onNavClick()"
+        class="flex items-center gap-3   ml-2.5 my-0.5 px-3 py-2.5 rounded-l-lg no-underline transition-colors duration-150 cursor-pointer"
+        [ngClass]="  item.route === curr_route 
+          ? 'bg-white/[0.13] text-white'
+          : 'text-white/[0.7] hover:bg-white/[0.07] hover:text-white/[0.9]'">
         <mat-icon
-          class="flex-shrink-0 transition-colors"
-          style="font-size:20px;width:20px;height:20px;line-height:20px"
-          [class.text-yellow-400]="rla.isActive"
-          [class.text-blue-300]="!rla.isActive">
+          class="shrink-0 text-xl w-5 h-5"
+          [style.color]=" item.route === curr_route  ? '#ffffff' : 'rgba(255,255,255,0.5)'">
           {{ item.icon }}
         </mat-icon>
-
         <span
-          *ngIf="sidebarOpen"
-          class="text-sm font-medium whitespace-nowrap"
-          [class.text-white]="rla.isActive"
-          [class.text-blue-200]="!rla.isActive">
+          class="text-sm whitespace-nowrap"
+          [ngClass]="  item.route === curr_route 
+          ? 'font-bold text-white':'font-medium text-white/[0.7]'">
           {{ item.label }}
         </span>
       </a>
     </nav>
 
-    <!-- Bottom user panel -->
-    <div class="border-t border-blue-800 p-3 flex-shrink-0">
+    <span class="flex-1"></span>
+    <div
+      class="flex items-center gap-2.5 px-3.5 py-3 border-t border-white/[0.06] shrink-0">
+      <div
+        class="w-8 h-8 rounded-full bg-[#2e7d32] text-white flex items-center justify-center text-xs font-bold shrink-0 tracking-wider">
 
-      <!-- User card (expanded only) -->
-      <div *ngIf="sidebarOpen" class="flex items-center gap-3 px-2 py-2 mb-1 rounded-xl bg-blue-900">
-        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 font-bold text-xs">
-          {{ userInitials }}
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <p class="text-sm font-semibold truncate leading-tight">{{ currentUser?.name }}</p>
-          <p class="text-xs text-blue-400 capitalize truncate">{{ userRoleLabel }}</p>
-        </div>
       </div>
-
-      <!-- Logout button -->
-      <button
-        (click)="logout()"
-        [matTooltip]="!sidebarOpen ? 'Logout' : ''"
-        matTooltipPosition="right"
-        class="flex items-center gap-3 w-full px-3 py-2.5 mt-1 rounded-xl text-blue-300 hover:text-white hover:bg-blue-800 transition-all duration-200">
-        <mat-icon class="flex-shrink-0" style="font-size:20px;width:20px;height:20px;line-height:20px">logout</mat-icon>
-        <span *ngIf="sidebarOpen" class="text-sm">Sign Out</span>
+      <div class="flex flex-col overflow-hidden flex-1 min-w-0">
+        <span
+          class="text-[13px] font-semibold text-white whitespace-nowrap overflow-hidden text-ellipsis">
+          {{ auth.user()?.username ?? 'Admin' }}
+        </span>
+        <span
+          class="text-[11px] text-white/[0.45] whitespace-nowrap">Administrator</span>
+      </div>
+      <button mat-icon-button (click)="logout()" class="logout-btn"
+        matTooltip="Logout" matTooltipPosition="above">
+        <mat-icon>logout</mat-icon>
       </button>
     </div>
-  </aside>
+  </mat-sidenav>
 
-  <!-- ── Main area ─────────────────────────────────────────────────── -->
-  <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
-
-    <!-- Top bar -->
-    <header class="flex items-center gap-3 px-4 md:px-6 h-16 bg-white border-b border-gray-200 flex-shrink-0 z-10 shadow-sm">
-
-      <!-- Hamburger / close -->
-      <button
-        (click)="toggleSidebar()"
-        class="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors flex-shrink-0">
-        <mat-icon>{{ isMobile && sidebarOpen ? 'close' : 'menu' }}</mat-icon>
-      </button>
-
-      <!-- Page title -->
-      <div class="flex-1 min-w-0">
-        <h1 class="text-gray-800 font-semibold text-base md:text-lg truncate leading-tight">
-          {{ pageTitle }}
-        </h1>
+  <mat-sidenav-content class="sidenav-content">
+    <header
+      class="sticky top-0 z-[100] flex items-center shadow-md justify-between h-16 pl-4 pr-6 bg-white border-b border-[#c8e6c9] shrink-0">
+      <div class="flex items-center  gap-4">
+        <button mat-icon-button (click)="drawer.toggle()"
+          class="text-[#558b5e]">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <h1
+          class="m-0 text-xl font-bold text-[#1b3a1c] tracking-tight leading-none">{{page_title}}</h1>
       </div>
 
-      <!-- Right actions -->
-      <div class="flex items-center gap-1 flex-shrink-0">
-
-        <!-- Notification bell -->
-        <button
-          class="hidden md:flex p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+      <div class="flex items-center gap-1">
+        <button mat-icon-button class="text-[#558b5e] hidden sm:inline-flex"
           matTooltip="Notifications">
           <mat-icon>notifications_none</mat-icon>
         </button>
-
-        <!-- User avatar + dropdown trigger -->
-        <button
-          [matMenuTriggerFor]="userMenu"
-          class="flex items-center gap-2 px-2 py-1.5 rounded-xl hover:bg-gray-100 transition-colors">
-          <!-- Avatar circle -->
-          <div class="w-8 h-8 rounded-full bg-blue-700 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold shadow">
-            {{ userInitials }}
+        <button mat-icon-button [matMenuTriggerFor]="userMenu">
+          <div
+            class="w-8 h-8 rounded-full bg-[#2e7d32] text-white flex items-center justify-center text-xs font-bold tracking-wider">
+            A
           </div>
-          <!-- Name/role (desktop only) -->
-          <div class="hidden md:block text-left leading-tight">
-            <p class="text-sm font-semibold text-gray-700 whitespace-nowrap">{{ currentUser?.name }}</p>
-            <p class="text-xs text-gray-400 capitalize">{{ userRoleLabel }}</p>
-          </div>
-          <mat-icon class="hidden md:block text-gray-400 text-base leading-none">expand_more</mat-icon>
         </button>
-
-        <!-- User dropdown -->
-        <mat-menu #userMenu="matMenu" xPosition="before">
-          <div class="px-4 py-3 border-b border-gray-100">
-            <p class="text-sm font-semibold text-gray-800">{{ currentUser?.name }}</p>
-            <p class="text-xs text-gray-400 capitalize">{{ userRoleLabel }}</p>
-          </div>
-          <button mat-menu-item class="text-red-600" (click)="logout()">
-            <mat-icon class="text-red-500">logout</mat-icon>
-            <span>Sign Out</span>
-          </button>
-        </mat-menu>
       </div>
+
+      <mat-menu #userMenu="matMenu" xPosition="before">
+        <button mat-menu-item>
+          <mat-icon>person</mat-icon>
+          <span>Profile</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()" class="logout-menu-item">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
     </header>
 
-    <!-- Page content -->
-    <main class="flex-1 overflow-y-auto p-4 md:p-6">
+    <!-- Page body -->
+    <div class="flex-1 overflow-y-auto p-6 max-sm:p-4 bg-[#f0f7f0]">
       <router-outlet></router-outlet>
-    </main>
+    </div>
 
-    <!-- Footer -->
-    <footer class="flex-shrink-0 px-6 py-2 border-t border-gray-200 bg-white">
-      <p class="text-xs text-gray-400 text-center">DTR System &copy; {{ currentYear }}</p>
-    </footer>
-  </div>
-</div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

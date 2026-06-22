@@ -1,0 +1,24 @@
+<div class="h-full w-full  ">
+  <div
+    class="drop-zone"
+    [class.dragging]="isDragging()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="isDragging.set(false)"
+    (drop)="onDrop($event)"
+    (click)="fileInput.click()">
+
+    @if (parser.isLoading()) {
+    <p>Parsing file...</p>
+    } @else {
+    <p>Drag & drop your DTR .xls file here</p>
+    <span>or click to browse</span>
+    }
+  </div>
+
+  <input
+    #fileInput
+    type="file"
+    accept=".xls,.xlsx"
+    hidden
+    (change)="onFileSelected($event)" />
+</div>
