@@ -1,4 +1,4 @@
-import { Component, ElementRef, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,12 +17,11 @@ import { ParserService } from '../../../../services/parser/parser.service';
   styleUrl: './dtr-upload.component.scss',
 })
 export class DtrUploadComponent {
-  constructor(
-    private parser_service: ParserService,
-    private dtrService: DtrService
-  ) { }
-  ngOnInit(): void { }
-
+  // constructor(
+  //   private parser_service: ParserService,
+  //   private dtrService: DtrService
+  // ) { }
+  parser = inject(ParserService);
   isDragging = signal(false);
 
   onDragOver(e: DragEvent) {
@@ -34,11 +33,11 @@ export class DtrUploadComponent {
     e.preventDefault();
     this.isDragging.set(false);
     const file = e.dataTransfer?.files[0];
-    if (file) this.parser_service.parseFile(file);
+    if (file) this.parser.parseFile(file);
   }
 
   onFileSelected(e: Event) {
     const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) this.parser_service.parseFile(file);
+    if (file) this.parser.parseFile(file);
   }
 }
