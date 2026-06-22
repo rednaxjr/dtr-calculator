@@ -1,37 +1,35 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './guards/auth.guard';
+import { AuthGuard } from './services/guards/auth.guard';
 import { IndexLayoutComponent } from './component/layout/index-layout/index-layout.component';
 import { AdminLayoutComponent } from './component/layout/admin-layout/admin-layout.component';
 import { IndexComponent } from './views/index/index.component';
-import { LoginComponent } from './views/admin/login/login.component';
-import { DashboardComponent } from './views/dashboard/dashboard.component';
-import { EmployeeListComponent } from './views/employees/employee-list/employee-list.component';
-import { DtrListComponent } from './views/dtr/dtr-list/dtr-list.component';
-import { DtrUploadComponent } from './views/dtr/dtr-upload/dtr-upload.component';
+import { DashboardComponent } from './views/admin/dashboard/dashboard.component';
+import { EmployeeListComponent } from './views/admin/employees/employee-list/employee-list.component';
+import { DtrListComponent } from './views/admin/dtr/dtr-list/dtr-list.component';
+import { DtrUploadComponent } from './views/admin/dtr/dtr-upload/dtr-upload.component';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-
-  {
-    path: 'admin',
-    component: AdminLayoutComponent,
-    canActivate: [authGuard],
-    children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'employees', component: EmployeeListComponent },
-      { path: 'dtr', component: DtrListComponent },
-      { path: 'dtr/upload', component: DtrUploadComponent },
-    ],
-  },
-
   {
     path: '',
     component: IndexLayoutComponent,
     children: [
-      { path: '', component: IndexComponent, data: { title: 'Document', parent: 'document' } },
+      { path: '', component: IndexComponent, data: { title: '', parent: '' } },
     ],
   },
+
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    // canActivate: [AuthGuard],
+    children: [ 
+      { path: 'dashboard', component: DashboardComponent,data: { title: 'Dashboard' } },
+      { path: 'employees', component: EmployeeListComponent, data: { title: 'Employees' } },
+      { path: 'dtr', component: DtrListComponent, data: { title: 'DTR Files' } },
+      { path: 'dtr/upload', component: DtrUploadComponent, data: { title: 'Upload DTR' } },
+    ],
+  },
+
+
 
   { path: '**', redirectTo: '/login' },
 ];

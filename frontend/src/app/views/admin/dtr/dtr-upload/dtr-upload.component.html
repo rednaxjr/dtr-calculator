@@ -1,0 +1,19 @@
+<div class="h-full w-full  ">
+  <div
+      class="drop-zone"
+      [class.dragging]="isDragging()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="isDragging.set(false)"
+      (drop)="onDrop($event)"
+      (click)="fileInput.click()">
+
+    
+    </div>
+
+    <input
+      #fileInput
+      type="file"
+      accept=".xls,.xlsx"
+      hidden
+      (change)="onFileSelected($event)" />
+</div> 

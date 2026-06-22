@@ -49,11 +49,7 @@ export class IndexLayoutComponent {
         this.routeTitle = title;
         this.userRole = role;
       });
-    this.sideBarRoutes = [
-      { path: 'documents', name: "Documents", icon: "assignment" }, 
-
-       
-    ];
+   
   }
 
 

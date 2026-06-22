@@ -1,2 +1,26 @@
-.w-260 { width: 260px; }
-.w-16  { width: 64px; }
+// Angular Material component-level overrides only.
+// Nav is now plain HTML + Tailwind — only mat-sidenav host and logout need overrides.
+
+.sidenav {
+  width: 220px;
+  background-color: #1b5e20;
+  border-right: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidenav-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.logout-btn {
+  color: rgba(255, 255, 255, 0.45) !important;
+  flex-shrink: 0;
+  &:hover { color: rgba(255, 255, 255, 0.8) !important; }
+}
+
+.logout-menu-item {
+  color: #dc2626 !important;
+  mat-icon { color: #dc2626 !important; }
+}

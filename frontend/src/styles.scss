@@ -11,12 +11,15 @@ body {
 * {
     font-size: 14px;
     font-weight: 500;
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    color: rgba(0, 0, 0, 0.5);
 }
 
 body {
     margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
-    font-size: 14px; 
+    font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.5);
 }  
 .page-title {
     font-size: 35px;
@@ -24,7 +27,7 @@ body {
 
 .indexContainer {
     // background: url('./app/assets/img/background.jpg');
-    background-color: gainsboro;
+    background-color: #1b5e20; 
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;

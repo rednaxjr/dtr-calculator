@@ -1,0 +1,102 @@
+<div class="flex items-center justify-between mb-6">
+  <div class="relative  w-full md:w-96 lg:w-96  mt-2">
+    <div
+      class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+      <svg xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5 text-gray-400" fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          stroke-width="2"
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+    </div>
+    <input
+      type="text"
+      class="w-full pl-10 pr-4 py-2 border shadow-md border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      placeholder="Search " />
+  </div>
+  <button
+    class=" pl-2 pr-4  py-1 border shadow-md border-gray-300 rounded-lg   bg-amber-500 text-white
+    hover:bg-amber-600
+    focus:outline-none focus:ring-1  focus:ring-yellow-500  flex items-center gap-x-2"
+    (click)="add_dtr()">
+    <mat-icon class="text-lg">add</mat-icon>
+    <span class="!text-white">Add</span>
+  </button>
+</div>
+
+<!-- Table -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+  <table mat-table [dataSource]="files" class="w-full">
+
+    <ng-container matColumnDef="filename">
+      <th mat-header-cell *matHeaderCellDef
+        class="text-xs font-semibold text-gray-500 uppercase">File Name</th>
+      <td mat-cell *matCellDef="let f">
+        <div class="flex items-center gap-2">
+          <mat-icon class="text-green-600 text-base">table_view</mat-icon>
+          <span class="text-sm font-medium text-gray-800">{{ f.filename
+            }}</span>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="period">
+      <th mat-header-cell *matHeaderCellDef
+        class="text-xs font-semibold text-gray-500 uppercase">Period</th>
+      <td mat-cell *matCellDef="let f" class="text-sm text-gray-700">
+        {{ f.period_from || '—' }} <span *ngIf="f.period_to">– {{ f.period_to
+          }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="employees">
+      <th mat-header-cell *matHeaderCellDef
+        class="text-xs font-semibold text-gray-500 uppercase">Employees</th>
+      <td mat-cell *matCellDef="let f">
+        <span
+          class="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+          {{ f.employee_count }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="uploaded_at">
+      <th mat-header-cell *matHeaderCellDef
+        class="text-xs font-semibold text-gray-500 uppercase">Uploaded</th>
+      <td mat-cell *matCellDef="let f" class="text-sm text-gray-500">
+        {{ f.uploaded_at | date:'MMM d, y h:mm a' }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef
+        class="text-xs font-semibold text-gray-500 uppercase">Actions</th>
+      <td mat-cell *matCellDef="let f">
+        <a mat-icon-button color="primary" [routerLink]="['/admin/dtr/upload']"
+          [queryParams]="{id: f.id}" matTooltip="View">
+          <mat-icon>visibility</mat-icon>
+        </a>
+        <button mat-icon-button color="warn" (click)="deleteFile(f)"
+          matTooltip="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns;"
+      class="hover:bg-gray-50"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center py-12 text-gray-400"
+        [attr.colspan]="columns.length">
+        <div class="flex flex-col items-center gap-2">
+          <mat-icon class="text-5xl text-gray-300">upload_file</mat-icon>
+          <p>{{ loading ? 'Loading...' :
+            'No DTR files yet. Click "Upload DTR" to get started.' }}</p>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>

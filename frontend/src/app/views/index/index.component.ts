@@ -1,78 +1,51 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import SignaturePad from 'signature_pad';
-import { ESignComponent } from '../../component/modal/e-sign/e-sign.component';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Routes, RouterModule, Router, RouterOutlet, RouterLink, RouterLinkActive, ActivatedRoute, } from '@angular/router';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { ESign2Component } from '../../component/modal/e-sign2/e-sign2.component';
-import { MatIconModule } from '@angular/material/icon';
-import { FileService } from '../../services/file/file.service';
-import { DocumentTableComponent } from '../../component/table/document-table/document-table.component';
-import { BannerComponent } from '../../component/parts/banner/banner.component';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
-import { HttpClient, HttpEvent, HttpHeaders } from '@angular/common/http';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import {StorageService} from '../../services/storage/storage.service'
+ import {AuthService} from '../../services/auth/auth.service';
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [CommonModule, ESignComponent, MatIconModule, FormsModule, RouterModule, DocumentTableComponent, BannerComponent,],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterOutlet, RouterLink, RouterLinkActive, MatIconModule],
   templateUrl: './index.component.html',
   styleUrl: './index.component.scss'
 })
 
 export class IndexComponent implements OnInit {
-  pdfSrc = 'http://localhost:3000/uploaded_files/IMG_0020.pdf';
-  documents_list: any = [];
 
-  documents_list_duplicate: any = [];
-  banner: any;
-
-  show_esign = false;
-  e_sign_image!: string;
-  image_downloadable: any;
-  list_of_signs: any = [];
-  files_data_duplicate: any = [];
-  selected_format: string = 'png';
-  item_to_download: any;
   constructor(
-    private dialog: MatDialog,
-    private file_service: FileService,
-    private httpClient: HttpClient,
-    private router: Router
+    private router: Router,
+    private storageService: StorageService,
+    private auth_service: AuthService,
   ) {
 
-    this.banner = [
-      { text: null, icon: "home", link: "/admin/dashboard", },
-      { text: "Product", icon: null, link: "/admin/product", },
-      { text: "Client's Information", icon: null, link: "/admin/product/details" },
-    ];
   }
   ngOnInit(): void {
-    this.getAllFiles();
-  }
-  async getAllFiles() {
-    this.documents_list = await this.file_service.get_files2();
-    this.documents_list_duplicate = this.documents_list;
 
-    for (let i = 0; i < this.documents_list.length; i++) {
-      this.documents_list[i].status = 0;
-    }
   }
+  password: string = "";
+  email: string = "";
+  isLogin: boolean = true;
+  async submit() {
+    // const data = {
+    //   username: this.email,
+    //   password: this.password
+    // }
+    // this.auth_service.login(data).subscribe((res: any) => {
+    //   console.log(res)
+    //   this.storageService.setItem("token", res.token);
+    //   this.router.navigate(['/user/dashboard']);
+    // }, (error) => {
+    //   console.log(error);
+    // })
+     this.router.navigate(['/admin/dashboard']);
+     console.log("aaaa")
 
-
-
-  handleSignatureSaved(data: any) {
-    this.getAllFiles();
-  }
-  deleted() {
-    this.getAllFiles();
-  }
-  refreshPage() {
-    const currentUrl = this.router.url;
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate([currentUrl]);
-    });
   }
 }
+
 
