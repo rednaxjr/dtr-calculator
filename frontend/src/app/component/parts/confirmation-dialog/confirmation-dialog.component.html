@@ -1,0 +1,27 @@
+<div class="modal-backdrop !z-10" [@fadeIn]>
+  <div class="modal-container" [@scaleIn]>
+    <div class="modal-content" >
+      <div class="modal-header"> 
+        <h2 class="modal-title">{{data.title}} </h2> 
+      </div>
+      <div class="modal-body">
+        <p class="modal-description">{{data.message}}</p>
+      </div>
+      <div class="modal-footer font-medium text-base">
+        <button class="btn btn-cancel" *ngIf="data.isCancel"
+          (click)="onCancel()">{{ data.cancelText
+          }}</button> 
+        <button
+          class="btn"
+          [ngClass]="{
+            'btn-destructive': data.type == 'danger',
+            'btn-success': data.type == 'success',
+            'btn-secondary': data.type == 'secondary'
+          }"
+          (click)="onConfirm()">{{ data.confirmText
+          }}</button>
+
+      </div>
+    </div>
+  </div>
+</div>

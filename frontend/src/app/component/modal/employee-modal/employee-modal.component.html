@@ -1,0 +1,58 @@
+<div class="p-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-5">
+    <h2 class="text-xl font-bold text-gray-800">{{ isEdit ? 'Edit Employee' : 'Add Employee' }}</h2>
+    <button mat-icon-button (click)="cancel()"><mat-icon>close</mat-icon></button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="space-y-4">
+
+    <div class="grid grid-cols-2 gap-4">
+      <mat-form-field appearance="outline" class="col-span-2">
+        <mat-label>Employee ID</mat-label>
+        <input matInput formControlName="employee_id" />
+        <mat-error *ngIf="form.get('employee_id')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>First Name</mat-label>
+        <input matInput formControlName="first_name" />
+        <mat-error *ngIf="form.get('first_name')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Last Name</mat-label>
+        <input matInput formControlName="last_name" />
+        <mat-error *ngIf="form.get('last_name')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Position</mat-label>
+        <input matInput formControlName="position" />
+        <mat-error *ngIf="form.get('position')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Department</mat-label>
+        <input matInput formControlName="department" />
+        <mat-error *ngIf="form.get('department')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="col-span-2">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          <mat-option value="active">Active</mat-option>
+          <mat-option value="inactive">Inactive</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex gap-3 justify-end pt-2">
+      <button mat-stroked-button type="button" (click)="cancel()">Cancel</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="saving">
+        {{ saving ? 'Saving...' : (isEdit ? 'Update' : 'Add Employee') }}
+      </button>
+    </div>
+  </form>
+</div>

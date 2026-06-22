@@ -1,0 +1,79 @@
+<div>
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-800">Employees</h2>
+      <p class="text-gray-500 text-sm mt-1">Manage employee records</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="openAdd()" class="flex items-center gap-2">
+      <mat-icon>person_add</mat-icon> Add Employee
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="bg-white rounded-xl shadow-sm p-4 mb-4">
+    <mat-form-field appearance="outline" class="w-full max-w-sm">
+      <mat-label>Search employees</mat-label>
+      <input matInput [(ngModel)]="search" (ngModelChange)="applySearch()" placeholder="Name, ID, department..." />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <table mat-table [dataSource]="filtered" class="w-full">
+
+      <ng-container matColumnDef="employee_id">
+        <th mat-header-cell *matHeaderCellDef class="text-xs font-semibold text-gray-500 uppercase">ID</th>
+        <td mat-cell *matCellDef="let e" class="text-sm text-gray-700">{{ e.employee_id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef class="text-xs font-semibold text-gray-500 uppercase">Name</th>
+        <td mat-cell *matCellDef="let e" class="text-sm font-medium text-gray-800">{{ e.first_name }} {{ e.last_name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef class="text-xs font-semibold text-gray-500 uppercase">Position</th>
+        <td mat-cell *matCellDef="let e" class="text-sm text-gray-700">{{ e.position }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="department">
+        <th mat-header-cell *matHeaderCellDef class="text-xs font-semibold text-gray-500 uppercase">Department</th>
+        <td mat-cell *matCellDef="let e" class="text-sm text-gray-700">{{ e.department }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef class="text-xs font-semibold text-gray-500 uppercase">Status</th>
+        <td mat-cell *matCellDef="let e">
+          <span class="px-2 py-1 rounded-full text-xs font-medium"
+            [class.bg-green-100]="e.status === 'active'" [class.text-green-700]="e.status === 'active'"
+            [class.bg-gray-100]="e.status === 'inactive'" [class.text-gray-600]="e.status === 'inactive'">
+            {{ e.status | titlecase }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="text-xs font-semibold text-gray-500 uppercase">Actions</th>
+        <td mat-cell *matCellDef="let e">
+          <button mat-icon-button color="primary" (click)="openEdit(e)" matTooltip="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteEmployee(e)" matTooltip="Delete">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;" class="hover:bg-gray-50 transition-colors"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell text-center py-8 text-gray-400" [attr.colspan]="columns.length">
+          {{ loading ? 'Loading...' : 'No employees found.' }}
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

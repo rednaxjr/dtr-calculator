@@ -1,0 +1,72 @@
+<div class="h-screen bg-gray-100 p-6 overflow-hidden">
+    <div class="h-full w-full">
+        <div class="flex flex-col md:flex-row gap-6 h-full max-w-full mx-auto">
+            <div
+                class="relative w-full md:w-1/2 border-4 border-red-600 rounded-lg h-full flex overflow-x-hidden">
+                <!-- <div class="absolute top-0 left-0 h-14 w-14 bg-green-600  z-3 rounded-full">
+
+                </div> -->
+                <pdf-viewer
+                    [src]="data.pdf.url"
+                    [render-text]="true"
+                    [original-size]="false"
+                    class="w-full h-full">
+                </pdf-viewer>
+            </div>
+
+            <div class="w-full md:w-1/2 flex flex-col gap-6">
+
+                <div class="border-4 border-green-600 rounded-lg flex"
+                    style="height: 40vh;">
+                    <div [hidden]="data.pdf.signatureCount == 1"
+                        class="flex-1 relative overflow-hidden m-4 rounded-xl border-2 border-dashed border-blue-300 bg-white shadow-inner"
+                        #canvasContainer>
+
+                        <canvas
+                            #canvas
+                            class="absolute inset-0 w-full h-full touch-none bg-gray-100"></canvas>
+
+                        <div *ngIf="isEmpty"
+                            class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-gray-300 pointer-events-none select-none">
+                            <span class="material-icons"
+                                style="font-size: 48px;">gesture</span>
+                            <span class="text-base tracking-wide">Sign
+                                here</span>
+                        </div>
+
+                        <div
+                            class="absolute bottom-[20%] left-[5%] right-[5%] h-px bg-blue-100 pointer-events-none"></div>
+                    </div>
+                    <div [hidden]="data.pdf.signatureCount == 0">
+                        <img *ngIf="data.pdf.signatures.length > 0"
+                            [src]="data.pdf.signatures[0].url"
+                            class="w-full h-full object-cover" />
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6">
+                    <button
+                        (click)="save()"
+                        [disabled]="data.pdf.signatureCount == 1"
+                        [ngClass]="{
+                            'bg-green-600 hover:bg-green-700 cursor-pointer text-white': data.pdf.signatureCount != 1,
+                            'bg-gray-400 cursor-not-allowed text-gray-200': data.pdf.signatureCount == 1
+                        }"
+                        class="h-20 md:h-24 rounded-lg w-full flex items-center justify-center border-4 border-yellow-400 shadow-md font-medium text-3xl md:text-5xl transition-all duration-200">
+                        Save
+                    </button>
+
+                    <button (click)="clear()"
+                        *ngIf="!isEmpty && data.pdf.signatureCount == 0"
+                        class="h-20 md:h-24 font-medium text-3xl md:text-5xl bg-red-600 text-white rounded-lg w-full flex items-center justify-center border-4 border-yellow-400 shadow-md">
+                        Clear
+                    </button>
+                    <button (click)="close()"
+                        *ngIf="isEmpty"
+                        class="h-20 md:h-24 font-medium text-3xl md:text-5xl bg-red-600 text-white rounded-lg w-full flex items-center justify-center border-4 border-yellow-400 shadow-md">
+                        Cancel
+                    </button> 
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>

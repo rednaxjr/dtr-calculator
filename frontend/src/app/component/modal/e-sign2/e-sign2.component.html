@@ -1,0 +1,140 @@
+<div class="flex flex-col h-full w-full bg-gray-50">
+    <div
+        class="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200 shrink-0">
+
+        <div class="flex items-center gap-1">
+            <button mat-icon-button matTooltip="Clear" (click)="page = 1;clear()"
+                *ngIf="page == 2">
+                <span class="material-icons text-gray-500">arrow_back</span>
+            </button>
+
+        </div>
+        <div class="flex items-center gap-1">
+            <button mat-icon-button matTooltip="Clear" (click)="clear()"
+                *ngIf="page == 2">
+                <span class="material-icons text-gray-500">restart_alt</span>
+            </button>
+            <button mat-icon-button (click)="save()" *ngIf="page == 2">
+                <span class="material-icons text-gray-500">save</span>
+            </button>
+            <button mat-icon-button (click)="close()">
+                <span class="material-icons text-gray-500">close</span>
+            </button> 
+        </div>
+    </div>
+    <div *ngIf="page == 1"
+        class="flex flex-col h-full px-8">
+        <div class="form-body flex flew-row w-full h-full">
+            <div class="mt-2 w-full p-4">
+                <label for="Name" class="font-medium text-base">
+                    First name</label>
+                <div
+                    class="relative mt-1 flex flex-row items-center space-x-4">
+                    <div class="w-full">
+                        <input
+                            id="folder-name"
+                            type="text"
+                            placeholder="Enter your firstname"
+                            [(ngModel)]="fname"
+                            autoFocus
+                            class="w-full pl-9 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed" />
+                        <div
+                            class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-600 flex items-center">
+                            <div
+                                class="flex justify-center items-center">
+
+                                <mat-icon>person</mat-icon>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="mt-2 w-full p-4">
+                <label for="Name" class="font-medium text-base">
+                    Middle name</label>
+                <div
+                    class="relative mt-1 flex flex-row items-center space-x-4">
+                    <div class="w-full">
+                        <input
+                            id="folder-name"
+                            type="text"
+                            placeholder="Enter your middle name"
+                            [(ngModel)]="mname"
+                            autoFocus
+                            class="w-full pl-9 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed" />
+                        <div
+                            class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-600 flex items-center">
+                            <div
+                                class="flex justify-center items-center">
+
+                                <mat-icon>person</mat-icon>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="mt-2 w-full p-4">
+                <label for="Name" class="font-medium text-base">
+                    Last name</label>
+                <div
+                    class="relative mt-1 flex flex-row items-center space-x-4">
+                    <div class="w-full">
+                        <input
+                            id="folder-name"
+                            type="text"
+                            placeholder="Enter your last name"
+                            [(ngModel)]="lname"
+                            autoFocus
+                            class="w-full pl-9 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed" />
+                        <div
+                            class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-600 flex items-center">
+                            <div
+                                class="flex justify-center items-center">
+
+                                <mat-icon>person</mat-icon>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="h-18 w-full border flex justify-end items-center">
+            <button
+                (click)="page= 2"
+                class="py-2 px-4 rounded-10 text-white text-sm border bg-blue-600 shadow-md hover:bg-opacity-95">
+                Next
+            </button>
+        </div>
+    </div>
+    <div class="flex transition-all duration-300 transform   overflow-hidden "
+        [ngClass]="{
+                    '  translate-x-0 opacity-100 h-full w-full': page == 2,
+                    'translate-x-full opacity-0 h-0 w-0': page == 1
+                }">
+        <div
+            class="flex-1 relative overflow-hidden m-4 rounded-xl border-2 border-dashed border-blue-300 bg-white shadow-inner "
+            #canvasContainer>
+
+            <canvas
+                #canvas
+                class="absolute inset-0 w-full h-full touch-none bg-gray-100"></canvas>
+
+            <div *ngIf="isEmpty"
+                class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-gray-300 pointer-events-none select-none">
+                <span class="material-icons"
+                    style="font-size: 48px;">gesture</span>
+                <span class="text-base tracking-wide">Sign here</span>
+            </div>
+
+            <div
+                class="absolute bottom-[20%] left-[5%] right-[5%] h-px bg-blue-100 pointer-events-none"></div>
+        </div>
+    </div>
+
+</div>

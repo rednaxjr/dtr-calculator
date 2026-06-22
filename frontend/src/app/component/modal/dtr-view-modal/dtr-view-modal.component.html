@@ -1,0 +1,122 @@
+<div class="flex flex-col h-full">
+
+  <!-- Dialog header -->
+  <div class="flex items-center justify-between px-6 py-4 border-b bg-blue-900 text-white flex-shrink-0">
+    <div class="flex items-center gap-3">
+      <mat-icon>badge</mat-icon>
+      <div>
+        <h2 class="text-lg font-bold">{{ record.employee_name }}</h2>
+        <p class="text-blue-200 text-xs">
+          Period: {{ record.period_from || '—' }}<span *ngIf="record.period_to"> – {{ record.period_to }}</span>
+        </p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button mat-stroked-button class="text-white border-white hover:bg-blue-800" (click)="toggleEdit()">
+        <mat-icon class="text-sm mr-1">{{ isEditing ? 'visibility' : 'edit' }}</mat-icon>
+        {{ isEditing ? 'View Mode' : 'Edit Mode' }}
+      </button>
+      <button mat-icon-button class="text-white" (click)="close()"><mat-icon>close</mat-icon></button>
+    </div>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="grid grid-cols-4 gap-3 px-6 py-3 bg-gray-50 border-b flex-shrink-0">
+    <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+      <p class="text-xl font-bold text-blue-700">{{ workingDays }}</p>
+      <p class="text-xs text-gray-500 mt-0.5">Days Worked</p>
+    </div>
+    <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+      <p class="text-xl font-bold text-green-600">{{ totalHours }}</p>
+      <p class="text-xs text-gray-500 mt-0.5">Total Hours</p>
+    </div>
+    <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+      <p class="text-xl font-bold text-orange-500">{{ formatMinutes(totalLate) }}</p>
+      <p class="text-xs text-gray-500 mt-0.5">Total Late</p>
+    </div>
+    <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+      <p class="text-xl font-bold text-red-500">{{ formatMinutes(totalUndertime) }}</p>
+      <p class="text-xs text-gray-500 mt-0.5">Total Undertime</p>
+    </div>
+  </div>
+
+  <!-- DTR Table -->
+  <div class="flex-1 overflow-y-auto">
+    <table class="w-full text-sm border-collapse">
+      <thead class="bg-gray-100 sticky top-0 z-10">
+        <tr>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase border-b w-12">Day</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase border-b">Date</th>
+          <th class="px-3 py-3 text-center text-xs font-semibold text-blue-600 uppercase border-b">AM In</th>
+          <th class="px-3 py-3 text-center text-xs font-semibold text-blue-600 uppercase border-b">AM Out</th>
+          <th class="px-3 py-3 text-center text-xs font-semibold text-indigo-600 uppercase border-b">PM In</th>
+          <th class="px-3 py-3 text-center text-xs font-semibold text-indigo-600 uppercase border-b">PM Out</th>
+          <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 uppercase border-b">Hours</th>
+          <th class="px-3 py-3 text-center text-xs font-semibold text-orange-500 uppercase border-b">Late</th>
+          <th class="px-3 py-3 text-center text-xs font-semibold text-red-500 uppercase border-b">Undertime</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let entry of record.entries"
+          class="border-b border-gray-100 hover:bg-blue-50 transition-colors"
+          [class.bg-red-50]="entry.is_absent">
+
+          <td class="px-4 py-2 font-semibold text-gray-700">{{ entry.day }}</td>
+          <td class="px-4 py-2 text-gray-600 text-xs">{{ entry.date || '—' }}</td>
+
+          <!-- AM In -->
+          <td class="px-2 py-1 text-center">
+            <input *ngIf="isEditing" type="time" [(ngModel)]="entry.am_in" (change)="onTimeChange(entry)"
+              class="border border-blue-300 rounded px-1 py-0.5 text-xs w-24 text-center focus:outline-none focus:ring-1 focus:ring-blue-400" />
+            <span *ngIf="!isEditing" class="text-blue-700 font-mono text-xs">{{ entry.am_in || '—' }}</span>
+          </td>
+
+          <!-- AM Out -->
+          <td class="px-2 py-1 text-center">
+            <input *ngIf="isEditing" type="time" [(ngModel)]="entry.am_out" (change)="onTimeChange(entry)"
+              class="border border-blue-300 rounded px-1 py-0.5 text-xs w-24 text-center focus:outline-none focus:ring-1 focus:ring-blue-400" />
+            <span *ngIf="!isEditing" class="text-blue-700 font-mono text-xs">{{ entry.am_out || '—' }}</span>
+          </td>
+
+          <!-- PM In -->
+          <td class="px-2 py-1 text-center">
+            <input *ngIf="isEditing" type="time" [(ngModel)]="entry.pm_in" (change)="onTimeChange(entry)"
+              class="border border-indigo-300 rounded px-1 py-0.5 text-xs w-24 text-center focus:outline-none focus:ring-1 focus:ring-indigo-400" />
+            <span *ngIf="!isEditing" class="text-indigo-700 font-mono text-xs">{{ entry.pm_in || '—' }}</span>
+          </td>
+
+          <!-- PM Out -->
+          <td class="px-2 py-1 text-center">
+            <input *ngIf="isEditing" type="time" [(ngModel)]="entry.pm_out" (change)="onTimeChange(entry)"
+              class="border border-indigo-300 rounded px-1 py-0.5 text-xs w-24 text-center focus:outline-none focus:ring-1 focus:ring-indigo-400" />
+            <span *ngIf="!isEditing" class="text-indigo-700 font-mono text-xs">{{ entry.pm_out || '—' }}</span>
+          </td>
+
+          <td class="px-3 py-2 text-center font-semibold text-gray-700 text-xs">{{ entry.hours_rendered ?? '—' }}</td>
+          <td class="px-3 py-2 text-center text-xs" [class.text-orange-600]="entry.late_minutes">
+            {{ entry.late_minutes ? formatMinutes(entry.late_minutes) : '—' }}
+          </td>
+          <td class="px-3 py-2 text-center text-xs" [class.text-red-600]="entry.undertime_minutes">
+            {{ entry.undertime_minutes ? formatMinutes(entry.undertime_minutes) : '—' }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div class="flex items-center justify-between px-6 py-4 border-t bg-white flex-shrink-0">
+    <p *ngIf="isEditing" class="text-xs text-gray-400 flex items-center gap-1">
+      <mat-icon class="text-sm">info</mat-icon>
+      Edit the time fields above. Hours, Late, and Undertime recalculate automatically.
+    </p>
+    <span *ngIf="!isEditing"></span>
+    <div class="flex gap-3">
+      <button mat-stroked-button (click)="close()">Close</button>
+      <button mat-flat-button color="primary" (click)="save()">
+        <mat-icon class="mr-1">save</mat-icon> Save Changes
+      </button>
+    </div>
+  </div>
+</div>

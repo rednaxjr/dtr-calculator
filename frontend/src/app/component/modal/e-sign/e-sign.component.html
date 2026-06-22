@@ -1,0 +1,36 @@
+
+<div class="flex flex-col h-full w-full bg-gray-50  ">
+    <div
+        class="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200 shrink-0">
+
+        <div class="flex items-center  ">
+
+            <button mat-icon-button matTooltip="Close">
+                <span class="material-icons text-gray-500" (click)="close()">close</span>
+            </button>
+
+        </div>
+        <div class="flex items-center  ">
+
+            <button mat-icon-button (click)="clear()" matTooltip="Clear">
+                <span class="material-icons text-gray-500">restart_alt</span>
+            </button>
+        </div>
+    </div>
+    <div
+        class="flex-1 relative overflow-hidden m-4 rounded-xl border-2 border-dashed border-blue-300 bg-white shadow-inner"
+        #canvasContainer>
+
+        <canvas
+            #canvas
+            class="absolute inset-0 w-full h-full  "
+            (mousedown)="startDrawing($event)"
+            (mousemove)="draw($event)"
+            (mouseup)="stopDrawing()"
+            (mouseleave)="stopDrawing()"
+            (touchstart)="startDrawingTouch($event)"
+            (touchmove)="drawTouch($event)"
+            (touchend)="stopDrawing()"></canvas>
+
+    </div>
+</div>

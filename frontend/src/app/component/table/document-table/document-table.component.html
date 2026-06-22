@@ -1,0 +1,60 @@
+<div class="mat-table-wrapper h-full flex flex-col">
+  <div class="flex-1 overflow-auto min-h-0 h-full">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-full min-h-full">
+        <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef class="capitalize">Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef class="capitalize">Status</th>
+
+            <td mat-cell *matCellDef="let element" [ngClass]="{ '
+            text-green-600  ': element.status === 1 ,
+            'text-red-600  ': element.status === 0 ,
+            }"><span *ngIf="element.status == 1">Signed</span> <span
+                    *ngIf="element.status == 0">Not Signed</span></td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef class="capitalize">Action</th>
+            <td mat-cell *matCellDef="let element" class="py-3">
+                <div class="flex flex-row items-center gap-3">
+                    <button
+                        mat-stroked-button
+                        (click)="onEdit(element)"
+                        class="!flex !items-center !gap-2 !text-blue-600 !border-blue-300 hover:!bg-blue-50 !rounded-lg !px-4 !py-2 !text-base !font-medium !transition-all !h-10">
+                        <mat-icon
+                            class="!text-xl !w-5 !h-5 !leading-none">edit</mat-icon>
+                        <span class="text-base">Edit</span>
+                    </button>
+                    <button
+                        mat-stroked-button
+                        (click)="onDelete(element)"
+                        [disabled]="element.signatureCount == 0"
+                        [ngClass]="{
+                                '!text-red-600 !border-red-300 hover:!bg-red-50': element.signatureCount != 0,
+                                '!text-gray-400 !border-gray-200 !cursor-not-allowed !opacity-50': element.signatureCount == 0
+                            }"
+                        class="!flex !items-center !gap-2 !rounded-lg !px-4 !py-2 !text-base !font-medium !transition-all !h-10">
+                        <mat-icon
+                            class="!text-xl !w-5 !h-5 !leading-none">delete</mat-icon>
+                        <span class="text-base">Delete</span>
+                    </button>
+
+                </div>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="labels; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: labels;"></tr>
+    </table>
+  </div>
+
+    <div class="border-t shrink-0">
+        <mat-paginator
+            [pageSizeOptions]="[5, 10, 25, 50, 100]"
+            showFirstLastButtons
+            aria-label="Select page of periodic elements">
+        </mat-paginator>
+    </div>
+</div>

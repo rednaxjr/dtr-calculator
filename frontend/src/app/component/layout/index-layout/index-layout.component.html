@@ -1,0 +1,73 @@
+<div class="flex flex-col h-screen">
+
+    <mat-sidenav-container class="!relative flex-1 min-h-0">
+        <!-- <mat-sidenav
+            #drawer
+            [mode]="isSide ? 'over' : 'side'"
+            [opened]="isOpen"
+            class="shadow-md"
+            [fixedInViewport]="!isSmall">
+            <div class="w-full h-[64px] border-b"></div>
+            <div class="pt-2"></div>
+
+            <li *ngFor="let i of sideBarRoutes"
+                class="w-full h-auto list-none flex flex-col">
+
+                Regular menu item (no children)
+                <div *ngIf="!i.isAccordion" class="w-full h-auto flex pt-2">
+                    <a [routerLink]="[i.path]"
+                        [ngClass]="{ 'bg-gray-300 font-semibold': i.name === routeTitle }"
+                        class="w-full flex gap-3 items-center px-3 py-4 rounded-r-[25px] hover:bg-gray-200">
+                        <mat-icon>{{ i.icon }}</mat-icon>
+                        <span>{{ i.name }}</span>
+                    </a>
+                </div>
+
+                Accordion menu item (with children)
+                <div *ngIf="i.isAccordion"
+                    class="w-full h-auto flex flex-col pt-2">
+                    <button (click)="i.is_shown = !i.is_shown"
+                        class="w-full flex gap-3 items-center px-3 py-4 rounded-r-[25px] hover:bg-gray-200">
+                        <span class="font-semibold">{{ i.name }}</span>
+                        <mat-icon class="ml-auto">
+                            {{ i.is_shown ? 'expand_less' : 'expand_more'
+                            }}
+                        </mat-icon>
+                    </button> 
+                    <div *ngIf="i.is_shown" class="flex flex-col  ">
+                        <a *ngFor="let child of i.children"
+                            [routerLink]="[child.path]"
+                            [ngClass]="{ 'bg-gray-300 font-semibold': child.name === routeTitle }"
+                            class="w-full flex gap-3 items-center px-3 py-3 rounded-r-[25px] hover:bg-gray-200">
+                            <mat-icon>{{ child.icon }}</mat-icon>
+                            <span>{{ child.name }}</span>
+                        </a>
+                    </div>
+                </div>
+            </li>
+        </mat-sidenav> -->
+
+        <mat-sidenav-content class="!relative flex flex-col h-full bg-gray-100">
+            <!-- <mat-toolbar class="fixed-header   drop-shadow-md  ">
+
+                <div class="flex w-full justify-between  items-center ">
+                    <button
+                        type="button"
+                        aria-label="Toggle sidenav"
+                        mat-icon-button
+                        (click)="drawer.toggle()">
+                        <mat-icon
+                            aria-label="Side nav toggle icon">menu</mat-icon>
+                    </button>
+                    <span class="example-spacer"></span>
+                    
+                </div>
+           
+            </mat-toolbar> -->
+            <!-- Main Content Area -->
+            <div class="flex-1 overflow-hidden px-4 pb-5 relative h-full flex flex-col">
+                <router-outlet></router-outlet>
+            </div>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>

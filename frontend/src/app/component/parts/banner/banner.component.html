@@ -1,0 +1,22 @@
+<div class="w-full h-12 border bg-white rounded-md mt-5 mb-5 px-6">
+    <ol class="flex  items-center h-full">
+        <li
+            *ngFor="let item of data;let i = index;"
+            class="flex flex-row items-center text-gray-400">
+            <div class=" flex items-cent px-2 ">
+                <mat-icon *ngIf="item.icon != null"
+                    class="material-symbols-sharp cursor-pointer hover:text-gray-700"
+                    aria-hidden="items.icon" (click)="router.navigate([item.link])">
+                    {{item.icon}}
+                </mat-icon>
+                <mat-icon *ngIf="item.icon == null"
+                    class="material-symbols-sharp"
+                    aria-hidden="arrow_forward_ios">
+                    arrow_forward_ios
+                </mat-icon>
+
+            </div>
+            <p class="font-normal text-md hover:text-gray-600 cursor-pointer" (click)="router.navigate([item.link])">{{item.text}}</p>
+        </li> 
+    </ol>
+</div>
