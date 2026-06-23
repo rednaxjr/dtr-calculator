@@ -1,12 +1,38 @@
 .drop-zone {
-      border: 2px dashed #ccc;
-      border-radius: 8px;
-      padding: 40px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s;
+    border: 2px dashed #1b5e20;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+
+    .upload-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        color: #1b5e20;
+        margin-bottom: 12px;
+        transition: transform 0.2s;
     }
-    .drop-zone.dragging {
-      border-color: #4f46e5;
-      background: #eef2ff;
+}
+
+.drop-zone.dragging {
+    border-color: #1b5e20;
+    background: #e8f5e9;
+    transform: scale(1.02);
+    animation: pulse-border 1s ease-in-out infinite;
+
+    .upload-icon {
+        animation: bounce-up 0.6s ease-in-out infinite alternate;
     }
+}
+
+@keyframes bounce-up {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-10px); }
+}
+
+@keyframes pulse-border {
+    0%, 100% { border-color: #1b5e20; }
+    50%       { border-color: #4caf50; }
+}

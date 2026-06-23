@@ -32,24 +32,23 @@
         [routerLink]="[item.route]"
         (click)="onNavClick()"
         class="flex items-center gap-3   ml-2.5 my-0.5 px-3 py-2.5 rounded-l-lg no-underline transition-colors duration-150 cursor-pointer"
-        [ngClass]="  item.route === curr_route 
+        [ngClass]="  item.name === page_title 
           ? 'bg-white/[0.13] text-white'
           : 'text-white/[0.7] hover:bg-white/[0.07] hover:text-white/[0.9]'">
         <mat-icon
           class="shrink-0 text-xl w-5 h-5"
-          [style.color]=" item.route === curr_route  ? '#ffffff' : 'rgba(255,255,255,0.5)'">
+          [style.color]=" item.name === page_title  ? '#ffffff' : 'rgba(255,255,255,0.5)'">
           {{ item.icon }}
         </mat-icon>
         <span
           class="text-sm whitespace-nowrap"
-          [ngClass]="  item.route === curr_route 
+          [ngClass]="  item.name === page_title 
           ? 'font-bold text-white':'font-medium text-white/[0.7]'">
           {{ item.label }}
         </span>
       </a>
     </nav>
 
-    <span class="flex-1"></span>
     <div
       class="flex items-center gap-2.5 px-3.5 py-3 border-t border-white/[0.06] shrink-0">
       <div
@@ -107,9 +106,7 @@
           <span>Logout</span>
         </button>
       </mat-menu>
-    </header>
-
-    <!-- Page body -->
+    </header> 
     <div class="flex-1 overflow-y-auto p-6 max-sm:p-4 bg-[#f0f7f0]">
       <router-outlet></router-outlet>
     </div>

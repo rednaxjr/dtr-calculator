@@ -1,0 +1,110 @@
+<div class="flex flex-col h-full">
+
+  <!-- Header -->
+  <div
+    class="flex items-center justify-between px-6 py-4 bg-green text-white flex-shrink-0">
+    <div class="flex items-center gap-4">
+      <div
+        class="w-11 h-11 rounded-full bg-white/15 flex items-center justify-center">
+        <mat-icon
+          style="color:#eab308 ;font-size:20px;width:20px;height:20px;line-height:20px">article_person</mat-icon>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold leading-tight text-white uppercase ">{{
+          employee.name }}</h2>
+        <p class="text-white/75 text-sm">User ID: {{ employee.userId }}</p>
+      </div>
+    </div>
+    <button mat-icon-button class="text-white" (click)="close()">
+      <mat-icon  style="color:#fff">close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Summary strip -->
+  <div
+    class="flex gap-4 px-6 py-4 bg-green-50 border-b border-green/10 flex-shrink-0">
+    <div class="flex-1 bg-white rounded-lg px-4 py-3 text-center shadow-sm">
+      <p class="text-2xl font-bold text-white">{{ employee.logs.length }}</p>
+      <p class="text-xs text-gray-500 mt-0.5">Total Records</p>
+    </div>
+  </div>
+
+  <!-- Time records (scrollable) -->
+  <div class="flex-1 overflow-y-auto px-2">
+    <table class="w-full border-collapse">
+      <thead class="bg-gray-100 sticky top-0 z-10">
+        <tr>
+          <th
+            class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wide border-b">Date</th>
+          <th
+            class="px-3 py-3 text-center text-xs font-bold text-blue-600 uppercase tracking-wide border-b">AM
+            In</th>
+          <th
+            class="px-3 py-3 text-center text-xs font-bold text-blue-600 uppercase tracking-wide border-b">AM
+            Out</th>
+          <th
+            class="px-3 py-3 text-center text-xs font-bold text-indigo-600 uppercase tracking-wide border-b">PM
+            In</th>
+          <th
+            class="px-3 py-3 text-center text-xs font-bold text-indigo-600 uppercase tracking-wide border-b">PM
+            Out</th>
+          <th
+            class="px-3 py-3 text-center text-xs font-bold text-amber-600 uppercase tracking-wide border-b">OT
+            In</th>
+          <th
+            class="px-3 py-3 text-center text-xs font-bold text-amber-600 uppercase tracking-wide border-b">OT
+            Out</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (log of employee.logs; track $index) {
+        <tr
+          class="border-b border-gray-100 odd:bg-white even:bg-gray-50/60 hover:bg-green-50 transition-colors">
+          <td
+            class="px-4 py-2 text-sm font-semibold text-gray-700 whitespace-nowrap">{{
+            log.date }}</td>
+          <td class="px-2 py-2 text-center">
+            <input type="text" placeholder="—" [(ngModel)]="log.amIn"
+              class="border border-blue-200 rounded-md px-2 py-1.5 text-sm w-24 text-center font-mono text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+          </td>
+          <td class="px-2 py-2 text-center">
+            <input type="text" placeholder="—" [(ngModel)]="log.amOut"
+              class="border border-blue-200 rounded-md px-2 py-1.5 text-sm w-24 text-center font-mono text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+          </td>
+          <td class="px-2 py-2 text-center">
+            <input type="text" placeholder="—" [(ngModel)]="log.pmIn"
+              class="border border-indigo-200 rounded-md px-2 py-1.5 text-sm w-24 text-center font-mono text-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+          </td>
+          <td class="px-2 py-2 text-center">
+            <input type="text" placeholder="—" [(ngModel)]="log.pmOut"
+              class="border border-indigo-200 rounded-md px-2 py-1.5 text-sm w-24 text-center font-mono text-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+          </td>
+          <td class="px-2 py-2 text-center">
+            <input type="text" placeholder="—" [(ngModel)]="log.otIn"
+              class="border border-amber-200 rounded-md px-2 py-1.5 text-sm w-24 text-center font-mono text-amber-800 focus:outline-none focus:ring-2 focus:ring-amber-300" />
+          </td>
+          <td class="px-2 py-2 text-center">
+            <input type="text" placeholder="—" [(ngModel)]="log.otOut"
+              class="border border-amber-200 rounded-md px-2 py-1.5 text-sm w-24 text-center font-mono text-amber-800 focus:outline-none focus:ring-2 focus:ring-amber-300" />
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div
+    class="flex items-center justify-between gap-3 px-6 py-4 border-t bg-white flex-shrink-0">
+    <p class="text-xs text-gray-400 flex items-center gap-1">
+      <mat-icon class="!text-base !w-4 !h-4 leading-4">info</mat-icon>
+      Edit any time field, then click Save to apply your changes.
+    </p>
+    <div class="flex gap-3">
+      <button mat-stroked-button (click)="close()">Close</button>
+      <button mat-flat-button class="!bg-green !text-white" (click)="save()">
+        <mat-icon class="mr-1">save</mat-icon> Save
+      </button>
+    </div>
+  </div>
+</div>

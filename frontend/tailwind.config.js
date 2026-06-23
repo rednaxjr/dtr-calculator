@@ -29,7 +29,7 @@ module.exports = {
       amber: colors.amber,
       yellow: colors.yellow,
       lime: colors.lime,
-      green: colors.green,
+      green: { ...colors.green, DEFAULT: '#1b5e20' },
       emerald: colors.emerald,
       teal: colors.teal,
       cyan: colors.cyan,
