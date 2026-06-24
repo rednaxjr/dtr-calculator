@@ -41,6 +41,7 @@ module.exports = {
       fuchsia: colors.fuchsia,
       pink: colors.pink,
       rose: colors.rose, 
+      gold:{DEFAULT:'#F9A825'}
     }),
     columns: {
       auto: 'auto',
