@@ -22,10 +22,10 @@ export const routes: Routes = [
     component: AdminLayoutComponent,
     // canActivate: [AuthGuard],
     children: [ 
-      { path: 'dashboard', component: DashboardComponent,data: { title: 'Dashboard' } },
-      { path: 'employees', component: EmployeeListComponent, data: { title: 'Employees' } },
-      { path: 'dtr', component: DtrListComponent, data: { title: 'DTR Files' } },
-      { path: 'dtr/upload', component: DtrUploadComponent, data: { title: 'Upload DTR' } },
+      { path: 'dashboard', component: DashboardComponent,data: { title: 'Dashboard', parent: 'Dashboard' } },
+      { path: 'employees', component: EmployeeListComponent, data: { title: 'Employees' , parent: 'Employees' } },
+      { path: 'dtr', component: DtrListComponent, data: { title: 'DTR Files', parent: 'DTR Files' } },
+      { path: 'dtr/upload', component: DtrUploadComponent, data: { title: 'Upload DTR', parent: 'DTR Files' } },
     ],
   },
 

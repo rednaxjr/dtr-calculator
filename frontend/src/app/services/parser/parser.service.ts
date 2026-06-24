@@ -1,25 +1,23 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { read, utils } from 'xlsx';
-import { Employee, DailyLog } from '../../component/models/employee.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ParserService {
-employees = signal<Employee[]>([]);
-  isLoading  = signal(false);
-  error      = signal<string | null>(null);
+
+  employees: any[] = [];
+  isLoading: boolean = false;
+  error: string | null = null;
 
   private readonly SKIP_SHEETS = [
     'Shift Setting Table',
     'Attendance Statistic Table'
   ];
-
-  // Column offsets within each 15-col employee block
   private readonly COL = {
     dept:   1,
     name:   9,
-    userId: 9,    
+    userId: 9,
     date:   0,
     amIn:   1,
     amOut:  3,
@@ -28,23 +26,26 @@ employees = signal<Employee[]>([]);
     otIn:   10,
     otOut:  12,
   };
-
-  // Rows (0-indexed)
   private readonly ROW = {
-    nameRow:   3,   // row 4
-    userIdRow: 4,   // row 5
-    logsStart: 12,  // row 13
-    logsEnd:   42,  // row 43
+    nameRow:   3,
+    userIdRow: 4,
+    logsStart: 12,
+    logsEnd:   42,
   };
 
+  clear() {
+    this.employees = [];
+    this.error = null;
+  }
+
   async parseFile(file: File): Promise<void> {
-    this.isLoading.set(true);
-    this.error.set(null);
+    this.isLoading = true;
+    this.error = null;
 
     try {
       const buffer = await file.arrayBuffer();
       const wb = read(buffer, { type: 'array' });
-      const result: Employee[] = [];
+      const result: any[] = [];
 
       for (const sheetName of wb.SheetNames) {
         if (this.SKIP_SHEETS.includes(sheetName)) continue;
@@ -63,20 +64,18 @@ employees = signal<Employee[]>([]);
           const name   = data[this.ROW.nameRow]?.[col + this.COL.name];
           const userId = data[this.ROW.userIdRow]?.[col + this.COL.userId];
 
-          // Guards
           if (!dept && !name && !userId) continue;
           if (!userId || typeof userId !== 'number') continue;
           if (!name   || typeof name   !== 'string') continue;
 
-          // Extract daily logs rows 13–43
-          const logs: DailyLog[] = [];
+          const logs: any[] = [];
 
           for (let row = this.ROW.logsStart; row <= this.ROW.logsEnd; row++) {
             const r = data[row];
             if (!r) continue;
 
             const date = r[col + this.COL.date];
-            if (!date) continue; // skip empty day rows
+            if (!date) continue;
 
             logs.push({
               date:  String(date),
@@ -93,19 +92,18 @@ employees = signal<Employee[]>([]);
         }
         console.log(result)
       }
-      
 
       if (result.length === 0) {
-        this.error.set('No employees found. Check if this is a valid DTR file.');
+        this.error = 'No employees found. Check if this is a valid DTR file.';
       }
 
-      this.employees.set(result); 
+      this.employees = result;
 
     } catch (err) {
-      this.error.set('Failed to parse file. Please check the format.');
+      this.error = 'Failed to parse file. Please check the format.';
       console.error(err);
     } finally {
-      this.isLoading.set(false);
+      this.isLoading = false;
     }
-  } 
+  }
 }

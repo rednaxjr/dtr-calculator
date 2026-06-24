@@ -34,9 +34,9 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
   private routeSub?: Subscription;
 
   modules: any = [
-    { label: 'Dashboard', icon: 'dashboard', route: '/admin/dashboard', exact: true },
-    { label: 'Employees', icon: 'people', route: '/admin/employees' },
-    { label: 'DTR Files', icon: 'description', route: '/admin/dtr' },
+    { label: 'Dashboard', icon: 'dashboard', route: '/admin/dashboard', name: "Dashboard", exact: true },
+    { label: 'Employees', icon: 'people', route: '/admin/employees', name: "Employees" },
+    { label: 'DTR Files', icon: 'description', route: '/admin/dtr', name: "DTR Files" },
   ];
 
   constructor(
@@ -49,17 +49,18 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.curr_route = this.router.url;
+    const deepest = this.getDeepestRoute(this.route);
+    this.page_title = deepest.snapshot.data['parent'];
     this.routeSub = this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe((e: any) => {
         this.curr_route = e.urlAfterRedirects;
         const deepest = this.getDeepestRoute(this.route);
-        const title = deepest.snapshot.data['title'];
+        const title = deepest.snapshot.data['parent'];
         this.page_title = title;
         if (this.isMobile) this.drawer?.close();
       });
-    console.log(this.curr_route)
-    console.log(this.page_title)
+ 
   }
   getDeepestRoute(route: ActivatedRoute): ActivatedRoute {
     while (route.firstChild) {

@@ -1,0 +1,157 @@
+<div class="flex flex-col h-full">
+
+  <!-- Header -->
+  <div
+    class="flex items-center justify-between px-6 py-4 bg-green text-white flex-shrink-0">
+    <div class="flex items-center gap-4">
+      <div
+        class="w-11 h-11 rounded-full bg-white/15 flex items-center justify-center">
+        <mat-icon
+          style="color:#eab308 ;font-size:20px;width:20px;height:20px;line-height:20px">article_person</mat-icon>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold leading-tight text-white uppercase ">{{
+          employee.name }}</h2>
+        <p class="text-white/75 text-sm">User ID: {{ employee.userId }}</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      @if (editedCount > 0) {
+      <span
+        class="hidden sm:inline-flex items-center gap-1 text-xs font-semibold bg-white/15 text-white rounded-full px-3 py-1"
+        matTooltip="You have unsaved changes.">
+        <mat-icon class="!text-base !w-4 !h-4 leading-4">edit</mat-icon>
+        {{ editedCount }} unsaved
+      </span>
+      }
+      <button mat-icon-button class="text-white" (click)="close()">
+        <mat-icon style="color:#fff">close</mat-icon>
+      </button>
+    </div>
+  </div> 
+  <div class="flex-1 overflow-auto px-2">
+    <table class="w-full border-collapse">
+      <thead class="bg-gray-100 sticky top-0 z-10">
+        <tr>
+          <th
+            class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wide border-b">
+            Date</th>
+          @for (f of fields; track f.key) {
+          <th
+            class="px-3 py-3 text-center text-xs font-bold uppercase tracking-wide border-b whitespace-nowrap"
+            [ngClass]="{
+              'text-blue-600': f.session === 'AM',
+              'text-indigo-600': f.session === 'PM',
+              'text-amber-600': f.session === 'OT'
+            }">
+            {{ f.label }}
+            @if (f.required) {
+            <span class="text-red-500" matTooltip="Required field">*</span>
+            }
+          </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (log of employee.logs; track $index) {
+        <tr class="tr-row transition-colors" [ngClass]="rowClass(log)">
+          <td class="px-4 py-2.5 text-sm font-semibold text-gray-700 whitespace-nowrap">
+            <div class="flex items-center gap-2">
+              @if (isWeekend(log)) { 
+               <button type="button" class="tr-date-trigger"
+              >
+                <span class=" ">{{ log.date }}</span> 
+              </button>  
+                <!-- <span class=" ">{{ log.date }}</span>  -->
+              } @else {
+              <button type="button" class="tr-date-trigger"
+                [matMenuTriggerFor]="statusMenu"
+                [matMenuTriggerData]="{ log: log }" [disabled]="saving"
+                matTooltip="Change attendance status">
+                <span class=" ">{{ log.date }}</span> 
+              </button> 
+              }
+            </div>
+          </td>
+          @for (f of fields; track f.key) {
+          <td class="px-2 py-2.5 text-center">
+            <div class="relative inline-block">
+              <input type="text" placeholder="—" [(ngModel)]="log[f.key]"
+                [disabled]="isFieldDisabled(log, f)"
+                [ngClass]="isFieldDisabled(log, f) ? { 'tr-disabled': true } : inputClasses(log, f)"
+                [matTooltip]="fieldTooltip(log, f)" matTooltipPosition="above"
+                class="tr-input border rounded-md px-2 py-1.5 text-sm w-24 text-center font-mono focus:outline-none focus:ring-2 transition-colors duration-200 disabled:cursor-not-allowed" />
+              @if (hasFieldMenu(log, f)) {
+              <button type="button" class="tr-field-menu-btn"
+                [matMenuTriggerFor]="fieldMenu"
+                [matMenuTriggerData]="{ log: log, field: f }"
+                matTooltip="Quick actions" matTooltipPosition="above">
+                <mat-icon>more_horiz</mat-icon>
+              </button>
+              }
+              @if (!isFieldDisabled(log, f) && isEdited($index, f)) {
+              <span class="tr-edit-badge"
+                matTooltip="Edited from the original value. Unsaved change."
+                matTooltipPosition="above">
+                <mat-icon>edit</mat-icon>
+              </span>
+              }
+            </div>
+          </td>
+          }
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+ 
+  <mat-menu #statusMenu="matMenu" class="tr-status-menu">
+    <ng-template matMenuContent let-log="log">
+      @for (opt of statusOptions; track opt.value) {
+      <button mat-menu-item (click)="setStatus(log, opt.value)"
+        [class.tr-menu-item-active]="log.status === opt.value">
+        <mat-icon class="text-gray-500">{{ statusMeta[opt.value].icon }}</mat-icon>
+        <span>{{ opt.label }}</span>
+        @if (log.status === opt.value) {
+        <mat-icon class="!text-base text-green-600 ml-auto">check</mat-icon>
+        }
+      </button>
+      }
+    </ng-template>
+  </mat-menu>
+
+  <!-- Field quick-action menu (AM Out / PM In …) -->
+  <mat-menu #fieldMenu="matMenu" class="tr-field-menu">
+    <ng-template matMenuContent let-log="log" let-field="field">
+      <button mat-menu-item (click)="fillField(log, field)"
+        [disabled]="!canFillBlank(log, field)">
+        <mat-icon class="text-gray-500">schedule</mat-icon>
+        <span>Fill Blank ({{ field.fillValue }})</span>
+      </button>
+      <!-- future actions: Clear Value · Copy Previous Day · Set Default · Revert -->
+    </ng-template>
+  </mat-menu>
+
+  <div
+    class="flex items-center justify-between gap-3 px-6 py-4 border-t bg-white flex-shrink-0">
+    <p class="text-xs text-gray-400 flex items-center gap-1">
+      <mat-icon class="!text-base !w-4 !h-4 leading-4">info</mat-icon>
+      Edit any time field, then click Save to apply your changes.
+    </p>
+    <div class="flex gap-3">
+      <button mat-stroked-button (click)="close()"
+        [disabled]="saving">Close</button>
+      <button mat-flat-button class="!bg-green !text-white" (click)="save()"
+        [disabled]="saving">
+        @if (saving) {
+        <mat-progress-spinner diameter="18" mode="indeterminate"
+          class="inline-block mr-2 align-middle"></mat-progress-spinner>
+        Saving…
+        } @else {
+        <span class="inline-flex items-center"><mat-icon
+            class="mr-1">save</mat-icon> Save</span>
+        }
+      </button>
+    </div>
+  </div>
+</div>
