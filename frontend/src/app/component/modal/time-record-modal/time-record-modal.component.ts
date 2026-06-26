@@ -172,42 +172,42 @@ export class TimeRecordModalComponent {
   rowClass(log: any): string {
     return this.isWeekend(log) ? '' : this.meta(log).rowClass;
   }
-
-  /** the whole row is read-only (weekend or a locked status) */
+ 
   isRowLocked(log: any): boolean {
     return this.isWeekend(log) || this.meta(log).locked;
   }
-
-  /** a single field is disabled: locked row, or the PM session of a half day */
+ 
   isFieldDisabled(log: any, field: FieldDef): boolean {
     if (this.isRowLocked(log)) return true;
     if (this.isHalfDay(log) && field.session === 'PM') return true;
     return false;
   }
-
-  /** tooltip for a disabled or active field */
+ 
   fieldTooltip(log: any, field: FieldDef): string {
     if (this.isWeekend(log)) return 'Weekend — non-working day';
     if (this.isFieldDisabled(log, field)) return this.meta(log).tooltip;
     return this.statusTooltip(log, field);
   }
-
-  // ---- field quick-action menu (AM Out / PM In …) ---------------------------
-
-  /** the field exposes a quick-action menu, and is currently editable */
-  hasFieldMenu(log: any, field: FieldDef): boolean {
-    return !!field.fillValue && !this.isFieldDisabled(log, field);
+ 
+  isFillable(field: FieldDef): boolean {
+    return !!field.fillValue;
+  }
+ 
+  canFillAnyBlank(field: FieldDef): boolean {
+    if (!this.isFillable(field)) return false;
+    return this.employee.logs.some(
+      (log: any) => !this.isFieldDisabled(log, field) && this.isBlank(log[field.key]),
+      console.log(this.employee)
+    );
   }
 
-  /** Fill Blank is only offered while the field is empty */
-  canFillBlank(log: any, field: FieldDef): boolean {
-    return this.hasFieldMenu(log, field) && this.isBlank(log[field.key]);
-  }
-
-  /** populate an empty field with its default value (counts as a manual edit) */
-  fillField(log: any, field: FieldDef): void {
-    if (!this.canFillBlank(log, field)) return;
-    log[field.key] = field.fillValue;
+   
+  fillAllBlank(field: FieldDef): void {
+    if (!this.isFillable(field)) return;
+    for (const log of this.employee.logs) {
+      if (this.isFieldDisabled(log, field)) continue;
+      if (this.isBlank(log[field.key])) log[field.key] = field.fillValue;
+    }
   }
 
   // ---- status / colour detection -------------------------------------------

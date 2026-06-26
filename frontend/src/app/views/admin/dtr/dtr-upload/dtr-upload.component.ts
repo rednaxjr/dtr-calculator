@@ -81,10 +81,10 @@ export class DtrUploadComponent implements OnDestroy {
   openModal(emp: any, index: number) {
     const ref = this.dialog.open(TimeRecordModalComponent, {
       data: emp,
-      width: '90vw',
-      height: '90vh',
-      maxWidth: '90vw',
-      maxHeight: '90vh',
+      width: '98vw',
+      height: '98vh',
+      maxWidth: '98vw',
+      maxHeight: '98vh',
       panelClass: 'time-record-dialog',
     });
     ref.afterClosed().subscribe((result: any) => {
