@@ -141,7 +141,7 @@
       </button>
       }
     </ng-template>
-  </mat-menu>
+  </mat-menu> 
 
   <mat-menu #columnMenu="matMenu" class="tr-field-menu">
     <ng-template matMenuContent let-field="field">
@@ -149,6 +149,12 @@
         [disabled]="!canFillAnyBlank(field)">
         <mat-icon class="text-gray-500">schedule</mat-icon>
         <span>Fill all blank ({{ field.fillValue }})</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="clearAutoFilled(field)"
+        [disabled]="!hasAutoFilled(field)">
+        <mat-icon class="text-red-400">backspace</mat-icon>
+        <span class="text-red-500">Remove auto-filled data</span>
       </button>
     </ng-template>
   </mat-menu>

@@ -8,6 +8,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
 
 type FieldKey = 'amIn' | 'amOut' | 'pmIn' | 'pmOut' | 'otIn' | 'otOut';
 type Session = 'AM' | 'PM' | 'OT';
@@ -44,6 +45,7 @@ interface StatusMeta {
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatMenuModule,
+    MatDividerModule,
   ],
   templateUrl: './time-record-modal.component.html',
   styleUrl: './time-record-modal.component.scss',
@@ -196,6 +198,24 @@ export class TimeRecordModalComponent {
     });
   }
 
+  /** True if at least one cell in this column was auto-filled and not yet cleared. */
+  hasAutoFilled(field: FieldDef): boolean {
+    return this.employee.logs.some(
+      (_: any, i: number) => this.autoFilledCells.has(`${i}-${field.key}`)
+    );
+  }
+
+  /** Restore every auto-filled cell in this column to its original value. */
+  clearAutoFilled(field: FieldDef): void {
+    this.employee.logs.forEach((log: any, i: number) => {
+      const cellKey = `${i}-${field.key}`;
+      if (!this.autoFilledCells.has(cellKey)) return;
+      const originalVal = this.original?.logs?.[i]?.[field.key];
+      log[field.key] = originalVal ?? '';
+      this.autoFilledCells.delete(cellKey);
+    });
+  }
+
   isAutoFilled(index: number, field: FieldDef): boolean {
     return this.autoFilledCells.has(`${index}-${field.key}`);
   }
@@ -285,6 +305,23 @@ export class TimeRecordModalComponent {
     return this.original?.logs?.[index]?.status !== this.employee?.logs?.[index]?.status;
   }
 
+  /**
+   * Dates whose Holiday state changed in this session, so the parent can
+   * cascade them to every other employee.
+   */
+  private holidayDiffs(): { added: string[]; removed: string[] } {
+    const added: string[] = [];
+    const removed: string[] = [];
+    this.employee.logs.forEach((log: any, i: number) => {
+      const before = this.original?.logs?.[i]?.status;
+      const after = log.status;
+      if (before === after) return;
+      if (after === 'Holiday') added.push(log.date);
+      else if (before === 'Holiday') removed.push(log.date);
+    });
+    return { added, removed };
+  }
+
   get editedCount(): number {
     let count = 0;
     this.employee.logs.forEach((log: any, i: number) => {
@@ -351,11 +388,19 @@ export class TimeRecordModalComponent {
     this.saving = true;
     try {
       await this.persist();
-      this.snackBar.open('Time records saved successfully.', 'OK', {
+      const holidays = this.holidayDiffs();
+      const message = holidays.added.length
+        ? `Saved. ${holidays.added.length} holiday${holidays.added.length > 1 ? 's' : ''} applied to all employees.`
+        : 'Time records saved successfully.';
+      this.snackBar.open(message, 'OK', {
         duration: 3000,
         panelClass: 'tr-snack-success',
       });
-      this.dialogRef.close(this.employee);
+      this.dialogRef.close({
+        employee: this.employee,
+        holidaysAdded: holidays.added,
+        holidaysRemoved: holidays.removed,
+      });
     } catch {
       this.saving = false;
       this.snackBar.open('Failed to save time records. Please try again.', 'Retry', {

@@ -38,6 +38,34 @@ export class ParserService {
     this.error = null;
   }
 
+  /**
+   * Propagate holiday changes across every employee.
+   * A holiday is a day-level property, so marking a date as Holiday for one
+   * employee applies it to all of them (and clearing it reverts the others to
+   * Present without touching their recorded times).
+   */
+  applyHoliday(added: string[] = [], removed: string[] = []): void {
+    const addKeys = new Set(added.map(d => this.dayKey(d)));
+    const remKeys = new Set(removed.map(d => this.dayKey(d)));
+    if (addKeys.size === 0 && remKeys.size === 0) return;
+
+    for (const emp of this.employees) {
+      for (const log of emp.logs ?? []) {
+        const key = this.dayKey(log.date);
+        if (addKeys.has(key)) {
+          log.status = 'Holiday';
+        } else if (remKeys.has(key) && log.status === 'Holiday') {
+          log.status = 'Present';
+        }
+      }
+    }
+  }
+ 
+  private dayKey(date: any): string {
+    const match = String(date ?? '').match(/\d+/);
+    return match ? match[0] : String(date ?? '').trim();
+  }
+
   async parseFile(file: File): Promise<void> {
     this.isLoading = true;
     this.error = null;

@@ -93,7 +93,9 @@ export class DtrUploadComponent implements OnDestroy {
       panelClass: 'time-record-dialog',
     });
     ref.afterClosed().subscribe((result: any) => {
-      if (result) this.parser.employees[index] = result;
+      if (!result) return;
+      this.parser.employees[index] = result.employee;
+      this.parser.applyHoliday(result.holidaysAdded, result.holidaysRemoved);
     });
   }
 }
