@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, signal, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,9 +18,13 @@ export class DtrUploadComponent implements OnDestroy {
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
-  parser = inject(ParserService);
-  dialog = inject(MatDialog);
   isDragging = signal(false);
+  file_name:any="";
+
+  constructor(
+    public parser: ParserService,
+    public dialog: MatDialog,
+  ) {}
 
   ngOnDestroy() {
     this.parser.clear();
@@ -52,6 +56,7 @@ export class DtrUploadComponent implements OnDestroy {
   }
 
   async getResult(file: File) {
+    this.file_name=file.name;
     await this.parser.parseFile(file);
     const employees = this.parser.employees;
     console.log(employees);

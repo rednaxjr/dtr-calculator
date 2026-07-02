@@ -34,21 +34,30 @@
       <thead class="bg-gray-100 sticky top-0 z-10">
         <tr>
           <th
-            class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wide border-b">
-            Date</th>
+            class="px-3 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wide border-b">
+            <span
+              class="inline-flex items-center justify-center gap-1 uppercase">Date</span>
+          </th>
           @for (f of fields; track f.key) {
           <th
-            class="px-3 py-3 text-center text-xs font-bold uppercase tracking-wide border-b whitespace-nowrap"
+            class="px-3 py-3 text-center text-xs font-bold uppercase tracking-wide border-b whitespace-nowrap "
             [ngClass]="{
               'text-blue-600': f.session === 'AM',
               'text-indigo-600': f.session === 'PM',
               'text-amber-600': f.session === 'OT'
             }">
             <span class="inline-flex items-center justify-center gap-1">
+              <mat-icon
+                class="!text-base !w-4 !h-4 !leading-4"
+                [ngClass]="blankCountFor(f) > 0 ? 'text-red-600' : 'text-green-600'"
+                [matTooltip]="blankCountFor(f) > 0 ? blankCountFor(f) + ' blank in this column' : 'No blanks in this column'">
+                {{ blankCountFor(f) > 0 ? 'error' : 'check_circle' }}
+              </mat-icon>
               {{ f.label }}
               @if (f.required) {
               <span class="text-red-500" matTooltip="Required field">*</span>
               }
+
               @if (isFillable(f)) {
               <button type="button" class="tr-col-menu-btn"
                 [matMenuTriggerFor]="columnMenu"
@@ -63,7 +72,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (log of employee.logs; track $index) {
+        @for (log of employee.logs; track $index; let logIndex = $index) {
         <tr class="tr-row transition-colors" [ngClass]="rowClass(log)">
           <td
             class="px-4 py-2.5 text-sm font-semibold text-gray-700 whitespace-nowrap">
@@ -72,7 +81,6 @@
               <button type="button" class="tr-date-trigger">
                 <span class=" ">{{ log.date }}</span>
               </button>
-              <!-- <span class=" ">{{ log.date }}</span>  -->
               } @else {
               <button type="button" class="tr-date-trigger"
                 [matMenuTriggerFor]="statusMenu"
@@ -89,13 +97,25 @@
               <input type="text" placeholder="—" [(ngModel)]="log[f.key]"
                 [disabled]="isFieldDisabled(log, f)"
                 [ngClass]="isFieldDisabled(log, f) ? { 'tr-disabled': true } : inputClasses(log, f)"
+                [style.border-color]="isAutoFilled(logIndex, f) ? '#2563eb' : null"
                 [matTooltip]="fieldTooltip(log, f)" matTooltipPosition="above"
-                class="tr-input border rounded-md px-2 py-1.5 text-sm w-24 text-center font-mono focus:outline-none focus:ring-2 transition-colors duration-200 disabled:cursor-not-allowed" />
-              @if (!isFieldDisabled(log, f) && isEdited($index, f)) {
-              <span class="tr-edit-badge"
-                matTooltip="Edited from the original value. Unsaved change."
-                matTooltipPosition="above">
-                <mat-icon>edit</mat-icon>
+                class="tr-input border-2  rounded-md py-1 text-sm w-24 text-center font-mono focus:outline-none focus:ring-2 transition-colors duration-200 disabled:cursor-not-allowed" />
+
+              @if (isModified(logIndex, f)) {
+              <!-- edit indicator: shown for auto-filled AND manually edited fields (incl. late) -->
+              <div
+                class="absolute flex -right-2 -top-2 items-center justify-center rounded-md pointer-events-none">
+                <div
+                  class="flex w-6 h-6 justify-center items-center rounded-full bg-blue-600">
+                  <mat-icon
+                    class="!flex !items-center !justify-center !text-base !h-4 !w-4 !leading-none !text-white">draw</mat-icon>
+                </div>
+              </div>
+
+              <span
+                class="absolute -right-18 bottom-2 text-sm leading-none font-mono  pointer-events-none whitespace-nowrap"
+                [style.color]="originalValueColor(logIndex, f)">
+                {{ originalValue(logIndex, f) }}
               </span>
               }
             </div>
@@ -123,7 +143,6 @@
     </ng-template>
   </mat-menu>
 
-  <!-- Column quick-action menu (AM Out / PM In …) -->
   <mat-menu #columnMenu="matMenu" class="tr-field-menu">
     <ng-template matMenuContent let-field="field">
       <button mat-menu-item (click)="fillAllBlank(field)"
@@ -131,7 +150,6 @@
         <mat-icon class="text-gray-500">schedule</mat-icon>
         <span>Fill all blank ({{ field.fillValue }})</span>
       </button>
-      <!-- future column actions: Clear Column · Copy Previous Day · Set Default -->
     </ng-template>
   </mat-menu>
 

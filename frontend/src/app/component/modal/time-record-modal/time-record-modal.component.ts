@@ -15,29 +15,19 @@ type FieldStatus = 'late' | 'ontime' | 'blank-required' | 'blank-optional' | 'ne
 
 interface FieldDef {
   key: FieldKey;
-  label: string;
-  /** which working session the punch belongs to */
-  session: Session;
-  /** required fields show red when blank, optional fields show orange */
-  required: boolean;
-  /** the scheduled "on-time" cutoff in minutes; later than this is late */
-  lateAfter: number | null;
-  /** default value offered by the field's quick-action menu (Fill Blank) */
+  label: string; 
+  session: Session; 
+  required: boolean; 
+  lateAfter: number | null; 
   fillValue?: string;
 }
 
-interface StatusMeta {
-  /** menu icon */
-  icon: string;
-  /** whole row is read-only (no time fields are editable / validated) */
-  locked: boolean;
-  /** only the morning session is worked; afternoon fields are disabled */
-  halfDay?: boolean;
-  /** tooltip shown on the badge and disabled fields */
-  tooltip: string;
-  /** css modifier for the badge chip ('' = no badge, i.e. Present) */
-  badgeClass: string;
-  /** css modifier tinting the whole row ('' = normal striping) */
+interface StatusMeta { 
+  icon: string; 
+  locked: boolean; 
+  halfDay?: boolean; 
+  tooltip: string; 
+  badgeClass: string; 
   rowClass: string;
 }
 
@@ -63,6 +53,9 @@ export class TimeRecordModalComponent {
 
   /** pristine snapshot used to detect edited fields */
   private original: any;
+
+  /** tracks cells filled automatically by fillAllBlank — key: "<logIndex>-<fieldKey>" */
+  private autoFilledCells = new Set<string>();
 
   saving = false;
 
@@ -125,46 +118,36 @@ export class TimeRecordModalComponent {
     private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
-    // edit a copy so closing without saving doesn't change the original
+   
     this.employee = JSON.parse(JSON.stringify(data));
-    this.normalizeStatuses(this.employee);
-    // snapshot AFTER normalizing so a defaulted status isn't seen as an edit
+    this.normalizeStatuses(this.employee); 
     this.original = JSON.parse(JSON.stringify(this.employee));
   }
-
-  /** ensure every log has an attendance status (migrates the old absent flag) */
+ 
   private normalizeStatuses(emp: any): void {
     for (const log of emp.logs ?? []) {
       if (!log.status) log.status = log.absent ? 'Absent' : 'Present';
     }
-  }
-
-  // ---- weekend detection ----------------------------------------------------
-
-  /** date strings look like "02 Sa" / "03 Su" (also handles German "So") */
+  } 
   isWeekend(log: any): boolean {
     const m = String(log?.date ?? '').trim().match(/([A-Za-z]{2})$/);
     if (!m) return false;
     const day = m[1].toLowerCase();
     return day === 'sa' || day === 'su' || day === 'so';
-  }
-
-  // ---- attendance status ----------------------------------------------------
+  } 
 
   meta(log: any): StatusMeta {
     return this.statusMeta[log?.status] ?? this.statusMeta['Present'];
   }
 
   setStatus(log: any, value: string): void {
-    if (this.isWeekend(log)) return; // weekends stay non-working
+    if (this.isWeekend(log)) return;  
     log.status = value;
   }
 
   isHalfDay(log: any): boolean {
     return log?.status === 'Half Day';
-  }
-
-  /** show a status chip for any non-Present (and non-weekend) day */
+  } 
   hasBadge(log: any): boolean {
     return !this.isWeekend(log) && this.meta(log).badgeClass !== '';
   }
@@ -204,15 +187,19 @@ export class TimeRecordModalComponent {
    
   fillAllBlank(field: FieldDef): void {
     if (!this.isFillable(field)) return;
-    for (const log of this.employee.logs) {
-      if (this.isFieldDisabled(log, field)) continue;
-      if (this.isBlank(log[field.key])) log[field.key] = field.fillValue;
-    }
+    this.employee.logs.forEach((log: any, i: number) => {
+      if (this.isFieldDisabled(log, field)) return;
+      if (this.isBlank(log[field.key])) {
+        log[field.key] = field.fillValue;
+        this.autoFilledCells.add(`${i}-${field.key}`);
+      }
+    });
   }
 
-  // ---- status / colour detection -------------------------------------------
-
-  /** parse "HH:mm" (or "HH:mm:ss") into minutes since midnight, else null */
+  isAutoFilled(index: number, field: FieldDef): boolean {
+    return this.autoFilledCells.has(`${index}-${field.key}`);
+  }
+ 
   private toMinutes(val: any): number | null {
     if (val === null || val === undefined || String(val).trim() === '') return null;
     const m = String(val).trim().match(/^(\d{1,2}):(\d{2})/);
@@ -235,12 +222,10 @@ export class TimeRecordModalComponent {
       const mins = this.toMinutes(value);
       if (mins !== null) return mins > field.lateAfter ? 'late' : 'ontime';
     }
-
-    // a filled out-punch / OT field with no late concept
+ 
     return field.lateAfter !== null ? 'ontime' : 'neutral';
   }
-
-  /** tailwind classes per status, applied to the input */
+ 
   inputClasses(log: any, field: FieldDef): Record<string, boolean> {
     const status = this.getStatus(log, field);
     return {
@@ -254,10 +239,10 @@ export class TimeRecordModalComponent {
 
   statusTooltip(log: any, field: FieldDef): string {
     switch (this.getStatus(log, field)) {
-      case 'late': return `${field.label} is late (after scheduled time).`;
-      case 'ontime': return `${field.label} is on time.`;
-      case 'blank-required': return `${field.label} is required but blank.`;
-      case 'blank-optional': return `${field.label} is optional / pending.`;
+      case 'late': return `Late`;
+      case 'ontime': return `On Time`;
+      case 'blank-required': return `Required`;
+      case 'blank-optional': return `Optional`;
       default: return '';
     }
   }
@@ -272,9 +257,30 @@ export class TimeRecordModalComponent {
     const orig = this.original?.logs?.[index]?.[field.key];
     const cur = this.employee?.logs?.[index]?.[field.key];
     return this.norm(orig) !== this.norm(cur);
+  } 
+  isModified(index: number, field: FieldDef): boolean {
+    const log = this.employee?.logs?.[index];
+    if (!log || this.isFieldDisabled(log, field)) return false;
+    return this.isEdited(index, field);
+  }
+ 
+  originalValue(index: number, field: FieldDef): string {
+    const val = this.original?.logs?.[index]?.[field.key];
+    return this.isBlank(val) ? '—' : String(val).trim();
+  }
+ 
+  originalValueColor(index: number, field: FieldDef): string {
+    const orig = this.original?.logs?.[index];
+    if (!orig) return '#6b7280'; // gray-500
+    switch (this.getStatus(orig, field)) {
+      case 'late': return '#ef4444';          
+      case 'blank-required': return '#ef4444';  
+      case 'blank-optional': return '#f97316';  
+      case 'ontime': return '#6b7280';        
+      default: return '#6b7280';         
+    }
   }
 
-  /** the attendance status changed from its original value */
   isStatusEdited(index: number): boolean {
     return this.original?.logs?.[index]?.status !== this.employee?.logs?.[index]?.status;
   }
@@ -283,7 +289,6 @@ export class TimeRecordModalComponent {
     let count = 0;
     this.employee.logs.forEach((log: any, i: number) => {
       if (this.isStatusEdited(i)) count++;
-      // ignore edits on disabled fields (locked rows / half-day PM)
       for (const f of this.fields) {
         if (!this.isFieldDisabled(log, f) && this.isEdited(i, f)) count++;
       }
@@ -291,26 +296,34 @@ export class TimeRecordModalComponent {
     return count;
   }
 
-  // ---- save ----------------------------------------------------------------
-
-  /** required punches for an editable day, given its attendance status */
+  /**
+   * Number of blank / missing editable inputs in a single column (field).
+   * Recomputed on every change-detection pass, so each header badge stays in
+   * sync with manual edits and fillAllBlank without any counter bookkeeping.
+   */
+  blankCountFor(field: FieldDef): number {
+    let count = 0;
+    for (const log of this.employee.logs) {
+      if (this.isFieldDisabled(log, field)) continue;
+      if (this.isBlank(log[field.key])) count++;
+    }
+    return count;
+  }
+ 
   private requiredFields(log: any): FieldDef[] {
-    if (this.isHalfDay(log)) {
-      // morning session only
+    if (this.isHalfDay(log)) { 
       return this.fields.filter(f => f.key === 'amIn' || f.key === 'amOut');
     }
     return this.fields.filter(f => f.required);
-  }
-
-  /** validate required fields on any editable day that has at least one punch */
+  } 
   private validate(): string | null {
     for (let i = 0; i < this.employee.logs.length; i++) {
       const log = this.employee.logs[i];
-      if (this.isRowLocked(log)) continue; // weekends / absent / leave / OB / holiday
+      if (this.isRowLocked(log)) continue; 
 
       const editable = this.fields.filter(f => !this.isFieldDisabled(log, f));
       const hasAny = editable.some(f => !this.isBlank(log[f.key]));
-      if (!hasAny) continue; // nothing entered = treat as non-working, no error
+      if (!hasAny) continue;  
 
       const missing = this.requiredFields(log)
         .filter(f => this.isBlank(log[f.key]))
@@ -351,12 +364,7 @@ export class TimeRecordModalComponent {
       });
     }
   }
-
-  /**
-   * Hand the updated record back to the parent component. Kept as a promise so
-   * the spinner / disabled state has a defined async boundary and so a real
-   * backend call can be dropped in here later.
-   */
+ 
   private persist(): Promise<void> {
     return Promise.resolve();
   }

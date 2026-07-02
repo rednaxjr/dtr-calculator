@@ -1,49 +1,48 @@
 :host {
   display: block;
   height: 100%;
+  color:#000;
 }
 
 /* ---- input status colours ------------------------------------------------ */
 
 .tr-input {
-  // base; individual status classes override border/background/text
-  border-color: #e5e7eb;
-  color: #374151;
+ 
+  border-color: #9ca3af;
+  color: #000;
 }
 
 .tr-ontime {
-  border-color: #93c5fd;            // blue-300
-  background-color: #eff6ff;        // blue-50
-  color: #1e40af;                   // blue-800
-  &:focus { --tw-ring-color: #93c5fd; box-shadow: 0 0 0 2px #93c5fd; }
+  border-color: #9ca3af;              
+  color: #000;                
+  &:focus { --tw-ring-color: #d1d5db ; box-shadow: 0 0 0 2px #d1d5db ; }
 }
 
 .tr-late {
-  border-color: #f87171;            // red-400
-  background-color: #fef2f2;        // red-50
-  color: #b91c1c;                   // red-700
+  border-color: #f87171;              
+  color: #000;                 
   font-weight: 700;
   &:focus { --tw-ring-color: #fca5a5; box-shadow: 0 0 0 2px #fca5a5; }
 }
 
 .tr-blank-required {
-  border-color: #f87171;            // red-400
-  background-color: #fef2f2;        // red-50
+  border-color: #f87171;            
+ 
   &::placeholder { color: #ef4444; }
   &:focus { --tw-ring-color: #fca5a5; box-shadow: 0 0 0 2px #fca5a5; }
 }
 
 .tr-blank-optional {
-  border-color: #fdba74;            // orange-300
-  background-color: #fff7ed;        // orange-50
+  border-color: #fdba74;            
+  background-color: #fff7ed;        
   &::placeholder { color: #f97316; }
   &:focus { --tw-ring-color: #fdba74; box-shadow: 0 0 0 2px #fdba74; }
 }
 
 .tr-neutral {
-  border-color: #e5e7eb;            // gray-200
+  border-color: #9ca3af;         
   background-color: #ffffff;
-  color: #374151;
+  color: #000;
 }
 
 /* ---- weekend / disabled inputs ------------------------------------------- */
@@ -85,7 +84,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 6px;
+  padding: 2px 4px;
   border-radius: 6px;
   color: #374151;                    // gray-700
   cursor: pointer;
@@ -124,11 +123,11 @@
   }
 }
 
-.tr-badge-absent  { background-color: #fee2e2; color: #b91c1c; } // red
-.tr-badge-leave   { background-color: #dbeafe; color: #1d4ed8; } // blue
-.tr-badge-halfday { background-color: #e0e7ff; color: #4338ca; } // indigo
-.tr-badge-ob      { background-color: #f3e8ff; color: #7e22ce; } // purple
-.tr-badge-holiday { background-color: #ccfbf1; color: #0f766e; } // teal
+.tr-badge-absent  { background-color: #fee2e2; color: #000; }  
+.tr-badge-leave   { background-color: #dbeafe; color: #000; } 
+.tr-badge-halfday { background-color: #e0e7ff; color: #000; } 
+.tr-badge-ob      { background-color: #f3e8ff; color: #000; }  
+.tr-badge-holiday { background-color: #ccfbf1; color: #000; }  
 
 /* ---- column quick-action trigger (AM Out / PM In headers) ---------------- */
 
@@ -195,10 +194,10 @@
   width: 11px;
   height: 11px;
   border-radius: 9999px;
-  border: 1px solid;
+  border: 5px solid;
 }
 
-.tr-dot-ontime   { background-color: #eff6ff; border-color: #93c5fd; }
+.tr-dot-ontime   { background-color: #eff6ff; border-color: #d1d5db ; }
 .tr-dot-late     { background-color: #fef2f2; border-color: #f87171; }
 .tr-dot-required { background-color: #fef2f2; border-color: #ef4444; }
 .tr-dot-optional { background-color: #fff7ed; border-color: #fdba74; }
