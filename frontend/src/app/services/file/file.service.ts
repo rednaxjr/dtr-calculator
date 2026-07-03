@@ -32,57 +32,10 @@ export class FileService {
   constructor(
     private httpClient: HttpClient,
     private configService: ConfigService
-  ) { }
-  // get_files(data: any) {
-  //   return this.httpClient.post(this.url + "/get_files", data, this.headers)
-  // }
+  ) { } 
 
-  // get_files2() {
-  //   return this.httpClient.post(this.url + "/get_files", this.headers)
-  // }
-
-
-  async get_files2(): Promise<any[]> {
-    const folder = this.configService.uploadDir;
-    const signatureDir = this.configService.signatureDir;
-    console.log('PDF folder from config:', folder);
-    return window.electronAPI.listPdfs(folder, signatureDir);
+  async get_files2(){
+  
   }
-
-  async readPdfAsBase64(filePath: string): Promise<string> {
-    return window.electronAPI.readPdf(filePath);
-  }
-
-  uploadFile(formData: FormData): Observable<any> {
-    const req = this.httpClient.post<HttpEvent<any>>(this.url + "/uploadFile", formData
-      , {
-        reportProgress: true,
-        observe: 'events' as const,
-        headers: new HttpHeaders(),
-      }
-    );
-    return req;
-
-  }
-  get_signs() {
-    return this.httpClient.get<any>(this.url + "/getAllFiles");
-  }
-
-  remove_signature(data: any): Promise<void> {
-    return window.electronAPI.deletePdf(data.path);
-  }
-
-  async saveSignature(stem: string, base64Data: string): Promise<void> {
-    const signatureDir = this.configService.signatureDir;
-    return window.electronAPI.saveSignature(signatureDir, stem, base64Data);
-  }
-
-  async deleteSignature(stem: string): Promise<void> {
-    const signatureDir = this.configService.signatureDir;
-    return window.electronAPI.deleteSignature(signatureDir, stem);
-  }
-  delete_folders(data: any) {
-    console.log(data)
-    return this.httpClient.post(this.url + "/delete-folders", data, this.headers)
-  }
+ 
 }
