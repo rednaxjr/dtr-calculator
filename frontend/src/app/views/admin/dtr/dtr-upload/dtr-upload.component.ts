@@ -32,8 +32,12 @@ export class DtrUploadComponent implements OnDestroy {
 
   clearResults() {
     this.parser.clear();
-    
+
     if (this.fileInput) this.fileInput.nativeElement.value = '';
+  }
+
+  saveExcel() {
+    this.parser.saveToExcel();
   }
 
   onDragOver(e: DragEvent) {
@@ -94,7 +98,12 @@ export class DtrUploadComponent implements OnDestroy {
     });
     ref.afterClosed().subscribe((result: any) => {
       if (!result) return;
-      this.parser.employees[index] = result.employee;
+      // Mutate the existing employee object in place rather than replacing the
+      // array element. The summary table tracks rows by userId, so swapping in a
+      // new object with the same id leaves the row bound to the stale reference
+      // and edits don't show. Updating in place keeps the same reference the
+      // template (and Save-to-Excel provenance) already points at.
+      Object.assign(this.parser.employees[index], result.employee);
       this.parser.applyHoliday(result.holidaysAdded, result.holidaysRemoved);
     });
   }

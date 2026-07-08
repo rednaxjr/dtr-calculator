@@ -106,13 +106,13 @@ export class TimeRecordModalComponent {
     },
   };
 
+  // OT In / OT Out are intentionally not shown; their values are folded into
+  // PM Out on parse (see ParserService.resolvePmOut).
   readonly fields: FieldDef[] = [
     { key: 'amIn',  label: 'AM In',  session: 'AM', required: true,  lateAfter: this.AM_START },
     { key: 'amOut', label: 'AM Out', session: 'AM', required: false, lateAfter: null, fillValue: '12:00' },
     { key: 'pmIn',  label: 'PM In',  session: 'PM', required: false, lateAfter: this.PM_START, fillValue: '13:00' },
     { key: 'pmOut', label: 'PM Out', session: 'PM', required: true,  lateAfter: null },
-    { key: 'otIn',  label: 'OT In',  session: 'OT', required: false, lateAfter: null },
-    { key: 'otOut', label: 'OT Out', session: 'OT', required: false, lateAfter: null },
   ];
 
   constructor(
@@ -143,13 +143,26 @@ export class TimeRecordModalComponent {
   }
 
   setStatus(log: any, value: string): void {
-    if (this.isWeekend(log)) return;  
+    if (this.isWeekend(log)) return;
     log.status = value;
+    if (value !== 'Half Day') delete log.halfSession;
+  }
+
+  /** Half day with the working session recorded: 'AM' = morning, 'PM' = afternoon. */
+  setHalfDay(log: any, session: 'AM' | 'PM'): void {
+    if (this.isWeekend(log)) return;
+    log.status = 'Half Day';
+    log.halfSession = session;
   }
 
   isHalfDay(log: any): boolean {
     return log?.status === 'Half Day';
-  } 
+  }
+
+  /** Session the employee actually worked on a half day; defaults to morning. */
+  halfSession(log: any): 'AM' | 'PM' {
+    return log?.halfSession === 'PM' ? 'PM' : 'AM';
+  }
   hasBadge(log: any): boolean {
     return !this.isWeekend(log) && this.meta(log).badgeClass !== '';
   }
@@ -161,16 +174,47 @@ export class TimeRecordModalComponent {
   isRowLocked(log: any): boolean {
     return this.isWeekend(log) || this.meta(log).locked;
   }
- 
+
+  // ---- status row overlay --------------------------------------------------
+
+  /** Show the status overlay on rows that are fully non-editable for the day. */
+  showStatusOverlay(log: any): boolean {
+    return this.isRowLocked(log);
+  }
+
+  statusOverlayLabel(log: any): string {
+    return this.isWeekend(log) ? 'Rest Day' : (log?.status ?? '');
+  }
+
+  statusOverlayIcon(log: any): string {
+    return this.isWeekend(log) ? 'weekend' : this.meta(log).icon;
+  }
+
+  /** Pill colour class, reusing the existing status badge palette. */
+  statusPillClass(log: any): string {
+    if (this.isWeekend(log)) return 'tr-badge-weekend';
+    return this.meta(log).badgeClass || 'tr-badge-weekend';
+  }
+
   isFieldDisabled(log: any, field: FieldDef): boolean {
     if (this.isRowLocked(log)) return true;
-    if (this.isHalfDay(log) && field.session === 'PM') return true;
+    if (this.isHalfDay(log)) {
+      // disable the session that was NOT worked: morning half day -> PM off, afternoon half day -> AM off
+      const offSession = this.halfSession(log) === 'PM' ? 'AM' : 'PM';
+      if (field.session === offSession) return true;
+    }
     return false;
   }
- 
+
   fieldTooltip(log: any, field: FieldDef): string {
     if (this.isWeekend(log)) return 'Weekend — non-working day';
-    if (this.isFieldDisabled(log, field)) return this.meta(log).tooltip;
+    if (this.isFieldDisabled(log, field)) {
+      if (this.isHalfDay(log)) {
+        const off = this.halfSession(log) === 'PM' ? 'morning' : 'afternoon';
+        return `Half day — ${off} session is not required.`;
+      }
+      return this.meta(log).tooltip;
+    }
     return this.statusTooltip(log, field);
   }
  
@@ -302,7 +346,9 @@ export class TimeRecordModalComponent {
   }
 
   isStatusEdited(index: number): boolean {
-    return this.original?.logs?.[index]?.status !== this.employee?.logs?.[index]?.status;
+    const o = this.original?.logs?.[index];
+    const c = this.employee?.logs?.[index];
+    return o?.status !== c?.status || o?.halfSession !== c?.halfSession;
   }
 
   /**
@@ -348,8 +394,11 @@ export class TimeRecordModalComponent {
   }
  
   private requiredFields(log: any): FieldDef[] {
-    if (this.isHalfDay(log)) { 
-      return this.fields.filter(f => f.key === 'amIn' || f.key === 'amOut');
+    if (this.isHalfDay(log)) {
+      const worked = this.halfSession(log);
+      return worked === 'PM'
+        ? this.fields.filter(f => f.key === 'pmIn' || f.key === 'pmOut')
+        : this.fields.filter(f => f.key === 'amIn' || f.key === 'amOut');
     }
     return this.fields.filter(f => f.required);
   } 

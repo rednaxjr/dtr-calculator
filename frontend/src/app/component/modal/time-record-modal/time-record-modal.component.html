@@ -76,6 +76,15 @@
         <tr class="tr-row transition-colors" [ngClass]="rowClass(log)">
           <td
             class="px-4 py-2.5 text-sm font-semibold text-gray-700 whitespace-nowrap">
+            @if (showStatusOverlay(log)) {
+            <!-- status overlay: spans the whole row (resolves to position:relative tr) -->
+            <div class="tr-status-overlay">
+              <span class="tr-status-pill" [ngClass]="statusPillClass(log)">
+                <mat-icon>{{ statusOverlayIcon(log) }}</mat-icon>
+                {{ statusOverlayLabel(log) }}
+              </span>
+            </div>
+            }
             <div class="flex items-center gap-2">
               @if (isWeekend(log)) {
               <button type="button" class="tr-date-trigger">
@@ -130,6 +139,18 @@
   <mat-menu #statusMenu="matMenu" class="tr-status-menu">
     <ng-template matMenuContent let-log="log">
       @for (opt of statusOptions; track opt.value) {
+      @if (opt.value === 'Half Day') {
+      <!-- Half Day opens a submenu to pick the worked session (morning / afternoon) -->
+      <button mat-menu-item [matMenuTriggerFor]="halfDayMenu"
+        [matMenuTriggerData]="{ log: log }"
+        [class.tr-menu-item-active]="log.status === opt.value">
+        <mat-icon class="text-gray-500">{{ statusMeta[opt.value].icon }}</mat-icon>
+        <span>{{ opt.label }}</span>
+        @if (log.status === opt.value) {
+        <mat-icon class="!text-base text-green-600 ml-auto">check</mat-icon>
+        }
+      </button>
+      } @else {
       <button mat-menu-item (click)="setStatus(log, opt.value)"
         [class.tr-menu-item-active]="log.status === opt.value">
         <mat-icon class="text-gray-500">{{ statusMeta[opt.value].icon
@@ -140,8 +161,30 @@
         }
       </button>
       }
+      }
     </ng-template>
-  </mat-menu> 
+  </mat-menu>
+
+  <mat-menu #halfDayMenu="matMenu" class="tr-status-menu">
+    <ng-template matMenuContent let-log="log">
+      <button mat-menu-item (click)="setHalfDay(log, 'AM')"
+        [class.tr-menu-item-active]="isHalfDay(log) && halfSession(log) === 'AM'">
+        <mat-icon class="text-gray-500">wb_sunny</mat-icon>
+        <span>Morning Half Day</span>
+        @if (isHalfDay(log) && halfSession(log) === 'AM') {
+        <mat-icon class="!text-base text-green-600 ml-auto">check</mat-icon>
+        }
+      </button>
+      <button mat-menu-item (click)="setHalfDay(log, 'PM')"
+        [class.tr-menu-item-active]="isHalfDay(log) && halfSession(log) === 'PM'">
+        <mat-icon class="text-gray-500">wb_twilight</mat-icon>
+        <span>Afternoon Half Day</span>
+        @if (isHalfDay(log) && halfSession(log) === 'PM') {
+        <mat-icon class="!text-base text-green-600 ml-auto">check</mat-icon>
+        }
+      </button>
+    </ng-template>
+  </mat-menu>
 
   <mat-menu #columnMenu="matMenu" class="tr-field-menu">
     <ng-template matMenuContent let-field="field">
