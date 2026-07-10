@@ -147,8 +147,7 @@ export class TimeRecordModalComponent {
     log.status = value;
     if (value !== 'Half Day') delete log.halfSession;
   }
-
-  /** Half day with the working session recorded: 'AM' = morning, 'PM' = afternoon. */
+ 
   setHalfDay(log: any, session: 'AM' | 'PM'): void {
     if (this.isWeekend(log)) return;
     log.status = 'Half Day';
@@ -158,8 +157,7 @@ export class TimeRecordModalComponent {
   isHalfDay(log: any): boolean {
     return log?.status === 'Half Day';
   }
-
-  /** Session the employee actually worked on a half day; defaults to morning. */
+ 
   halfSession(log: any): 'AM' | 'PM' {
     return log?.halfSession === 'PM' ? 'PM' : 'AM';
   }
@@ -167,9 +165,9 @@ export class TimeRecordModalComponent {
     return !this.isWeekend(log) && this.meta(log).badgeClass !== '';
   }
 
-  rowClass(log: any): string {
-    return this.isWeekend(log) ? '' : this.meta(log).rowClass;
-  }
+  // rowClass(log: any): string {
+  //   return this.isWeekend(log) ? '' : this.meta(log).rowClass;
+  // }
  
   isRowLocked(log: any): boolean {
     return this.isWeekend(log) || this.meta(log).locked;
@@ -190,11 +188,7 @@ export class TimeRecordModalComponent {
     return this.isWeekend(log) ? 'weekend' : this.meta(log).icon;
   }
 
-  /** Pill colour class, reusing the existing status badge palette. */
-  statusPillClass(log: any): string {
-    if (this.isWeekend(log)) return 'tr-badge-weekend';
-    return this.meta(log).badgeClass || 'tr-badge-weekend';
-  }
+  
 
   isFieldDisabled(log: any, field: FieldDef): boolean {
     if (this.isRowLocked(log)) return true;

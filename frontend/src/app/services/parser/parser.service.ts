@@ -8,9 +8,7 @@ export class ParserService {
 
   employees: any[] = [];
   isLoading: boolean = false;
-  error: string | null = null;
-
-  /** name of the uploaded file, reused when exporting the edited copy */
+  error: string | null = null; 
   fileName = '';
  
   private workbook: any = null; 
