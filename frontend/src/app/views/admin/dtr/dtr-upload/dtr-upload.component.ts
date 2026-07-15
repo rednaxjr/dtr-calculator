@@ -4,13 +4,14 @@ import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ParserService } from '../../../../services/parser/parser.service';
 import { TimeRecordModalComponent } from '../../../../component/modal/time-record-modal/time-record-modal.component';
 
 @Component({
   selector: 'app-dtr-upload',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, MatDialogModule],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, MatDialogModule, MatSnackBarModule],
   templateUrl: './dtr-upload.component.html',
   styleUrl: './dtr-upload.component.scss',
 })
@@ -19,12 +20,14 @@ export class DtrUploadComponent implements OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   isDragging = signal(false);
-  file_name:any="";
+  file_name: any = "";
+  saving = false;
 
   constructor(
     public parser: ParserService,
     public dialog: MatDialog,
-  ) {}
+    private snackBar: MatSnackBar,
+  ) { }
 
   ngOnDestroy() {
     this.parser.clear();
@@ -37,7 +40,9 @@ export class DtrUploadComponent implements OnDestroy {
   }
 
   saveExcel() {
+    console.log("asdawd")
     this.parser.saveToExcel();
+
   }
 
   onDragOver(e: DragEvent) {
@@ -55,18 +60,18 @@ export class DtrUploadComponent implements OnDestroy {
   onFileSelected(e: Event) {
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0];
-    if (file) this.getResult(file); 
+    if (file) this.getResult(file);
     input.value = '';
   }
 
   async getResult(file: File) {
-    this.file_name=file.name;
+    this.file_name = file.name;
     await this.parser.parseFile(file);
     const employees = this.parser.employees;
     console.log(employees);
     return employees;
   }
- 
+
   getLates(emp: any): number {
     let count = 0;
     for (const log of emp.logs) {
@@ -75,11 +80,11 @@ export class DtrUploadComponent implements OnDestroy {
     }
     return count;
   }
- 
+
   getDaysPresent(emp: any): number {
     return emp.logs.filter((log: any) => log.amIn || log.amOut || log.pmIn || log.pmOut).length;
   }
- 
+
   toMinutes(val: any): number | null {
     if (val === null || val === undefined || val === '') return null;
     const match = String(val).trim().match(/^(\d{1,2}):(\d{2})/);

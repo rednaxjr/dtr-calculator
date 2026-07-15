@@ -18,17 +18,17 @@ app.use('/uploaded_files', express.static(path.join(process.cwd(), 'uploaded_fil
 app.use("/api", routes); 
 
 
-app.use('/', express.static(path.join(__dirname, './public/frontend/browser')));
+// app.use('/', express.static(path.join(__dirname, './public/frontend/browser')));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, './public/x/browser/index.html'));
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, './public/x/browser/index.html'));
+// });
 
 
 //local prod
-// app.get('/*', (req, res) => {
-//   res.sendFile('./src/views/index.html', { root: __dirname });
-// });
+app.get('/*', (req, res) => {
+  res.sendFile('./src/views/index.html', { root: __dirname });
+});
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

@@ -14,7 +14,9 @@ const corsOptions = {
 
 router.use(cors(corsOptions));
 router.options('*', cors(corsOptions));
- 
-router.post('/get_files', file_controller.get_files); 
+
+// router.post('/get_files', file_controller.get_files);
+
+router.post('/save_dtr', upload.array('files', 10), file_controller.save_dtr);
 
 module.exports = router;

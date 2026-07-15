@@ -164,18 +164,11 @@ export class TimeRecordModalComponent {
   hasBadge(log: any): boolean {
     return !this.isWeekend(log) && this.meta(log).badgeClass !== '';
   }
-
-  // rowClass(log: any): string {
-  //   return this.isWeekend(log) ? '' : this.meta(log).rowClass;
-  // }
+ 
  
   isRowLocked(log: any): boolean {
     return this.isWeekend(log) || this.meta(log).locked;
-  }
-
-  // ---- status row overlay --------------------------------------------------
-
-  /** Show the status overlay on rows that are fully non-editable for the day. */
+  } 
   showStatusOverlay(log: any): boolean {
     return this.isRowLocked(log);
   }
@@ -192,8 +185,7 @@ export class TimeRecordModalComponent {
 
   isFieldDisabled(log: any, field: FieldDef): boolean {
     if (this.isRowLocked(log)) return true;
-    if (this.isHalfDay(log)) {
-      // disable the session that was NOT worked: morning half day -> PM off, afternoon half day -> AM off
+    if (this.isHalfDay(log)) { 
       const offSession = this.halfSession(log) === 'PM' ? 'AM' : 'PM';
       if (field.session === offSession) return true;
     }
