@@ -19,16 +19,13 @@ export class ConfigService {
         this.config = await firstValueFrom(
           this.http.get('assets/config.json')
         );
-      }
-      console.log('[Config] Loaded:', this.config);
-    } catch (error) {
-      console.error('Config load failed:', error);
+      } 
+    } catch (error) { 
       this.config = {};
     }
 
     (window as any).electronAPI?.onConfigUpdated?.((newConfig: any) => {
-      this.config = newConfig;
-      console.log('[Config] Updated live:', newConfig);
+      this.config = newConfig; 
     });
   }
 

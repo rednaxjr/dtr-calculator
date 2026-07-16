@@ -27,6 +27,9 @@
     (change)="onFileSelected($event)" />
 
   @if (parser.employees.length > 0) {
+  <app-dtr-banner [data]="banner" [view_number]="view_number_data"
+    (select_view)="view_number($event)" />
+
   <div
     class="bg-white rounded-xl shadow-md overflow-hidden border border-green/10">
 
@@ -36,21 +39,29 @@
         <mat-icon
           style="color:#eab308 ;font-size:20px;width:20px;height:20px;line-height:20px">assignment</mat-icon>
         <div>
-          <h2 class="text-base font-bold leading-tight text-white">{{file_name}}</h2>
+          <h2
+            class="text-base font-bold leading-tight text-white">{{file_name}}</h2>
           <p class="text-xs text-white/70">{{ parser.employees.length }} Record
             (s) Found</p>
         </div>
       </div>
-      <div class="flex flex-row gap-4"> 
-        <button
+      <div class="flex flex-row gap-4">
+        <!-- <button
+          class="  py-1 border shadow-lg border-gray-300 rounded-lg   bg-amber-500 text-white
+    hover:bg-amber-600
+    focus:outline-none focus:ring-1  focus:ring-yellow-500  flex items-center gap-x-2"
+          (click)="saveExcel()">
+          <span class="!text-white">Next</span>
+        </button> -->
+        <!-- <button
           class=" pl-2 pr-4  py-1 border shadow-md border-emerald-300 rounded-lg   bg-emerald-600 text-white
     hover:bg-emerald-700
     focus:outline-none focus:ring-1  focus:ring-emerald-500  flex items-center gap-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          
           (click)="saveExcel()">
-          <mat-icon class="mr-1 text-lg">{{ saving ? 'hourglass_top' : 'save' }}</mat-icon>
+          <mat-icon class="mr-1 text-lg">{{ saving ? 'hourglass_top' : 'save'
+            }}</mat-icon>
           <span class="!text-white">{{ saving ? 'Saving...' : 'Save' }}</span>
-        </button>
+        </button> -->
         <button mat-icon-button class="text-white" (click)="clearResults()">
           <mat-icon style="color:#fff">close</mat-icon>
         </button>
@@ -116,6 +127,14 @@
         </tbody>
       </table>
     </div>
+  </div>
+
+  <div class="w-full h-auto flex justify-end  ">
+    <button
+      class="px-6 py-2 border shadow-md border-gray-300 rounded-lg   bg-amber-500 text-white
+    hover:bg-amber-600
+    focus:outline-none focus:ring-1  focus:ring-yellow-500  flex items ">
+      Next</button>
   </div>
   }
 </div>

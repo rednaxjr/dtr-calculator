@@ -6,17 +6,17 @@
             <div class=" flex items-cent px-2 ">
                 <mat-icon *ngIf="item.icon != null"
                     class="material-symbols-sharp cursor-pointer hover:text-gray-700"
-                    aria-hidden="items.icon" (click)="router.navigate([item.link])">
+                    aria-hidden="items.icon" (click)="select_data(item)">
                     {{item.icon}}
                 </mat-icon>
-                <mat-icon *ngIf="item.icon == null"
+                <mat-icon *ngIf="item.icon == null && i >0"
                     class="material-symbols-sharp"
                     aria-hidden="arrow_forward_ios">
                     arrow_forward_ios
                 </mat-icon>
 
             </div>
-            <p class="font-normal text-md hover:text-gray-600 cursor-pointer" (click)="router.navigate([item.link])">{{item.text}}</p>
+            <p class="font-normal text-md hover:text-gray-600 cursor-pointer" (click)="select_data(item)">{{item.text}}</p>
         </li> 
     </ol>
 </div>

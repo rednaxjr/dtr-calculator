@@ -7,11 +7,13 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ParserService } from '../../../../services/parser/parser.service';
 import { TimeRecordModalComponent } from '../../../../component/modal/time-record-modal/time-record-modal.component';
+import { DtrBannerComponent } from '../../../../component/parts/dtr-banner/dtr-banner.component';
+
 
 @Component({
   selector: 'app-dtr-upload',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, MatDialogModule, MatSnackBarModule],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, MatDialogModule, MatSnackBarModule, DtrBannerComponent],
   templateUrl: './dtr-upload.component.html',
   styleUrl: './dtr-upload.component.scss',
 })
@@ -22,12 +24,20 @@ export class DtrUploadComponent implements OnDestroy {
   isDragging = signal(false);
   file_name: any = "";
   saving = false;
+  banner: any;
+  view_number_data: any=1;
 
   constructor(
     public parser: ParserService,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
-  ) { }
+  ) { 
+    this.banner = [
+      { text: "Upload File", icon: null, value: 1 },
+      { text: "Details", icon: null, value: 2 },
+       ...(this.parser.employees.length > 0 ? [{ text: "Details", icon: null, value: 2 }] : []),
+    ];
+  }
 
   ngOnDestroy() {
     this.parser.clear();
@@ -39,8 +49,7 @@ export class DtrUploadComponent implements OnDestroy {
     if (this.fileInput) this.fileInput.nativeElement.value = '';
   }
 
-  saveExcel() {
-    console.log("asdawd")
+  saveExcel() { 
     this.parser.saveToExcel();
 
   }
@@ -102,14 +111,14 @@ export class DtrUploadComponent implements OnDestroy {
       panelClass: 'time-record-dialog',
     });
     ref.afterClosed().subscribe((result: any) => {
-      if (!result) return;
-      // Mutate the existing employee object in place rather than replacing the
-      // array element. The summary table tracks rows by userId, so swapping in a
-      // new object with the same id leaves the row bound to the stale reference
-      // and edits don't show. Updating in place keeps the same reference the
-      // template (and Save-to-Excel provenance) already points at.
+      if (!result) return; 
       Object.assign(this.parser.employees[index], result.employee);
       this.parser.applyHoliday(result.holidaysAdded, result.holidaysRemoved);
     });
+  }
+
+  view_number(data: any) {
+    console.log(data);
+    this.view_number_data = data.value
   }
 }
