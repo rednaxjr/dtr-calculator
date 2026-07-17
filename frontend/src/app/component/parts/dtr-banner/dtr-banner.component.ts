@@ -24,9 +24,7 @@ import { Router } from '@angular/router';
 })
 export class DtrBannerComponent {
   @Input() data: any[] = [];
-  @Input() view_number: any;
-  @Input() labels: string[] = [];
-  @Input() paginate: any = [];
+  @Input() view_number: any; 
   @Output() select_view = new EventEmitter<any>();
   constructor( 
     public router: Router, 

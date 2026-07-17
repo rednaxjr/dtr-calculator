@@ -1,8 +1,8 @@
-<div class="w-full h-12 border bg-white rounded-md  px-6">
+<!-- <div class="w-full h-12 border bg-white rounded-md  px-6">
     <ol class="flex  items-center h-full">
         <li
             *ngFor="let item of data;let i = index;"
-            class="flex flex-row items-center text-gray-400">
+            class="flex flex-row items-center  ">
             <div class=" flex items-cent px-2 ">
                 <mat-icon *ngIf="item.icon != null"
                     class="material-symbols-sharp cursor-pointer hover:text-gray-700"
@@ -16,7 +16,56 @@
                 </mat-icon>
 
             </div>
-            <p class="font-normal text-md hover:text-gray-600 cursor-pointer" (click)="select_data(item)">{{item.text}}</p>
-        </li> 
+            <p class="  text-lg font-bold hover:text-gray-600 cursor-pointer"
+                [ngClass]="  item.value === view_number 
+          ? ' !text-black'
+          : 'text-gray-500'"
+                (click)="select_data(item)">{{item.text}}</p>
+        </li>
     </ol>
-</div>
+</div>  -->
+
+<!-- <div className="space-y-2">
+    <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-foreground">Upload File</span>
+        <span className="text-sm text-muted-foreground">&gt;</span>
+        <span className="text-sm font-medium text-gold">Details</span>
+    </div>
+</div> -->
+
+<ol class="flex items-center h-full gap-1">
+    <li *ngFor="let item of data; let i = index"
+        class="flex flex-row items-center gap-1">
+
+        <mat-icon *ngIf="i > 0"
+            class="material-symbols-sharp text-gray-300 select-none"
+            style="font-size: 24px; width: 24px; height: 24px;"
+            aria-hidden="true">
+            chevron_right
+        </mat-icon>
+
+        <div
+            class="flex items-center gap-1.5 px-2 py-1 rounded-md transition-colors duration-150"
+            [ngClass]="item.value === view_number
+          ? '  text-black'
+          : 'text-gray-500 hover:text-gray-700 cursor-pointer'"
+            (click)="item.value !== view_number && select_data(item)">
+
+            <mat-icon *ngIf="item.icon"
+                class="material-symbols-sharp"
+                style="font-size: 24px; width: 24px; height: 24px;"
+                aria-hidden="true" (click)="router.navigate([item.link])">
+                {{ item.icon }}
+            </mat-icon>
+
+            <span class="text-lg font-medium text-black whitespace-nowrap"
+                [ngClass]="item.value === view_number
+          ? '  text-black'
+          : 'text-gray-500  hover:text-gray-700 cursor-pointer'"
+                (click)="item.value !== view_number && select_data(item)">{{
+                item.text
+                }}</span>
+
+        </div>
+    </li>
+</ol>

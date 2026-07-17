@@ -1,23 +1,25 @@
-import { Component, signal, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, signal, OnDestroy, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ParserService } from '../../../../services/parser/parser.service';
 import { TimeRecordModalComponent } from '../../../../component/modal/time-record-modal/time-record-modal.component';
 import { DtrBannerComponent } from '../../../../component/parts/dtr-banner/dtr-banner.component';
-
+import { YearService } from '../../../../services/year/year.service';
 
 @Component({
   selector: 'app-dtr-upload',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, MatDialogModule, MatSnackBarModule, DtrBannerComponent],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, MatDialogModule, MatSnackBarModule, DtrBannerComponent, FormsModule],
   templateUrl: './dtr-upload.component.html',
   styleUrl: './dtr-upload.component.scss',
 })
-export class DtrUploadComponent implements OnDestroy {
+export class DtrUploadComponent implements OnDestroy, OnInit {
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -25,19 +27,46 @@ export class DtrUploadComponent implements OnDestroy {
   file_name: any = "";
   saving = false;
   banner: any;
-  view_number_data: any=1;
+  view_number_data: any = 1;
+  url_id: any = null;
+
+  email_reg: any = '';
+  fname: any;
+  lname: any;
+  mname: any;
+  contact_number: any;
+  username: any;
+  email: any;
+  password: any;
+  package_avail: any = null;
+  duration_avail: any = null;;
+  showPassword = false;
+  user_id: any;
+
+  year_list: any = [];
 
   constructor(
     public parser: ParserService,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
-  ) { 
+    private year_service: YearService,
+  ) {
     this.banner = [
+      { text: null, icon: "home", value: 0, link: "/admin/dtr", },
       { text: "Upload File", icon: null, value: 1 },
       { text: "Details", icon: null, value: 2 },
-       ...(this.parser.employees.length > 0 ? [{ text: "Details", icon: null, value: 2 }] : []),
     ];
   }
+  ngOnInit() {
+    this.get_year();
+  }
+  get_year() { 
+    this.year_service.get_year().subscribe((res: any) => { 
+      this.year_list = res.data; 
+    })
+
+  }
+
 
   ngOnDestroy() {
     this.parser.clear();
@@ -49,7 +78,7 @@ export class DtrUploadComponent implements OnDestroy {
     if (this.fileInput) this.fileInput.nativeElement.value = '';
   }
 
-  saveExcel() { 
+  saveExcel() {
     this.parser.saveToExcel();
 
   }
@@ -111,14 +140,23 @@ export class DtrUploadComponent implements OnDestroy {
       panelClass: 'time-record-dialog',
     });
     ref.afterClosed().subscribe((result: any) => {
-      if (!result) return; 
+      if (!result) return;
       Object.assign(this.parser.employees[index], result.employee);
       this.parser.applyHoliday(result.holidaysAdded, result.holidaysRemoved);
     });
   }
-
+  get filteredBanner() {
+    return this.banner.filter((item: any) => item.value <= this.view_number_data);
+  }
   view_number(data: any) {
     console.log(data);
-    this.view_number_data = data.value
+    this.view_number_data = data.value;
+  }
+
+  next_view() {
+    this.view_number_data = 2;
+  }
+  submit() {
+
   }
 }
