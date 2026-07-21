@@ -20,7 +20,7 @@ export class DtrListComponent implements OnInit {
   columns = ['filename', 'period', 'employees', 'uploaded_at', 'actions'];
 
   constructor(
-    private dtrService: DtrService,
+    private dtr_service: DtrService,
     private confirm: ConfirmationService,
     private router: Router,
     private route: ActivatedRoute,
@@ -32,7 +32,7 @@ export class DtrListComponent implements OnInit {
 
   async load() {
     this.loading = true;
-    this.files = await this.dtrService.getAllFiles();
+    this.files = await this.dtr_service.getAllFiles();
     this.loading = false;
   }
 
@@ -46,7 +46,7 @@ export class DtrListComponent implements OnInit {
       isCancel: true,
     }).subscribe(async confirmed => {
       if (confirmed) {
-        await this.dtrService.deleteFile(file.id);
+        await this.dtr_service.deleteFile(file.id);
         await this.load();
       }
     });

@@ -43,7 +43,27 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
   showPassword = false;
   user_id: any;
 
+
   year_list: any = [];
+  month_list: any = [
+    { number: 1, name: "January", dtr_count: 0 },
+    { number: 2, name: "February", dtr_count: 0 },
+    { number: 3, name: "March", dtr_count: 0 },
+    { number: 4, name: "April", dtr_count: 0 },
+    { number: 5, name: "May", dtr_count: 0 },
+    { number: 6, name: "June", dtr_count: 0 },
+    { number: 7, name: "July", dtr_count: 0 },
+    { number: 8, name: "August", dtr_count: 0 },
+    { number: 9, name: "September", dtr_count: 0 },
+    { number: 10, name: "October", dtr_count: 0 },
+    { number: 11, name: "November", dtr_count: 0 },
+    { number: 12, name: "December", dtr_count: 0 },
+  ];
+
+  year_id: any = null;
+  month_id: any = null;
+
+
 
   constructor(
     public parser: ParserService,
@@ -60,9 +80,9 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
   ngOnInit() {
     this.get_year();
   }
-  get_year() { 
-    this.year_service.get_year().subscribe((res: any) => { 
-      this.year_list = res.data; 
+  get_year() {
+    this.year_service.get_year().subscribe((res: any) => {
+      this.year_list = res.data;
     })
 
   }
@@ -158,5 +178,20 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
   }
   submit() {
 
+  }
+
+  select_year(data: any) {
+    this.year_id = data.id;
+    this.year_service.get_year_month(data).subscribe((res: any) => {
+      console.log(res.data);
+      this.month_list = res.data;
+    })
+
+  }
+
+  select_month(data: any) {
+    if (data.dtr_count > 0) return;
+    this.month_id = data;
+    console.log(this.month_id);
   }
 }

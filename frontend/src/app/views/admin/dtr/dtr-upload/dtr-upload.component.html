@@ -1,6 +1,5 @@
 <div class="w-full h-full flex flex-col gap-4">
 
-  
   <app-dtr-banner [data]="filteredBanner" [view_number]="view_number_data"
     (select_view)="view_number($event)" />
   @if (parser.employees.length === 0) {
@@ -128,82 +127,57 @@
   </div>
   <div *ngIf="view_number_data === 2" class="w-full h-full flex flex-col gap-6">
 
-    <div class="bg-white rounded-xl shadow-md overflow-hidden border border-green/10 p-6">
+    <div
+      class="bg-white rounded-xl shadow-md overflow-hidden border border-green/10   py-6">
 
       <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
-        
-        <div>
-          <h3 class=" font-medium text-gray-900">File's information</h3> 
+
+        <div class = px-6 >
+          <h3 class=" font-medium text-gray-900">File's information</h3>
         </div>
       </div>
 
-      <div class="grid gap-x-6 gap-y-5 md:grid-cols-2 lg:grid-cols-3">
+      <div class="grid gap-x-6 gap-y-5 md:grid-cols-2 lg:grid-cols-3 px-6 ">
 
         <div class="flex flex-col gap-1.5">
-         <label
+          <label
             class="text-sm font-medium text-black  tracking-wide">Year</label>
-          <input name="fname" [(ngModel)]="fname" type="text"
-            class="w-full h-9 px-3  border border-gray-200 rounded-lg bg-gray-50
-                 text-gray-900 placeholder:text-gray-400
-                 focus:outline-none focus:ring-2 focus:ring-amber-400/30 focus:border-amber-400
-                 disabled:opacity-50 disabled:cursor-not-allowed
-                 transition-colors duration-150"
-            placeholder="Enter first name"
-            [disabled]="url_id != 0">
-        </div>
-
-        <div class="flex flex-col gap-1.5">
-         <label
-            class="text-sm font-medium text-black  tracking-wide">
-            Middle name
-            <span
-              class="normal-case text-gray-400 font-normal ml-1">(optional)</span>
-          </label>
-          <input name="mname" [(ngModel)]="mname" type="text"
-            class="w-full h-9 px-3  border border-gray-200 rounded-lg bg-gray-50
-                 text-gray-900 placeholder:text-gray-400
-                 focus:outline-none focus:ring-2 focus:ring-amber-400/30 focus:border-amber-400
-                 disabled:opacity-50 disabled:cursor-not-allowed
-                 transition-colors duration-150"
-            placeholder="Enter middle name"
-            [disabled]="url_id != 0">
-        </div>
-
-        <div class="flex flex-col gap-1.5">
-         <label
-            class="text-sm font-medium text-black  tracking-wide">Last
-            name</label>
-          <input name="lname" [(ngModel)]="lname" type="text"
-            class="w-full h-9 px-3  border border-gray-200 rounded-lg bg-gray-50
-                 text-gray-900 placeholder:text-gray-400
-                 focus:outline-none focus:ring-2 focus:ring-amber-400/30 focus:border-amber-400
-                 disabled:opacity-50 disabled:cursor-not-allowed
-                 transition-colors duration-150"
-            placeholder="Enter last name"
-            [disabled]="url_id != 0">
-        </div>
-
-        <div class="flex flex-col gap-1.5">
-         <label
-            class="text-sm font-medium text-black  tracking-wide">Phone
-            number</label>
-          <div class="relative">
-            <mat-icon
-              class="material-symbols-sharp absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-              style="font-size:16px;">phone</mat-icon>
-            <input name="contact_number" [(ngModel)]="contact_number"
-              type="text"
-              class="w-full h-9 pl-8 pr-3  border border-gray-200 rounded-lg bg-gray-50
-                   text-gray-900 placeholder:text-gray-400
-                   focus:outline-none focus:ring-2 focus:ring-amber-400/30 focus:border-amber-400
-                   disabled:opacity-50 disabled:cursor-not-allowed
-                   transition-colors duration-150"
-              placeholder="+63 912 345 6789"
-              [disabled]="url_id != 0">
+          <div class="flex gap-3">
+            <div (click)="select_year(item)"
+              class="flex py-2 px-5 shadow-md border font-medium   bg-gray-50 text-black rounded-lg   justify-center text-center  items-center
+              hover:bg-gray-100 focus:outline-none focus:ring-2 cursor-pointer"
+              [ngClass]="{'bg-gray-200 focus:ring-2 focus:ring-blue-500': year_id === item.id}"
+              *ngFor="let item of year_list;let i =index">
+              {{item.name}}
+            </div>
           </div>
         </div>
 
-      </div> 
+        <div class="flex flex-col gap-1.5">
+          <label
+            class="text-sm font-medium text-black tracking-wide">Month</label>
+          <div class="flex flex-wrap gap-2 h-auto">
+            <div
+              *ngFor="let item of month_list"
+              (click)="select_month(item)"
+              [class.opacity-40]="year_id === null"
+              [class.cursor-not-allowed]="year_id === null"
+              [class.pointer-events-none]="year_id === null"
+              class="flex py-2 px-4 shadow-md border font-medium bg-gray-50 text-black rounded-lg
+             justify-center text-center items-center
+             hover:bg-gray-100 focus:outline-none focus:ring-2 cursor-pointer select-none"
+              [ngClass]="{'bg-gray-200 focus:ring-2 focus:ring-blue-500': month_id === item.id}">
+              {{ item.name }}
+            </div>
+          </div>
+
+        </div>
+
+    
+
+       
+
+      </div>
 
     </div>
 

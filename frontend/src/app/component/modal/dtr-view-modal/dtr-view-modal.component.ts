@@ -35,7 +35,7 @@ export class DtrViewModalComponent implements OnInit {
   }
 
   constructor(
-    private dtrService: DtrService,
+    private dtr_service: DtrService,
     private dialogRef: MatDialogRef<DtrViewModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { record: EmployeeDtr },
   ) {}
@@ -47,12 +47,12 @@ export class DtrViewModalComponent implements OnInit {
   toggleEdit() { this.isEditing = !this.isEditing; }
 
   onTimeChange(entry: DtrEntry) {
-    const updated = this.dtrService.computeDtr([entry]);
+    const updated = this.dtr_service.computeDtr([entry]);
     Object.assign(entry, updated[0]);
   }
 
   save() {
-    this.record.entries = this.dtrService.computeDtr(this.record.entries);
+    this.record.entries = this.dtr_service.computeDtr(this.record.entries);
     this.dialogRef.close(this.record);
   }
 

@@ -18,8 +18,13 @@ export class YearService {
 
   ) { }
 
- get_year() {
-  return this.httpClient.post(this.url + "/get_year", {}, this.headers);
-}
+  get_year() {
+    return this.httpClient.post(this.url + "/get_year", {}, this.headers);
+  }
+  get_year_month(data:any) {
+    return this.httpClient.post(this.url + "/get_year_month", data, this.headers);
+  }
+
+
 
 }

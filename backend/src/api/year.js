@@ -4,6 +4,6 @@ const cors = require('cors');
 const year_controller = require("../controller/year.controller");
 
 router.post('/get_year', year_controller.get_year);
-
+router.post('/get_year_month', year_controller.get_year_month);
 
 module.exports = router;
