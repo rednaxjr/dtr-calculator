@@ -1,0 +1,76 @@
+<div class="table-card-shell">
+
+    <!-- Card list -->
+    <div class="card-list">
+
+        <ng-container *ngIf="data && data.length > 0; else emptyState">
+
+            <div class="data-card drop-shadow-lg" *ngFor="let row of pagedData">
+                <div class="card-title border-b-2 border-slate-400 pb-4">
+                    <span class="file-icon">
+                        <span
+                            class="material-icons text-red-500 text-2xl">picture_as_pdf</span>
+
+                    </span>
+                    <span class="card-title-text">{{ row[titleField] }}</span>
+                </div>
+
+                <div class="card-fields border-b-2 border-slate-400"
+                    *ngIf="infoLabels.length">
+                    <div
+                        class="field-row overflow-hidden flex-row items-center py-3"
+                        *ngFor="let label of infoLabels">
+                        @if(label.field === 'status'){
+                        <span class="field-label flex flex-row items-center ">ステータス </span>
+                        }@else{
+
+                        }
+
+                        <span *ngIf="label.field === 'status'"
+                            class="status-badge "
+                            [ngClass]="row.signatureCount === 1 ? 'status-signed' : 'status-unsigned'">
+                            <mat-icon>{{ row[label.field] === 1 ?
+                                'check_circle' : 'radio_button_unchecked'
+                                }}</mat-icon>
+                            <span> {{ row.signatureCount === 1 ? '署名済み' :
+                                '未署名' }}</span>
+
+                        </span>
+
+                    </div>
+                </div>
+
+                <div class="card-actions" *ngIf="hasActions">
+                    <ng-container
+                        *ngTemplateOutlet="actions!; context: { $implicit: row }"></ng-container>
+                </div>
+
+            </div>
+
+        </ng-container>
+
+        <ng-template #emptyState>
+            <div class="empty-state">
+                <mat-icon>folder_open</mat-icon>
+                <p>No data found.</p>
+            </div>
+        </ng-template>
+
+    </div> 
+    <div class="pager" *ngIf="data && data.length > 0">
+        <button class="pager-btn" (click)="prevPage()" [disabled]="!canPrev">
+            <mat-icon>chevron_left</mat-icon>
+            <span>prev</span>
+        </button>
+
+        <span class="pager-info">
+            {{ fromItem }}–{{ toItem }} of {{ total }}
+        </span>
+
+        <button class="pager-btn" (click)="nextPage()" [disabled]="!canNext">
+            <span>next</span>
+            <mat-icon>chevron_right</mat-icon>
+        </button>
+    </div>
+
+</div>

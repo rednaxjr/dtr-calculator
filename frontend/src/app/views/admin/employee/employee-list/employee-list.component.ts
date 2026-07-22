@@ -11,6 +11,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { Employee, EmployeeService } from '../../../../services/employee/employee.service';
 import { EmployeeModalComponent } from '../../../../component/modal/employee-modal/employee-modal.component';
 import { ConfirmationService } from '../../../../services/general/confirmation.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-employee-list',
@@ -31,6 +32,7 @@ export class EmployeeListComponent implements OnInit {
     private employeeService: EmployeeService,
     private dialog: MatDialog,
     private confirm: ConfirmationService,
+    private router: Router
   ) {}
 
   async ngOnInit() {
@@ -76,5 +78,8 @@ export class EmployeeListComponent implements OnInit {
         await this.load();
       }
     });
+  }
+  add_employee() {
+  this.router.navigateByUrl('/admin/employees/details');
   }
 }

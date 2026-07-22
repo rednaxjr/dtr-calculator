@@ -33,6 +33,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
   page_title: any = "";
   private routeSub?: Subscription;
   page_description: any = "";
+  page_title2:any = "";
 
   modules: any = [
     { label: 'Dashboard', icon: 'dashboard', route: '/admin/dashboard', name: "Dashboard", exact: true },
@@ -52,6 +53,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
     this.curr_route = this.router.url;
     const deepest = this.getDeepestRoute(this.route);
     this.page_title = deepest.snapshot.data['parent']; 
+    this.page_title2 = deepest.snapshot.data['title'];
     this.page_description = deepest.snapshot.data['description'];
     this.routeSub = this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
@@ -59,8 +61,10 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
         this.curr_route = e.urlAfterRedirects;
         const deepest = this.getDeepestRoute(this.route);
         const title = deepest.snapshot.data['parent'];
+        const title2 = deepest.snapshot.data['title'];
         const description = deepest.snapshot.data['description'];
         this.page_title = title;
+        this.page_title2 = title2;
         this.page_description = description;
         console.log(this.page_description)
         if (this.isMobile) this.drawer?.close();

@@ -44,7 +44,11 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
   user_id: any;
 
 
-  year_list: any = [];
+  year_list: any = [
+    // { name: "2024" },
+    // { name: "2025" },
+    // { name: "2026" }
+  ];
   month_list: any = [
     { number: 1, name: "January", dtr_count: 0 },
     { number: 2, name: "February", dtr_count: 0 },
