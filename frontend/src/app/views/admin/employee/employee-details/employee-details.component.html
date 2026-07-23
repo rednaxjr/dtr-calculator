@@ -8,79 +8,115 @@
         <p class="text-sm  ">Personal
             Information</p>
         <div
-            class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3 ">
+            class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
             <div
                 class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
-                <div class="input-fields ">
+
+                <!-- First Name -->
+                <div class="input-fields">
                     <label for="fname">First name</label>
                     <input name="fname" [(ngModel)]="fname" type="text"
-                        (ngModelChange)="get_username()"
-                        class="input-text uppercase">
+                        (ngModelChange)="get_username(); onNameInput('fname')"
+                        (keypress)="blockNumbers($event)"
+                        class="input-text uppercase"
+                        [class.border-red-400]="errors.fname" />
+                    <div *ngIf="errors.fname"
+                        class="w-full text-red-400 text-xs mt-1">
+                        {{ errors.fname }}
+                    </div>
                 </div>
-                <div class="input-fields  ">
+
+                <!-- Middle Name -->
+                <div class="input-fields">
                     <label for="mname">Middle name
-                        <span
-                            class="text-sm   ">
-                            (Optional)
-                        </span>
+                        <span class="text-sm">(Optional)</span>
                     </label>
                     <input name="mname" [(ngModel)]="mname" type="text"
-                        class="input-text uppercase">
+                        (keypress)="blockNumbers($event)"
+                        (ngModelChange)="onNameInput('mname')"
+                        class="input-text uppercase"
+                        [class.border-red-400]="errors.mname" />
+                    <div *ngIf="errors.mname"
+                        class="w-full text-red-400 text-xs mt-1">
+                        {{ errors.mname }}
+                    </div>
                 </div>
-                <div class="input-fields ">
+
+                <!-- Last Name -->
+                <div class="input-fields">
                     <label for="lname">Last name</label>
                     <input name="lname" [(ngModel)]="lname" type="text"
-                        (ngModelChange)="get_username()"
-                        class="input-text uppercase">
+                        (ngModelChange)="get_username(); onNameInput('lname')"
+                        (keypress)="blockNumbers($event)"
+                        class="input-text uppercase"
+                        [class.border-red-400]="errors.lname" />
+                    <div *ngIf="errors.lname"
+                        class="w-full text-red-400 text-xs mt-1">
+                        {{ errors.lname }}
+                    </div>
                 </div>
+
+                <!-- Birth Date -->
                 <div class="input-fields">
                     <label for="bdate">Birth date</label>
                     <div class="flex gap-2">
-                        <div class="relative flex flex-col gap-1 flex-[2] ">
-                            <span class="text-sm text-gray-400">Month</span>
-                            <button [matMenuTriggerFor]="b_month"
-                                class="relative flex items-center justify-start mt-1.5 text-sm p-1.5 border
-                                 border-gray-600 rounded-md w-full font-bold shadow-sm  
-                                hover:bg-opacity-90
-                                ">
-                                {{ month == null || month === '' ?
-                                'Select Month' : month }}
 
-                                <div class="absolute top-1 right-2">
-                                    <mat-icon class="text-lg font-bold">
-                                        keyboard_arrow_down
-                                    </mat-icon>
-                                </div>
-                            </button>
-                        </div>
-                        <mat-menu #b_month="matMenu"
-                            class="mat-menu w-72 transition-all class duration-150 mt-2 bg-white  text-gray-400 font-light"> 
-                            <div class="h-fit w-full   border-gray-300" *ngFor="let i of months">
-                                <button mat-menu-item (click)="select_month(i.month)"
-                                    class="dropdown flex items-center  "> 
-                                    <span
-                                        class="text-black">{{i.month}}</span>
-                                </button>
+                        <!-- Month -->
+                        <div class="flex flex-col gap-1 flex-[2]">
+                            <span class="text-sm text-gray-400">Month</span>
+                            <select [(ngModel)]="birth_month"
+                                (ngModelChange)="onDateInput()"
+                                class="mt-[5px] h-[30px] w-full p-[5px] text-[12px] font-bold border rounded-md shadow-sm bg-white appearance-none"
+                                [class.border-red-400]="errors.birth_month"
+                                [class.border-gray-600]="!errors.birth_month">
+                                <option [ngValue]="0">Select Month</option>
+                                <option *ngFor="let month of months"
+                                    [ngValue]="month.number">
+                                    {{ month.month }}
+                                </option>
+                            </select>
+                            <div *ngIf="errors.birth_month"
+                                class="w-full text-red-400 text-xs">
+                                {{ errors.birth_month }}
                             </div>
-                        </mat-menu>
-                        <div class="flex flex-col gap-1 flex-1">
+                        </div>
+
+                        <!-- Day -->
+                        <div class="flex flex-col gap-1">
                             <span class="text-sm text-gray-400">Day</span>
                             <input name="birth_day" [(ngModel)]="birth_day"
                                 type="text" maxlength="2" placeholder="DD"
-                                class="input-text" />
+                                (keypress)="blockLetters($event)"
+                                (ngModelChange)="onDateInput()"
+                                class="input-text"
+                                [class.border-red-400]="errors.birth_day" />
+                            <div *ngIf="errors.birth_day"
+                                class="w-full text-red-400 text-xs">
+                                {{ errors.birth_day }}
+                            </div>
                         </div>
-                        <div class="flex flex-col gap-1 flex-[1.5]">
+
+                        <!-- Year -->
+                        <div class="flex flex-col gap-1">
                             <span class="text-sm text-gray-400">Year</span>
                             <input name="birth_year" [(ngModel)]="birth_year"
                                 type="text" maxlength="4" placeholder="YYYY"
-                                class="input-text" />
+                                (keypress)="blockLetters($event)"
+                                (ngModelChange)="onDateInput()"
+                                class="input-text"
+                                [class.border-red-400]="errors.birth_year" />
+                            <div *ngIf="errors.birth_year"
+                                class="w-full text-red-400 text-xs">
+                                {{ errors.birth_year }}
+                            </div>
                         </div>
+
                     </div>
                 </div>
 
             </div>
         </div>
-        <p class="text-sm   pt-3">Account
+        <p class="text-sm   pt-10">Account
             Information</p>
         <div
             class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3  ">

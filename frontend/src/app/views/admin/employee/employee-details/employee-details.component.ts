@@ -8,6 +8,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map } from 'rxjs/internal/operators/map';
+import { ValidationService } from '../../../../services/validation/validation.service';
+
+
 @Component({
   selector: 'app-employee-details',
   standalone: true,
@@ -28,6 +31,8 @@ import { map } from 'rxjs/internal/operators/map';
 export class EmployeeDetailsComponent {
   isMobile = signal(false)
   url_id: any = null;
+  errors = {};
+
 
   @ViewChild('email_address_content') email_address_content!: TemplateRef<any>;
   @ViewChild('email_address_buttons') email_address_buttons!: TemplateRef<any>;
@@ -46,7 +51,7 @@ export class EmployeeDetailsComponent {
     [key: string]: { content: TemplateRef<any>, buttons: TemplateRef<any> }
   };
   banner: any = [];
-  birth_month: any;
+  birth_month: any = 0;
   birth_day: any;
   birth_year: any;
   month: any;
@@ -74,6 +79,7 @@ export class EmployeeDetailsComponent {
     public activeRoute: ActivatedRoute,
     private dialog: MatDialog,
     private breakpointObserver: BreakpointObserver,
+    private validation_service: ValidationService,
   ) {
   }
   ngOnInit(): void {
@@ -114,5 +120,43 @@ export class EmployeeDetailsComponent {
     this.month = data;
   }
 
+  blockNumbers = (e: KeyboardEvent) => this.validation_service.blockNumbers(e);
+  blockLetters = (e: KeyboardEvent) => this.validation_service.blockLetters(e);
 
+  onNameInput(field: 'fname' | 'lname' | 'mname') {
+    const map: { [key: string]: () => string } = {
+      fname: () => this.validation_service.validateFirstName(this.fname),
+      lname: () => this.validation_service.validateLastName(this.lname),
+      mname: () => this.validation_service.validateMiddleName(this.mname),
+    }; 
+  }
+
+  onDateInput() {
+    const dateErrors = this.validation_service.validateDateFields({
+      birth_month: this.birth_month,
+      birth_day: this.birth_day,
+      birth_year: this.birth_year,
+    });
+    this.errors = { ...this.errors, ...dateErrors };
+  }
+
+  submit() {
+ 
+    this.errors = {
+      ...this.validation_service.validateNameFields({
+        fname: this.fname,
+        lname: this.lname,
+        mname: this.mname,
+      }),
+      ...this.validation_service.validateDateFields({
+        birth_month: this.birth_month,
+        birth_day: this.birth_day,
+        birth_year: this.birth_year,
+      }),
+    };
+
+    if (!this.validation_service.isValid(this.errors)) return;
+
+    // proceed with submit logic...
+  }
 }
