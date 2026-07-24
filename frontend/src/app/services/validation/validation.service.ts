@@ -3,14 +3,30 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class ValidationService {  
+export class ValidationService {
   blockNumbers(event: KeyboardEvent): void {
     if (/[0-9]/.test(event.key)) event.preventDefault();
   }
 
   blockLetters(event: KeyboardEvent): void {
     if (!/[0-9]/.test(event.key)) event.preventDefault();
-  } 
+  }
+
+  validate_required_text_only(value: any) {
+    if (!value.trim()) return '* Input field is required';
+    if (/[0-9]/.test(value)) return '* Numbers are not allowed';
+    return '';
+  }
+   validate_text_only(value: any) { 
+    if (/[0-9]/.test(value)) return '* Numbers are not allowed';
+    return '';
+  }
+
+  validate_required_number_only(value: string, label: string): string {
+    if (!value.trim()) return '* Input field is required';
+    if (!/^\d+$/.test(value)) return `* Input field must contain numbers`;
+    return '';
+  }
 
   validateFirstName(value: string): string {
     if (!value.trim()) return '* First name is required';
@@ -50,7 +66,7 @@ export class ValidationService {
     return '';
   }
 
-  
+
 
   // ── Generic ───────────────────────────────────────────────────────────────
 

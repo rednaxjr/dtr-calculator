@@ -31,7 +31,7 @@ import { ValidationService } from '../../../../services/validation/validation.se
 export class EmployeeDetailsComponent {
   isMobile = signal(false)
   url_id: any = null;
-  errors = {};
+  errors :any={};
 
 
   @ViewChild('email_address_content') email_address_content!: TemplateRef<any>;
@@ -120,7 +120,7 @@ export class EmployeeDetailsComponent {
     this.month = data;
   }
 
-  blockNumbers = (e: KeyboardEvent) => this.validation_service.blockNumbers(e);
+  block_numbers = (e: KeyboardEvent) => this.validation_service.validate_text_only(e);
   blockLetters = (e: KeyboardEvent) => this.validation_service.blockLetters(e);
 
   onNameInput(field: 'fname' | 'lname' | 'mname') {
@@ -129,6 +129,8 @@ export class EmployeeDetailsComponent {
       lname: () => this.validation_service.validateLastName(this.lname),
       mname: () => this.validation_service.validateMiddleName(this.mname),
     }; 
+    this.errors[field] = map[field]();
+    console.log(this.errors)
   }
 
   onDateInput() {

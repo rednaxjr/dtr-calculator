@@ -17,9 +17,9 @@
                     <label for="fname">First name</label>
                     <input name="fname" [(ngModel)]="fname" type="text"
                         (ngModelChange)="get_username(); onNameInput('fname')"
-                        (keypress)="blockNumbers($event)"
+                        (keypress)="block_numbers($event)"
                         class="input-text uppercase"
-                        [class.border-red-400]="errors.fname" />
+                        [ngClass]="{'input-error': errors.fname}" />
                     <div *ngIf="errors.fname"
                         class="w-full text-red-400 text-xs mt-1">
                         {{ errors.fname }}
@@ -32,10 +32,10 @@
                         <span class="text-sm">(Optional)</span>
                     </label>
                     <input name="mname" [(ngModel)]="mname" type="text"
-                        (keypress)="blockNumbers($event)"
+                        (keypress)="block_numbers($event)"
                         (ngModelChange)="onNameInput('mname')"
                         class="input-text uppercase"
-                        [class.border-red-400]="errors.mname" />
+                        [ngClass]="{'input-error': errors.mname}" />
                     <div *ngIf="errors.mname"
                         class="w-full text-red-400 text-xs mt-1">
                         {{ errors.mname }}
@@ -47,9 +47,9 @@
                     <label for="lname">Last name</label>
                     <input name="lname" [(ngModel)]="lname" type="text"
                         (ngModelChange)="get_username(); onNameInput('lname')"
-                        (keypress)="blockNumbers($event)"
+                        (keypress)="block_numbers($event)"
                         class="input-text uppercase"
-                        [class.border-red-400]="errors.lname" />
+                        [ngClass]="{'input-error': errors.mname}" />
                     <div *ngIf="errors.lname"
                         class="w-full text-red-400 text-xs mt-1">
                         {{ errors.lname }}
@@ -79,9 +79,7 @@
                                 class="w-full text-red-400 text-xs">
                                 {{ errors.birth_month }}
                             </div>
-                        </div>
-
-                        <!-- Day -->
+                        </div> 
                         <div class="flex flex-col gap-1">
                             <span class="text-sm text-gray-400">Day</span>
                             <input name="birth_day" [(ngModel)]="birth_day"
@@ -89,14 +87,12 @@
                                 (keypress)="blockLetters($event)"
                                 (ngModelChange)="onDateInput()"
                                 class="input-text"
-                                [class.border-red-400]="errors.birth_day" />
+                                [ngClass]="{'input-error': errors.birth_day}" />
                             <div *ngIf="errors.birth_day"
                                 class="w-full text-red-400 text-xs">
                                 {{ errors.birth_day }}
                             </div>
-                        </div>
-
-                        <!-- Year -->
+                        </div> 
                         <div class="flex flex-col gap-1">
                             <span class="text-sm text-gray-400">Year</span>
                             <input name="birth_year" [(ngModel)]="birth_year"
@@ -104,7 +100,7 @@
                                 (keypress)="blockLetters($event)"
                                 (ngModelChange)="onDateInput()"
                                 class="input-text"
-                                [class.border-red-400]="errors.birth_year" />
+                                [ngClass]="{'input-error': errors.birth_year}" />
                             <div *ngIf="errors.birth_year"
                                 class="w-full text-red-400 text-xs">
                                 {{ errors.birth_year }}
@@ -127,12 +123,7 @@
                     <label for="username">Username</label>
                     <input name="username" [(ngModel)]="username"
                         disabled type="text" class="input-text uppercase">
-                </div>
-                <div class="input-fields  ">
-                    <label>Password</label>
-                    <input type="password" disabled
-                        class="input-text uppercase">
-                </div>
+                </div> 
             </div>
         </div>
 
