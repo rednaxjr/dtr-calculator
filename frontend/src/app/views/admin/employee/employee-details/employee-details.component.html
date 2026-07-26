@@ -1,148 +1,192 @@
-<div class="flex flex-col lg:xl:2xl:flex-row w-full h-fit pb-24  gap-4">
-    <div
-        class="bg-white rounded-lg shadow-md border p-4  w-full   h-fit">
+<div class="w-full h-full flex flex-col gap-4">
+    <app-breadcrumbs [data]="filteredBanner" [view_number]="view_number_data" (select_view)="view_number($event)" />
 
-        <div class="mb-0.5">
-            <h3 class="text-lg font-bold text-green">Employee's Information</h3>
-        </div>
-        <p class="text-sm  ">Personal
-            Information</p>
-        <div
-            class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
-            <div
-                class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
+    <div class="flex flex-col lg:xl:2xl:flex-row w-full h-fit pb-10  gap-4">
 
-                <!-- First Name -->
-                <div class="input-fields">
-                    <label for="fname">First name</label>
-                    <input name="fname" [(ngModel)]="fname" type="text"
-                        (ngModelChange)="get_username(); onNameInput('fname')"
-                        (keypress)="block_numbers($event)"
-                        class="input-text uppercase"
-                        [ngClass]="{'input-error': errors.fname}" />
-                    <div *ngIf="errors.fname"
-                        class="w-full text-red-400 text-xs mt-1">
-                        {{ errors.fname }}
-                    </div>
-                </div>
 
-                <!-- Middle Name -->
-                <div class="input-fields">
-                    <label for="mname">Middle name
-                        <span class="text-sm">(Optional)</span>
-                    </label>
-                    <input name="mname" [(ngModel)]="mname" type="text"
-                        (keypress)="block_numbers($event)"
-                        (ngModelChange)="onNameInput('mname')"
-                        class="input-text uppercase"
-                        [ngClass]="{'input-error': errors.mname}" />
-                    <div *ngIf="errors.mname"
-                        class="w-full text-red-400 text-xs mt-1">
-                        {{ errors.mname }}
-                    </div>
-                </div>
+        <div class="bg-white rounded-lg shadow-md border p-4 pb-10  w-full   h-fit" *ngIf="view_number_data == 1">
 
-                <!-- Last Name -->
-                <div class="input-fields">
-                    <label for="lname">Last name</label>
-                    <input name="lname" [(ngModel)]="lname" type="text"
-                        (ngModelChange)="get_username(); onNameInput('lname')"
-                        (keypress)="block_numbers($event)"
-                        class="input-text uppercase"
-                        [ngClass]="{'input-error': errors.mname}" />
-                    <div *ngIf="errors.lname"
-                        class="w-full text-red-400 text-xs mt-1">
-                        {{ errors.lname }}
-                    </div>
-                </div>
+            <div class="mb-0.5">
+                <h3 class="text-lg font-bold text-green">Employee's Information</h3>
+            </div>
+            <p class="text-sm  ">Personal
+                Information</p>
+            <div class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
+                <div class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
 
-                <!-- Birth Date -->
-                <div class="input-fields">
-                    <label for="bdate">Birth date</label>
-                    <div class="flex gap-2">
-
-                        <!-- Month -->
-                        <div class="flex flex-col gap-1 flex-[2]">
-                            <span class="text-sm text-gray-400">Month</span>
-                            <select [(ngModel)]="birth_month"
-                                (ngModelChange)="onDateInput()"
-                                class="mt-[5px] h-[30px] w-full p-[5px] text-[12px] font-bold border rounded-md shadow-sm bg-white appearance-none"
-                                [class.border-red-400]="errors.birth_month"
-                                [class.border-gray-600]="!errors.birth_month">
-                                <option [ngValue]="0">Select Month</option>
-                                <option *ngFor="let month of months"
-                                    [ngValue]="month.number">
-                                    {{ month.month }}
-                                </option>
-                            </select>
-                            <div *ngIf="errors.birth_month"
-                                class="w-full text-red-400 text-xs">
-                                {{ errors.birth_month }}
-                            </div>
-                        </div> 
-                        <div class="flex flex-col gap-1">
-                            <span class="text-sm text-gray-400">Day</span>
-                            <input name="birth_day" [(ngModel)]="birth_day"
-                                type="text" maxlength="2" placeholder="DD"
-                                (keypress)="blockLetters($event)"
-                                (ngModelChange)="onDateInput()"
-                                class="input-text"
-                                [ngClass]="{'input-error': errors.birth_day}" />
-                            <div *ngIf="errors.birth_day"
-                                class="w-full text-red-400 text-xs">
-                                {{ errors.birth_day }}
-                            </div>
-                        </div> 
-                        <div class="flex flex-col gap-1">
-                            <span class="text-sm text-gray-400">Year</span>
-                            <input name="birth_year" [(ngModel)]="birth_year"
-                                type="text" maxlength="4" placeholder="YYYY"
-                                (keypress)="blockLetters($event)"
-                                (ngModelChange)="onDateInput()"
-                                class="input-text"
-                                [ngClass]="{'input-error': errors.birth_year}" />
-                            <div *ngIf="errors.birth_year"
-                                class="w-full text-red-400 text-xs">
-                                {{ errors.birth_year }}
-                            </div>
+                    <!-- First Name -->
+                    <div class="input-fields">
+                        <label for="fname">First name</label>
+                        <input name="fname" [(ngModel)]="fname" type="text"
+                            (ngModelChange)="get_username(); onNameInput('fname')" (keypress)="block_numbers($event)"
+                            class="input-text uppercase" [ngClass]="{'input-error': errors.fname}" />
+                        <div *ngIf="errors.fname" class="w-full text-red-400 text-xs mt-1">
+                            {{ errors.fname }}
                         </div>
+                    </div>
 
+                    <!-- Middle Name -->
+                    <div class="input-fields">
+                        <label for="mname">Middle name
+                            <span class="text-sm">(Optional)</span>
+                        </label>
+                        <input name="mname" [(ngModel)]="mname" type="text" (keypress)="block_numbers($event)"
+                            (ngModelChange)="onNameInput('mname')" class="input-text uppercase"
+                            [ngClass]="{'input-error': errors.mname}" />
+                        <div *ngIf="errors.mname" class="w-full text-red-400 text-xs mt-1">
+                            {{ errors.mname }}
+                        </div>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="input-fields">
+                        <label for="lname">Last name</label>
+                        <input name="lname" [(ngModel)]="lname" type="text"
+                            (ngModelChange)="get_username(); onNameInput('lname')" (keypress)="block_numbers($event)"
+                            class="input-text uppercase" [ngClass]="{'input-error': errors.mname}" />
+                        <div *ngIf="errors.lname" class="w-full text-red-400 text-xs mt-1">
+                            {{ errors.lname }}
+                        </div>
+                    </div>
+
+                    <!-- Birth Date -->
+                    <div class="input-fields">
+                        <label for="bdate">Birth date</label>
+                        <div class="flex gap-2">
+
+                            <!-- Month -->
+                            <div class="flex flex-col gap-1 flex-[2]">
+                                <span class="text-sm text-gray-400">Month</span>
+                                <select [(ngModel)]="birth_month" (ngModelChange)="onDateInput()"
+                                    class="mt-[5px] h-[30px] w-full p-[5px] text-[12px] font-bold border rounded-md shadow-sm bg-white appearance-none"
+                                    [class.border-red-400]="errors.birth_month"
+                                    [class.border-gray-600]="!errors.birth_month">
+                                    <option [ngValue]="0">Select Month</option>
+                                    <option *ngFor="let month of months" [ngValue]="month.number">
+                                        {{ month.month }}
+                                    </option>
+                                </select>
+                                <div *ngIf="errors.birth_month" class="w-full text-red-400 text-xs">
+                                    {{ errors.birth_month }}
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <span class="text-sm text-gray-400">Day</span>
+                                <input name="birth_day" [(ngModel)]="birth_day" type="text" maxlength="2"
+                                    placeholder="DD" (keypress)="blockLetters($event)" (ngModelChange)="onDateInput()"
+                                    class="input-text" [ngClass]="{'input-error': errors.birth_day}" />
+                                <div *ngIf="errors.birth_day" class="w-full text-red-400 text-xs">
+                                    {{ errors.birth_day }}
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <span class="text-sm text-gray-400">Year</span>
+                                <input name="birth_year" [(ngModel)]="birth_year" type="text" maxlength="4"
+                                    placeholder="YYYY" (keypress)="blockLetters($event)" (ngModelChange)="onDateInput()"
+                                    class="input-text" [ngClass]="{'input-error': errors.birth_year}" />
+                                <div *ngIf="errors.birth_year" class="w-full text-red-400 text-xs">
+                                    {{ errors.birth_year }}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <p class="text-sm   pt-10">Account
+                Information</p>
+            <div class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3  ">
+                <div class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
+
+                    <div class="input-fields ">
+                        <label for="username">Username</label>
+                        <input name="username" [(ngModel)]="username" disabled type="text" class="input-text uppercase">
                     </div>
                 </div>
-
             </div>
-        </div>
-        <p class="text-sm   pt-10">Account
-            Information</p>
-        <div
-            class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3  ">
-            <div
-                class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
 
-                <div class="input-fields ">
-                    <label for="username">Username</label>
-                    <input name="username" [(ngModel)]="username"
-                        disabled type="text" class="input-text uppercase">
-                </div> 
-            </div>
+
+
         </div>
 
-        @if(!isMobile() ){
-        <div class="w-full flex justify-end pt-10 pb-4 ">
-            <button
-                class="flex shadow-md items-center relative bg-green  gap-2  text-white  px-5 py-2   rounded-md transition-all  border border-gray-300 ">
-                Save
+        <div class="bg-white rounded-lg shadow-md border p-4  w-full   h-fit" *ngIf="view_number_data == 2">
+            <div class="mb-0.5">
+                <h3 class="text-lg font-bold text-green">Compensation Details</h3>
+            </div>
+            <p class="text-sm  ">Personal
+                Information</p>
+            <div class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
+                <div class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
+
+                    <!-- First Name -->
+                    <div class="input-fields">
+                        <label for="fname">First name</label>
+                        <input name="fname" [(ngModel)]="fname" type="text"
+                            (ngModelChange)="get_username(); onNameInput('fname')" (keypress)="block_numbers($event)"
+                            class="input-text uppercase" [ngClass]="{'input-error': errors.fname}" />
+                        <div *ngIf="errors.fname" class="w-full text-red-400 text-xs mt-1">
+                            {{ errors.fname }}
+                        </div>
+                    </div>
+
+                    <!-- Middle Name -->
+                    <div class="input-fields">
+                        <label for="mname">Middle name
+                            <span class="text-sm">(Optional)</span>
+                        </label>
+                        <input name="mname" [(ngModel)]="mname" type="text" (keypress)="block_numbers($event)"
+                            (ngModelChange)="onNameInput('mname')" class="input-text uppercase"
+                            [ngClass]="{'input-error': errors.mname}" />
+                        <div *ngIf="errors.mname" class="w-full text-red-400 text-xs mt-1">
+                            {{ errors.mname }}
+                        </div>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="input-fields">
+                        <label for="lname">Last name</label>
+                        <input name="lname" [(ngModel)]="lname" type="text"
+                            (ngModelChange)="get_username(); onNameInput('lname')" (keypress)="block_numbers($event)"
+                            class="input-text uppercase" [ngClass]="{'input-error': errors.mname}" />
+                        <div *ngIf="errors.lname" class="w-full text-red-400 text-xs mt-1">
+                            {{ errors.lname }}
+                        </div>
+                    </div>
+
+                    
+                            
+
+                </div>
+            </div>
+        </div>
+
+
+        @if(isMobile() ){
+        <div class="w-full flex justify-center  text-center">
+            <button (click)="next_view()"
+                class="flex w-full bg-green text-white  justify-center items-center relative  gap-2 text-center   px-4 py-2   rounded-md transition-all  border border-gray-300 ">
+                Next
             </button>
         </div>
         }
 
     </div>
-    @if(isMobile() ){
-    <div class="w-full flex justify-center  text-center">
-        <button (click)="save()"
-            class="flex w-full bg-green text-white  justify-center items-center relative  gap-2 text-center   px-4 py-2   rounded-md transition-all  border border-gray-300 ">
-            Save
-        </button>
+    @if(!isMobile() ){
+    <div class="w-full flex justify-between pb-4 ">
+        <div class=" flex   pb-4 ">
+            <button (click)="prev_view()"
+                class="flex shadow-md items-center relative bg-green  gap-2  text-white  px-5 py-2   rounded-md transition-all  border border-gray-300 ">
+                Back
+            </button>
+        </div>
+        <div class=" flex   pb-4 ">
+            <button (click)="next_view()"
+                class="flex shadow-md items-center relative bg-green  gap-2  text-white  px-5 py-2   rounded-md transition-all  border border-gray-300 ">
+                Next
+            </button>
+        </div>
+
     </div>
     }
 

@@ -17,7 +17,7 @@ export class ValidationService {
     if (/[0-9]/.test(value)) return '* Numbers are not allowed';
     return '';
   }
-   validate_text_only(value: any) { 
+  validate_text_only(value: any) {
     if (/[0-9]/.test(value)) return '* Numbers are not allowed';
     return '';
   }

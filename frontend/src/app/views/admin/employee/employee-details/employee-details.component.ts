@@ -9,6 +9,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map } from 'rxjs/internal/operators/map';
 import { ValidationService } from '../../../../services/validation/validation.service';
+import { BreadcrumbsComponent } from '../../../../component/parts/breadcrumbs/breadcrumbs.component';
 
 
 @Component({
@@ -22,7 +23,8 @@ import { ValidationService } from '../../../../services/validation/validation.se
     MatDialogModule,
     FormsModule,
     ReactiveFormsModule,
-    MatMenuModule
+    MatMenuModule,
+    BreadcrumbsComponent
 
   ],
   templateUrl: './employee-details.component.html',
@@ -31,8 +33,9 @@ import { ValidationService } from '../../../../services/validation/validation.se
 export class EmployeeDetailsComponent {
   isMobile = signal(false)
   url_id: any = null;
-  errors :any={};
-
+  errors: any = {};
+  view_number_data: any = 1;
+  banner: any;
 
   @ViewChild('email_address_content') email_address_content!: TemplateRef<any>;
   @ViewChild('email_address_buttons') email_address_buttons!: TemplateRef<any>;
@@ -50,7 +53,6 @@ export class EmployeeDetailsComponent {
   templateMap!: {
     [key: string]: { content: TemplateRef<any>, buttons: TemplateRef<any> }
   };
-  banner: any = [];
   birth_month: any = 0;
   birth_day: any;
   birth_year: any;
@@ -93,13 +95,22 @@ export class EmployeeDetailsComponent {
       this.url_id = paramsId.id;
     });
     this.banner = [
-      { text: null, icon: "home", link: "/admin/dashboard", },
-      { text: "Client list", icon: null, link: "/admin/client", },
-      { text: "Client's Information", icon: null, link: "/admin/client-info/" + this.url_id, },
+      { text: null, icon: "home", value: 0, link: "/admin/employees", },
+      { text: "Personal Information", icon: null, value: 1 },
+      { text: "Compensation Details", icon: null, value: 2 },
+      { text: "Benefits & Contributions", icon: null, value: 3 },
     ];
+  }
+  view_number(data: any) {
+    console.log(data);
+    this.view_number_data = data.value;
   }
 
 
+
+  get filteredBanner() {
+    return this.banner.filter((item: any) => item.value <= this.view_number_data);
+  }
   get_username() {
     const first = this.fname?.trim().charAt(0).toLowerCase() ?? '';
     const last = this.lname?.trim().toLowerCase().replace(/\s+/g, '') ?? '';
@@ -128,7 +139,7 @@ export class EmployeeDetailsComponent {
       fname: () => this.validation_service.validateFirstName(this.fname),
       lname: () => this.validation_service.validateLastName(this.lname),
       mname: () => this.validation_service.validateMiddleName(this.mname),
-    }; 
+    };
     this.errors[field] = map[field]();
     console.log(this.errors)
   }
@@ -143,22 +154,33 @@ export class EmployeeDetailsComponent {
   }
 
   submit() {
- 
-    this.errors = {
-      ...this.validation_service.validateNameFields({
-        fname: this.fname,
-        lname: this.lname,
-        mname: this.mname,
-      }),
-      ...this.validation_service.validateDateFields({
-        birth_month: this.birth_month,
-        birth_day: this.birth_day,
-        birth_year: this.birth_year,
-      }),
-    };
+    console.log(this.errors);
+    const data = {
+      fname: this.fname,
+      mname: this.mname,
+      lname: this.lname,
+      birth_month: this.birth_month,
+      birth_day: this.birth_day,
+      birth_year: this.birth_year,
+      username: this.username
+    }
 
-    if (!this.validation_service.isValid(this.errors)) return;
-
-    // proceed with submit logic...
+  }
+  next_view() {
+    console.log(this.errors);
+    const data = {
+      fname: this.fname,
+      mname: this.mname,
+      lname: this.lname,
+      birth_month: this.birth_month,
+      birth_day: this.birth_day,
+      birth_year: this.birth_year,
+      username: this.username
+    }
+    console.log(data)
+    this.view_number_data = this.view_number_data + 1;
+  }
+  prev_view() {
+    this.view_number_data = this.view_number_data -1;
   }
 }

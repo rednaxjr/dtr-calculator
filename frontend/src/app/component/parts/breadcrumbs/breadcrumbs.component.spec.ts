@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ESign2Component } from './e-sign2.component';
+import { BreadcrumbsComponent } from './breadcrumbs.component';
 
-describe('ESign2Component', () => {
-  let component: ESign2Component;
-  let fixture: ComponentFixture<ESign2Component>;
+describe('BreadcrumbsComponent', () => {
+  let component: BreadcrumbsComponent;
+  let fixture: ComponentFixture<BreadcrumbsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ESign2Component]
+      imports: [BreadcrumbsComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ESign2Component);
+    fixture = TestBed.createComponent(BreadcrumbsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
