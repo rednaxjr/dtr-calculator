@@ -8,7 +8,7 @@ export class ValidationService {
     if (/[0-9]/.test(event.key)) event.preventDefault();
   }
 
-  blockLetters(event: KeyboardEvent): void {
+  block_letters(event: KeyboardEvent): void {
     if (!/[0-9]/.test(event.key)) event.preventDefault();
   }
 

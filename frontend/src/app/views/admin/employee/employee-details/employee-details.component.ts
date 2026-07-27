@@ -10,6 +10,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map } from 'rxjs/internal/operators/map';
 import { ValidationService } from '../../../../services/validation/validation.service';
 import { BreadcrumbsComponent } from '../../../../component/parts/breadcrumbs/breadcrumbs.component';
+import { EmployeeService } from '../../../../services/employee/employee.service';
+import { ConfirmationService } from '../../../../services/general/confirmation.service';
 
 
 @Component({
@@ -42,9 +44,11 @@ export class EmployeeDetailsComponent {
   @ViewChild('qr_content') qr_content!: TemplateRef<any>;
   @ViewChild('qr_buttons') qr_buttons!: TemplateRef<any>;
   email_reg: any = '';
-  fname: any;
-  lname: any;
-  mname: any;
+  fname: any = '';
+  lname: any = '';
+  mname: any = '';
+  birth_day: any = '';
+  birth_year: any = '';
   b_date: any;
   username: any;
   email: any;
@@ -54,8 +58,6 @@ export class EmployeeDetailsComponent {
     [key: string]: { content: TemplateRef<any>, buttons: TemplateRef<any> }
   };
   birth_month: any = 0;
-  birth_day: any;
-  birth_year: any;
   month: any;
   months = [
     { number: 1, month: 'January' },
@@ -71,7 +73,19 @@ export class EmployeeDetailsComponent {
     { number: 11, month: 'November' },
     { number: 12, month: 'December' }
   ];
+  salary_type = [
+    { number: 1, value: 'Monthly' },
+    { number: 2, value: 'Semi-monthly' },
+    { number: 3, value: 'Bi-weekly' },
+    { number: 4, value: 'Weekly' },
+  ];
 
+
+  salary_id: any = 0;
+  salary: any;
+  pag_ibig: any;
+  phil_health: any;
+  sss: any;
 
 
 
@@ -81,7 +95,9 @@ export class EmployeeDetailsComponent {
     public activeRoute: ActivatedRoute,
     private dialog: MatDialog,
     private breakpointObserver: BreakpointObserver,
-    private validation_service: ValidationService,
+    public validation_service: ValidationService,
+    public employee_service: EmployeeService,
+    private confirmation_service: ConfirmationService
   ) {
   }
   ngOnInit(): void {
@@ -98,7 +114,6 @@ export class EmployeeDetailsComponent {
       { text: null, icon: "home", value: 0, link: "/admin/employees", },
       { text: "Personal Information", icon: null, value: 1 },
       { text: "Compensation Details", icon: null, value: 2 },
-      { text: "Benefits & Contributions", icon: null, value: 3 },
     ];
   }
   view_number(data: any) {
@@ -117,22 +132,14 @@ export class EmployeeDetailsComponent {
     this.username = first && last ? `${first}.${last}` : first || last;
   }
 
-  save() {
-    const data = {
-      fname: this.fname,
-      lname: this.lname,
-      mname: this.mname,
-      email: this.email,
-      b_date: this.b_date,
-    }
-  }
+
 
   select_month(data: any) {
     this.month = data;
   }
 
   block_numbers = (e: KeyboardEvent) => this.validation_service.validate_text_only(e);
-  blockLetters = (e: KeyboardEvent) => this.validation_service.blockLetters(e);
+  block_letters = (e: KeyboardEvent) => this.validation_service.block_letters(e);
 
   onNameInput(field: 'fname' | 'lname' | 'mname') {
     const map: { [key: string]: () => string } = {
@@ -154,7 +161,14 @@ export class EmployeeDetailsComponent {
   }
 
   submit() {
-    console.log(this.errors);
+    this.errors = {
+      ...this.errors,
+      salary_id: this.salary_id === 0 ? '* Select a salary type' : '',
+      salary: this.validation_service.validate_required_number_only(this.salary, 'Basic salary'),
+    };
+
+    if (!this.validation_service.isValid(this.errors)) return;
+
     const data = {
       fname: this.fname,
       mname: this.mname,
@@ -162,25 +176,79 @@ export class EmployeeDetailsComponent {
       birth_month: this.birth_month,
       birth_day: this.birth_day,
       birth_year: this.birth_year,
-      username: this.username
-    }
+      username: this.username,
+      salary: this.salary,
+      salary_id: this.salary_id,
+      sss: this.sss,
+      pag_ibig: this.pag_ibig,
+      phil_health: this.phil_health,
+    };
 
+    return this.employee_service.add_employee(data).subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          this.confirmation_service.confirm({
+            title: 'Employee Added',
+            message: 'Employee has been successfully added.',
+            confirmText: 'OK',
+            type: 'success',
+          }).subscribe((confirmed: boolean) => {
+            if (confirmed) {
+              this.router.navigate(['/admin/employees']);
+            }
+          });
+        }
+      },
+      error: (err: any) => {
+        if (err.status === 409) {
+          // Duplicate user or employee
+          this.confirmation_service.confirm({
+            title: 'Already Exists',
+            message: err.error.message,  
+            confirmText: 'OK', 
+          });
+        } else { 
+          this.confirmation_service.confirm({
+            title: 'Something went wrong',
+            message: 'An error occurred while saving the employee. Please try again.',
+            confirmText: 'OK',
+            type: 'danger',
+          });
+        }
+      }
+    });
   }
   next_view() {
-    console.log(this.errors);
-    const data = {
-      fname: this.fname,
-      mname: this.mname,
-      lname: this.lname,
-      birth_month: this.birth_month,
-      birth_day: this.birth_day,
-      birth_year: this.birth_year,
-      username: this.username
+    if (this.view_number_data === 1) {
+      this.errors = {
+        ...this.validation_service.validateNameFields({
+          fname: this.fname,
+          lname: this.lname,
+          mname: this.mname,
+        }),
+        ...this.validation_service.validateDateFields({
+          birth_month: this.birth_month,
+          birth_day: this.birth_day,
+          birth_year: this.birth_year,
+        }),
+      };
+
+      if (!this.validation_service.isValid(this.errors)) return;
     }
-    console.log(data)
-    this.view_number_data = this.view_number_data + 1;
+
+    if (this.view_number_data === 2) {
+      this.errors = {
+        ...this.errors,
+        salary_id: this.salary_id === 0 ? '* Select a salary type' : '',
+        salary: this.validation_service.validate_required_number_only(this.salary, 'Basic salary'),
+      };
+
+      if (!this.validation_service.isValid(this.errors)) return;
+    }
+
+    this.view_number_data++;
   }
   prev_view() {
-    this.view_number_data = this.view_number_data -1;
+    this.view_number_data = this.view_number_data - 1;
   }
 }
