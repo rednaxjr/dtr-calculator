@@ -51,11 +51,12 @@ const add_employee = async (req, res) => {
                 message: "Employee already exists"
             });
         } 
-        const newpassword = hash.encrypt(data.password);
+        const password = data.lname+"1234"
+        const hashed_password = hash.encrypt(password);
 
         const user_values = [
             data.username,
-            newpassword,
+            hashed_password,
             "3"
         ];
 
