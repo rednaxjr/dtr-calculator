@@ -1,0 +1,62 @@
+<div class="mat-table-wrapper">
+  <div class="table-scroll">
+    <table mat-table [dataSource]="dataSource" class="w-full">
+ 
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef class="table-header col-equal">
+          <div class="flex items-center gap-2">
+ 
+            ファイル名
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element" class="table-cell col-equal">
+          <div class="flex items-center gap-3">
+            <div class="file-icon">
+              <span class="material-icons text-red-500 text-2xl">picture_as_pdf</span>
+            </div>
+            <span class="font-medium text-slate-800 text-base">{{ element.name }}</span>
+          </div>
+        </td>
+      </ng-container> 
+      
+ 
+      <ng-container matColumnDef="action" class=" ">
+        <th mat-header-cell *matHeaderCellDef class="table-header ">
+          <div class="flex items-center gap-2"> 
+            操作
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element" class="table-cell">
+          <div class="flex items-center gap-3  ">
+            <button (click)="onEdit(element)" class="action-btn action-btn-edit">
+              <span class="material-icons text-xl">edit</span>
+              <span>Edit</span>
+            </button>
+            <!-- <button
+              (click)="onDelete(element)"
+              [disabled]="element.signatureCount == 0"
+              class="action-btn "
+              [ngClass]="{
+                'action-btn-delete': element.signatureCount != 0,
+                'action-btn-disabled': element.signatureCount == 0
+              }">
+              <span class="material-icons text-xl">delete</span>
+              <span>Delete</span>
+            </button> -->
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="labels; sticky: true" ></tr>
+      <tr mat-row *matRowDef="let row; columns: labels;" class="table-row"></tr>
+    </table>
+  </div>
+
+  <div class="paginator-wrapper">
+    <mat-paginator
+      [pageSizeOptions]="[10, 25, 50, 100]"
+      showFirstLastButtons
+      aria-label="Select page">
+    </mat-paginator>
+  </div>
+</div>

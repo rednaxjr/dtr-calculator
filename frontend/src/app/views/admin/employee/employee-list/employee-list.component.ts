@@ -11,17 +11,18 @@ import { MatChipsModule } from '@angular/material/chips';
 import {  EmployeeService } from '../../../../services/employee/employee.service'; 
 import { ConfirmationService } from '../../../../services/general/confirmation.service';
 import { Router } from '@angular/router';
+import { EmployeeTableComponent } from '../../../../component/table/employee-table/employee-table.component';
 
 @Component({
   selector: 'app-employee-list',
   standalone: true,
   imports: [CommonModule, FormsModule, MatTableModule, MatButtonModule, MatIconModule,
-    MatInputModule, MatFormFieldModule, MatChipsModule],
+    MatInputModule, MatFormFieldModule, MatChipsModule, EmployeeTableComponent],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.scss',
 })
 export class EmployeeListComponent implements OnInit {
- 
+  employee_list:any=[];
   search = '';
   loading = true;
   columns = ['employee_id', 'name', 'position', 'department', 'status', 'actions'];
@@ -37,6 +38,8 @@ export class EmployeeListComponent implements OnInit {
     
   }
  
-
+  add_employee() {
+  this.router.navigateByUrl('/admin/employees/details');
+  }
    
 }
