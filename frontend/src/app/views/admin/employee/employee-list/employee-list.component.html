@@ -1,47 +1,36 @@
- <div class="flex items-center justify-between mb-6">
+<!-- <div class="flex items-center justify-between mb-6">
 
-  <button
-    class=" pl-2 pr-4  py-1 border shadow-md border-gray-300 rounded-lg   bg-gold text-white
+  <button class=" pl-2 pr-4  py-1 border shadow-md border-gray-300 rounded-lg   bg-gold text-white
     hover:bg-opacity-90
-    focus:outline-none focus:ring-1  focus:ring-yellow-500  flex items-center gap-x-2"
-    (click)="add_employee()">
+    focus:outline-none focus:ring-1  focus:ring-yellow-500  flex items-center gap-x-2" (click)="add_employee()">
     <mat-icon class="text-lg">add</mat-icon>
     <span class="!text-white">Add</span>
   </button>
 
-</div>
-<div
-  class="flex-1 min-h-0 bg-white rounded-10 shadow-md border border-gray-600 overflow-hidden">
+</div> -->
+<div class="flex-1 min-h-0 bg-white rounded-10 shadow-md border border-gray-600 overflow-hidden">
 
   <div class="flex flex-col w-full flex-">
-    <div
-      class="flex items-center justify-between  w-full flex-row 1 gap-2 py-2 px-4 ">
+    <div class="flex items-center justify-between  w-full flex-row 1 gap-2 py-4 px-4 ">
       <div class="relative  w-full  ">
-        <div
-          class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
           <mat-icon>search</mat-icon>
         </div>
-        <input
-          type="text"
+        <input type="text"
           class="w-full pl-10 pr-4 py-2 border shadow-md text-sm font-normal border-green rounded-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="Search " />
       </div>
       <div class="table-buttons flex w-[30%] item-center gap-x-4">
-        <button
-          class="button-gold px-4  pl-2 pr-5        flex items-center  "
-          (click)="add_employee()">
+        <button class="button-gold px-4  pl-2 pr-5        flex items-center  " (click)="add_employee()">
           <mat-icon class="text-lg">add</mat-icon>
           <span class="!text-white">Add</span>
         </button>
-        
+
       </div>
     </div>
-    <div class="w-full h-[450px] border ">
-      <table>
-        
-      </table>
+    <app-table-landscape [labels]="headers" [data]="employees">
 
-    </div>
+    </app-table-landscape>
   </div>
 
   <!-- <app-employee-table

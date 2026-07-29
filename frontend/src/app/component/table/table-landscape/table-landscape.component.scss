@@ -79,12 +79,26 @@ tbody {
 .btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 7px 14px;
+    gap: 6px; 
     border-radius: 7px;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     transition: all .15s;
     border: none;
+}
+
+.tbl-foot {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.pagination {
+    display: flex;
+    gap: 4px;
 }

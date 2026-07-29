@@ -10,23 +10,23 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
 import { EmployeeService } from '../../../../services/employee/employee.service';
 import { ConfirmationService } from '../../../../services/general/confirmation.service';
-import { Router } from '@angular/router';
-import { EmployeeTableComponent } from '../../../../component/table/employee-table/employee-table.component';
+import { Router } from '@angular/router';  
+import { TableLandscapeComponent } from '../../../../component/table/table-landscape/table-landscape.component';
 
 @Component({
   selector: 'app-employee-list',
   standalone: true,
   imports: [CommonModule, FormsModule, MatTableModule, MatButtonModule, MatIconModule,
-    MatInputModule, MatFormFieldModule, MatChipsModule, EmployeeTableComponent],
+    MatInputModule, MatFormFieldModule, MatChipsModule, TableLandscapeComponent  ],
   templateUrl: './employee-list.component.html',
   styleUrl: './employee-list.component.scss',
 })
 export class EmployeeListComponent implements OnInit {
-  employee_list: any = [];
+  employees: any = [];
   search = '';
   loading = true;
   columns = ['id', 'name', 'actions'];
-
+  headers:any=['id', 'Name', 'Actions'];
   constructor(
     private dialog: MatDialog,
     private confirm: ConfirmationService,
@@ -45,13 +45,13 @@ export class EmployeeListComponent implements OnInit {
   load_employee() {
 
     return this.employee_service.get_employees(null).subscribe((res: any) => {
-      this.employee_list = res.data[0];
-      for (let i = 0; i < this.employee_list.length; i++) {
-        const employee = this.employee_list[i];
+      this.employees = res.data[0];
+      for (let i = 0; i < this.employees.length; i++) {
+        const employee = this.employees[i];
         employee.full_name = employee.lname+", "+employee.fname
 
       }
-      console.log(this.employee_list)
+      console.log(this.employees)
     })
   }
 

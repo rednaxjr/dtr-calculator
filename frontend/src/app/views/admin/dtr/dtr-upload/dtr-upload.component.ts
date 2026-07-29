@@ -11,6 +11,7 @@ import { ParserService } from '../../../../services/parser/parser.service';
 import { TimeRecordModalComponent } from '../../../../component/modal/time-record-modal/time-record-modal.component';
 import { DtrBannerComponent } from '../../../../component/parts/dtr-banner/dtr-banner.component';
 import { YearService } from '../../../../services/year/year.service';
+import { EmployeeService } from '../../../../services/employee/employee.service';
 
 @Component({
   selector: 'app-dtr-upload',
@@ -44,11 +45,7 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
   user_id: any;
 
 
-  year_list: any = [
-    // { name: "2024" },
-    // { name: "2025" },
-    // { name: "2026" }
-  ];
+  year_list: any = [];
   month_list: any = [
     { number: 1, name: "January", dtr_count: 0 },
     { number: 2, name: "February", dtr_count: 0 },
@@ -66,6 +63,7 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
 
   year_id: any = null;
   month_id: any = null;
+  employees: any = [];
 
 
 
@@ -74,6 +72,7 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
     private year_service: YearService,
+    private employee_service: EmployeeService
   ) {
     this.banner = [
       { text: null, icon: "home", value: 0, link: "/admin/dtr", },
@@ -83,12 +82,23 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
   }
   ngOnInit() {
     this.get_year();
+    this.load_employee();
   }
   get_year() {
     this.year_service.get_year().subscribe((res: any) => {
       this.year_list = res.data;
     })
 
+  }
+  load_employee() {
+
+    return this.employee_service.get_employees(null).subscribe((res: any) => {
+      this.employees = res.data[0];
+      for (let i = 0; i < this.employees.length; i++) {
+        const employee = this.employees[i];
+      }
+      console.log(this.employees)
+    })
   }
 
 
@@ -129,9 +139,18 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
   async getResult(file: File) {
     this.file_name = file.name;
     await this.parser.parseFile(file);
-    const employees = this.parser.employees;
-    console.log(employees);
-    return employees;
+
+    const employeeMap = new Map(
+      this.employees.map((e: any) => [e.lname.trim().toUpperCase(), e.id])
+    );
+
+    return this.parser.employees.map(employee => {
+      const key = employee.name.trim().toUpperCase();
+      return {
+        ...employee,
+        id: employeeMap.get(key) ?? employee.id
+      };
+    });
   }
 
   getLates(emp: any): number {

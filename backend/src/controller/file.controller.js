@@ -65,14 +65,16 @@ const get_files = (req, res) => {
 };
 
 const save_dtr = async (req, res) => {
-    console.log("save_dtr called");
+    let conn;
     try {
+        const pool = connection.promise();
+        conn = await pool.getConnection();
+        await conn.beginTransaction();
+
+
         const files = req.files;
         const data = JSON.parse(req.body.data);
-        console.log(data)
         const folderPath = paths.join(process.cwd(), 'uploaded_files');
-
-
         if (!fs.existsSync(folderPath)) fs.mkdirSync(folderPath, { recursive: true });
 
         const uploadDir = paths.join(process.cwd(), 'uploaded_files/' + data);
@@ -80,12 +82,23 @@ const save_dtr = async (req, res) => {
         const safeName = requestedName.replace(/[^a-zA-Z0-9._ -]/g, '_');
         const filePath = paths.join(folderPath, safeName);
 
+        const dtr_data = data.map(({ user_id, logs, year_id, month_id }) =>
+            [user_id, logs, year_id, month_id]
+        );
 
+        const add_dtr = await conn.query(
+            `INSERT INTO dtr_logs (user_id, logs, year_id, month_id, created_at)
+   VALUES ? `,
+            [values.map(row => [...row, new Date()])]
+        );
+
+
+        await conn.commit();
         try {
             fs.writeFileSync(filePath, files[0].buffer);
             return res.json({
                 success: true,
-                name: safeName, 
+                name: safeName,
             });
         } catch (err) {
             console.error(err);
@@ -95,8 +108,16 @@ const save_dtr = async (req, res) => {
         return res.status(200).json({ message: 'File uploaded successfully', path: filePath, status: "success" });
 
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Server error', error: error.message });
+        if (conn) await conn.rollback();
+        console.error("Transaction error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Error saving employee"
+        });
+
+    } finally {
+        if (conn) conn.release();
     }
 };
 
