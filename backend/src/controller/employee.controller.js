@@ -11,7 +11,6 @@ const mime = require('mime-types');
 
 
 const add_employee = async (req, res) => {
-    console.log(req.body);
     let conn;
     try {
         const data = req.body;
@@ -21,8 +20,8 @@ const add_employee = async (req, res) => {
 
         const pool = connection.promise();
         conn = await pool.getConnection();
-        await conn.beginTransaction(); 
-        
+        await conn.beginTransaction();
+
         const [existing_user] = await conn.query(
             `SELECT id FROM user WHERE username = ? LIMIT 1`,
             [data.username]
@@ -34,7 +33,7 @@ const add_employee = async (req, res) => {
                 success: false,
                 message: "Username already exists"
             });
-        } 
+        }
         const birthday = `${data.birth_year}-${String(data.birth_month).padStart(2, '0')}-${String(data.birth_day).padStart(2, '0')} 00:00:00`;
 
         const [existing_employee] = await conn.query(
@@ -50,8 +49,8 @@ const add_employee = async (req, res) => {
                 success: false,
                 message: "Employee already exists"
             });
-        } 
-        const password = data.lname+"1234"
+        }
+        const password = data.lname + "1234"
         const hashed_password = hash.encrypt(password);
 
         const user_values = [
@@ -64,12 +63,12 @@ const add_employee = async (req, res) => {
             `INSERT INTO user (username, password, user_role)
              VALUES (?, ?, ?)`,
             user_values
-        ); 
+        );
         if (add_user.insertId) {
             const employee_values = [
-                data.fname,
-                data.mname,
-                data.lname,
+                (data.fname || "").toUpperCase(),
+                (data.mname || "").toUpperCase(),
+                (data.lname || "").toUpperCase(),
                 birthday,
                 data.salary,
                 data.salary_id,
@@ -108,8 +107,43 @@ const add_employee = async (req, res) => {
     }
 };
 
+const get_employees = async (req, res) => {
+    let conn;
+    try {
+        const data = req.body;
+        if (!data) {
+            return res.status(400).json({ message: "Missing data" });
+        }
 
+        const pool = connection.promise();
+        conn = await pool.getConnection();
+        await conn.beginTransaction();
 
+        const users = await conn.query(
+            `SELECT * from employees`
+        );
+
+        await conn.commit();
+
+        return res.json({
+            success: true,
+            data: users
+        });
+
+    } catch (error) {
+        if (conn) await conn.rollback();
+        console.error("Transaction error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Error saving employee"
+        });
+
+    } finally {
+        if (conn) conn.release();
+    }
+};
 module.exports = {
     add_employee,
+    get_employees
 }

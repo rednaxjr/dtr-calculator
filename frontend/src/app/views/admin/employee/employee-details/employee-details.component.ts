@@ -33,6 +33,12 @@ import { ConfirmationService } from '../../../../services/general/confirmation.s
   styleUrl: './employee-details.component.scss'
 })
 export class EmployeeDetailsComponent {
+  table_headers: any[] = [
+    { field: 'name', text: 'Name', sort: true },
+    { field: 'status', text: 'Status', sort: true },
+    { field: 'action', text: 'Action' },
+  ];
+ 
   isMobile = signal(false)
   url_id: any = null;
   errors: any = {};

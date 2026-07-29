@@ -2,14 +2,18 @@ import { Component, Input, Output, EventEmitter, ViewChild, OnInit, AfterViewIni
 import { CommonModule } from '@angular/common';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationService } from '../../../services/general/confirmation.service'; 
+import { ConfirmationService } from '../../../services/general/confirmation.service';
 import { FileService } from '../../../services/file/file.service';
 
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatIconModule } from '@angular/material/icon';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-employee-table',
   standalone: true,
-  imports: [MatTableModule, MatPaginatorModule, CommonModule],
+  imports: [MatTableModule, MatPaginatorModule, CommonModule, MatDialogModule, MatIconModule, FormsModule, MatSortModule],
   templateUrl: './employee-table.component.html',
   styleUrl: './employee-table.component.scss'
 })
@@ -19,7 +23,7 @@ export class EmployeeTableComponent implements OnInit, AfterViewInit, OnChanges 
   @Output() signatureSaved = new EventEmitter<any>();
   @Output() deleteConfirmed = new EventEmitter<void>();
 
-  labels = ['name', 'status', 'action'];
+  labels = ['full_name', 'action'];
   dataSource = new MatTableDataSource<any>([]);
 
   constructor(
@@ -38,7 +42,7 @@ export class EmployeeTableComponent implements OnInit, AfterViewInit, OnChanges 
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data']) this.dataSource.data = this.data;
-  } 
+  }
   onEdit(data: any): void {
     // const dialog = this.dialog.open(FileDetailsComponent, {
     //   data: { title: 'Edit product', type: 'edit', pdf: data },
@@ -53,7 +57,7 @@ export class EmployeeTableComponent implements OnInit, AfterViewInit, OnChanges 
     // });
   }
 
- 
+
   // onDelete(data: any): void {
   //   this.confirmation_service.confirm({
   //     title: 'Delete File',

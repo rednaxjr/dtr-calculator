@@ -16,5 +16,6 @@ router.use(cors(corsOptions));
 router.options('*', cors(corsOptions)); 
 
 router.post('/add_employee', employee_controller.add_employee);
+router.post('/get_employees', employee_controller.get_employees);
 
 module.exports = router;

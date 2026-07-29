@@ -1,0 +1,165 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.mat-table-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
+    overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow:
+        0 10px 25px -5px rgba(15, 23, 42, 0.18),
+        0 8px 10px -6px rgba(15, 23, 42, 0.12);
+}
+
+.table-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    background: #fff;
+}
+
+.table-header {
+    color: #000 !important;
+}
+
+::ng-deep .mat-mdc-header-row {
+    height: 45px !important;
+}
+
+::ng-deep .mat-mdc-header-cell {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+
+
+::ng-deep table.mat-mdc-table {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+::ng-deep .mat-mdc-table>thead {
+    display: block;
+    flex: 0 0 auto;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+}
+
+::ng-deep .mat-mdc-table>thead::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+    /* invisible track on the header */
+}
+
+::ng-deep .mat-mdc-table>tbody {
+    display: block;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+}
+
+ 
+
+/* Each row lays out as a fixed table so header and body columns line up. */
+::ng-deep .mat-mdc-header-row,
+::ng-deep .mat-mdc-row {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+
+.table-cell {
+
+    font-size: 1rem !important;
+    color: #334155;
+    border-bottom: 2px solid #e0e0e0 !important;
+}
+
+.file-icon {
+    width: 25px;
+    height: 25px;
+    background: #fff1f2;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.status-signed {
+    color: #16a34a;
+    font-weight: 500;
+}
+
+.status-unsigned {
+    color: #dc2626;
+    font-weight: 500;
+}
+
+ 
+
+.action-col-header,
+.action-col-cell {
+    width: 20%;
+    white-space: nowrap;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+ 
+ 
+ 
+
+.paginator-wrapper {
+    flex-shrink: 0;
+    border-top: 2px solid #94a3b8;
+    background: #f8fafc;
+}
+
+::ng-deep .mat-mdc-paginator {
+    background: transparent !important;
+    font-size: 1rem !important;
+}
+
+::ng-deep .mat-mdc-paginator-range-label {
+    font-size: 1rem !important;
+    color: #475569;
+}
+
+::ng-deep .mat-mdc-row:nth-child(odd) {
+    background-color: #f9fafb;
+}
+
+::ng-deep .mat-mdc-row:nth-child(even) {
+    background-color: #f3f4f6;
+}
+
+::ng-deep .mat-mdc-row:hover {
+    background-color: #e5e7eb !important;
+    transition: background-color 0.2s ease;
+
+}

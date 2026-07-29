@@ -6,8 +6,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { ConfirmationService } from '../../../services/general/confirmation.service';
-import { FileDetailsComponent } from '../../modal/file-details/file-details.component';
+import { ConfirmationService } from '../../../services/general/confirmation.service'; 
 import { FileService } from '../../../services/file/file.service';
 import { Router } from '@angular/router';
 
@@ -63,19 +62,19 @@ export class MatTableEmployeeListComponent {
   }
 
   onEdit(data: any) {
-    const dialog = this.dialog.open(FileDetailsComponent, {
-      data: { title: "Edit product", type: "edit", pdf: data },
-      hasBackdrop: true,
-      width: '95vw',
-      height: '95vh',
-      maxWidth: '95vw',
-      maxHeight: '95vh',
-    });
-    dialog.afterClosed().subscribe((result: any) => { 
-      if (result.action === 'save') {
-        this.signatureSaved.emit(result.payload);
-      }
-    }); 
+    // const dialog = this.dialog.open(FileDetailsComponent, {
+    //   data: { title: "Edit product", type: "edit", pdf: data },
+    //   hasBackdrop: true,
+    //   width: '95vw',
+    //   height: '95vh',
+    //   maxWidth: '95vw',
+    //   maxHeight: '95vh',
+    // });
+    // dialog.afterClosed().subscribe((result: any) => { 
+    //   if (result.action === 'save') {
+    //     this.signatureSaved.emit(result.payload);
+    //   }
+    // }); 
   }
   onDelete(data: any) {
     console.log(data)

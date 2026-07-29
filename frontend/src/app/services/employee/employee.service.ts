@@ -19,6 +19,9 @@ export class EmployeeService {
   add_employee(data: any) {
     return this.httpClient.post(this.url + "/add_employee", data, this.headers);
   }
+  get_employees(data: any) {
+    return this.httpClient.post(this.url + "/get_employees", data, this.headers);
+  }
   // get_year_month(data: any) {
   //   return this.httpClient.post(this.url + "/get_year_month", data, this.headers);
   // }
