@@ -3,21 +3,27 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { ConfigService } from '../config/config.service';
 import { DtrEntry, EmployeeDtr, DtrFile } from './dtr.interface';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
+import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class DtrService {
   private readonly LS_KEY = 'dtr_files';
 
-  constructor(private http: HttpClient, private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private httpClient: HttpClient,
+  ) { }
 
-  private get url() { return `${this.configService.apiUrl}/dtr`; }
+  private url = `${environment.api}/dtr`;
   private get headers() {
     return { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) };
   }
 
   async getAllFiles(): Promise<DtrFile[]> {
     try {
-      return await firstValueFrom(this.http.get<DtrFile[]>(this.url, this.headers));
+      return await firstValueFrom(this.httpClient.get<DtrFile[]>(this.url, this.headers));
     } catch {
       return this.localGetAll();
     }
@@ -35,7 +41,7 @@ export class DtrService {
       records,
     };
     try {
-      return await firstValueFrom(this.http.post<DtrFile>(this.url, file, this.headers));
+      return await firstValueFrom(this.httpClient.post<DtrFile>(this.url, file, this.headers));
     } catch {
       const list = this.localGetAll();
       list.unshift(file);
@@ -44,25 +50,9 @@ export class DtrService {
     }
   }
 
-  async updateRecord(fileId: string, record: EmployeeDtr): Promise<void> {
-    try {
-      await firstValueFrom(this.http.put(`${this.url}/${fileId}/record`, record, this.headers));
-    } catch {
-      const list = this.localGetAll().map((f: DtrFile) => {
-        if (f.id !== fileId) return f;
-        return { ...f, records: f.records.map((r: EmployeeDtr) => r.employee_name === record.employee_name ? record : r) };
-      });
-      this.localSave(list);
-    }
-  }
 
-  async deleteFile(id: string): Promise<void> {
-    try {
-      await firstValueFrom(this.http.delete(`${this.url}/${id}`, this.headers));
-    } catch {
-      this.localSave(this.localGetAll().filter((f: DtrFile) => f.id !== id));
-    }
-  }
+
+
 
   computeDtr(entries: DtrEntry[]): DtrEntry[] {
     return entries.map(e => {
@@ -95,4 +85,12 @@ export class DtrService {
     const [h, m] = time.split(':').map(Number);
     return h * 60 + (m || 0);
   }
+
+  add_dtr(data: any) {
+    return this.httpClient.post(this.url + "/add_dtr", data, this.headers);
+  }
+
+
+
+
 }

@@ -37,21 +37,7 @@ export class DtrListComponent implements OnInit {
     this.loading = false;
   }
 
-  deleteFile(file: DtrFile) {
-    this.confirm.confirm({
-      title: 'Delete DTR File',
-      message: `Remove "${file.filename}"?`,
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
-      type: 'danger',
-      isCancel: true,
-    }).subscribe(async confirmed => {
-      if (confirmed) {
-        await this.dtr_service.deleteFile(file.id);
-        await this.load();
-      }
-    });
-  }
+ 
   add_dtr() {
     this.router.navigate(['/admin/dtr/upload']);
   }

@@ -13,6 +13,7 @@ import { DtrBannerComponent } from '../../../../component/parts/dtr-banner/dtr-b
 import { YearService } from '../../../../services/year/year.service';
 import { EmployeeService } from '../../../../services/employee/employee.service';
 import { TableLandscapeComponent } from "../../../../component/table/table-landscape/table-landscape.component";
+import { DtrService } from '../../../../services/dtr/dtr.service';
 
 @Component({
   selector: 'app-dtr-upload',
@@ -24,7 +25,7 @@ import { TableLandscapeComponent } from "../../../../component/table/table-lands
 export class DtrUploadComponent implements OnDestroy, OnInit {
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-  headers: any = ["id", "name", "late", "present", "absent", "actions"]
+  headers: any = ["id", "name", "late", "present", "actions"]
   isDragging = signal(false);
   file_name: any = "";
   saving = false;
@@ -73,7 +74,8 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
     private year_service: YearService,
-    private employee_service: EmployeeService
+    private employee_service: EmployeeService,
+    private dtr_service: DtrService
   ) {
     this.banner = [
       { text: null, icon: "home", value: 0, link: "/admin/dtr", },
@@ -231,16 +233,23 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
   }
 
   submit() {
-    for (let i = 0; i < this.parser.employees.length; i++) {
 
+    for (let i = 0; i < this.parser.employees.length; i++) {
+      this.parser.employees[i].year_id = this.year_id;
+      this.parser.employees[i].month_id = this.month_id;
     }
-    console.log()
+    const data = {
+      data: this.parser.employees
+    }
+    return this.dtr_service.add_dtr(data).subscribe((res: any) => {
+
+    })
+
   }
 
   select_year(data: any) {
     this.year_id = data.id;
     this.year_service.get_year_month(data).subscribe((res: any) => {
-      console.log(res.data);
       this.month_list = res.data;
     })
 
@@ -248,7 +257,7 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
 
   select_month(data: any) {
     if (data.dtr_count > 0) return;
-    this.month_id = data;
+    this.month_id = data.id;
     console.log(this.month_id);
   }
 
