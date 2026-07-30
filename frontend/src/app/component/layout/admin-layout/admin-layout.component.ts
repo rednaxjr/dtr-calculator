@@ -65,8 +65,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
         const description = deepest.snapshot.data['description'];
         this.page_title = title;
         this.page_title2 = title2;
-        this.page_description = description;
-        console.log(this.page_description)
+        this.page_description = description; 
         if (this.isMobile) this.drawer?.close();
       });
 

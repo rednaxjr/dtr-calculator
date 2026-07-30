@@ -42,7 +42,10 @@ module.exports = {
       pink: colors.pink,
       rose: colors.rose, 
       gold:{DEFAULT:'#F9A825'},
-      gold_dk:{Default:"#F57F17"}
+      gold_dk:{Default:"#F57F17"},
+      border:{DEFAULT:"#DCE8DC"},
+      text:{DEFAULT:"#1a3020"},
+      muted:{DEFAULT:"#6B8F6B"}
     }),
     columns: {
       auto: 'auto',

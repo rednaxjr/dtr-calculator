@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
-import { EmployeeDtr, DtrEntry } from '../dtr/dtr.service';
+import { EmployeeDtr, DtrEntry } from '../dtr/dtr.interface';
 
 @Injectable({ providedIn: 'root' })
 export class ExcelParserService {

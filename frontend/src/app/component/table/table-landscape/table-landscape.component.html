@@ -2,32 +2,35 @@
     <table class="w-full">
         <thead>
             <tr>
-                <th *ngFor="let header of labels">{{ header }}</th>
+                <th *ngFor="let header of labels"
+                    class="first-letter:uppercase text-green  ">{{ header }}</th>
             </tr>
         </thead>
 
         <tbody>
             <tr *ngFor="let item of data">
                 <ng-container *ngFor="let header of labels">
-
-                    <!-- Action column -->
-                    <td *ngIf="header === 'actions'" style="display:flex; gap:6px;">
-                        <button class="btn btn-link text-xs" style="color:var(--muted);">View</button>
-                        <button class="btn btn-link text-xs" style="color:var(--muted);">Edit</button>
-                        <button class="btn btn-link text-xs" style="color:var(--red);">Delete</button>
+                    <td>
+                        <ng-container
+                            *ngIf="header === 'actions' && actions; else defaultCell">
+                            <ng-container
+                                *ngTemplateOutlet="actions; context: { $implicit: item }"></ng-container>
+                        </ng-container>
+                        <ng-template #defaultCell>
+                            {{ item[header] }}
+                        </ng-template>
                     </td>
-
-                    <!-- All other columns -->
-                    <td *ngIf="header !== 'actions'">{{ item[header] }}</td>
-
                 </ng-container>
             </tr>
         </tbody>
     </table>
-    <div class="tbl-foot">
+    <div class="tbl-foot py-5 px-4 ">
         <span id="recs-count">Showing 10 of 10 records</span>
-        <div class="pagination" id="recs-pg"><button class="pg-btn">‹</button><button class="pg-btn ">1</button><button
-                class="pg-btn active">2</button><button class="pg-btn" disabled="">›</button></div>
+        <div class="pagination" id="recs-pg"><button
+                class="pg-btn">‹</button><button
+                class="pg-btn ">1</button><button
+                class="pg-btn active">2</button><button class="pg-btn"
+                disabled>›</button></div>
     </div>
 
 </div>

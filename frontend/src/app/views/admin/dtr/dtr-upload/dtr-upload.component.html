@@ -56,12 +56,33 @@
         </div>
 
       </div>
-      <div class="overflow-x-auto">
+      <app-table-landscape [labels]="headers"
+        [data]="parser.employees">
+        <ng-container>
+          <ng-template #actions let-default let-index="index">
+            <div
+              class="flex items-center py-2 ">
+
+              <button
+                class="text-blue-600 hover:text-opacity-80 font-bold text-sm ml-10"
+                (click)="openModal(default, index)">
+                Edit
+              </button>
+              <button
+                (click)="remove_data(index)"
+                class="text-red-600 hover:text-opacity-80 font-bold text-sm ml-10">
+                Delete
+              </button>
+            </div>
+          </ng-template>
+        </ng-container>
+      </app-table-landscape>
+      <!-- <div class="overflow-x-auto">
         <table class="w-full text-sm border-collapse">
           <thead>
             <tr class="bg-green-50 text-green border-b border-green/10">
               <th
-                class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wide">ID</th>
+                class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wide">Employee ID</th>
               <th
                 class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wide">Name</th>
               <th
@@ -113,7 +134,7 @@
             }
           </tbody>
         </table>
-      </div>
+      </div> -->
     </div>
 
     <div class="w-full h-auto flex justify-end  ">

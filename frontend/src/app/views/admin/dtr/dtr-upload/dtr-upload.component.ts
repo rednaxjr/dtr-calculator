@@ -12,18 +12,19 @@ import { TimeRecordModalComponent } from '../../../../component/modal/time-recor
 import { DtrBannerComponent } from '../../../../component/parts/dtr-banner/dtr-banner.component';
 import { YearService } from '../../../../services/year/year.service';
 import { EmployeeService } from '../../../../services/employee/employee.service';
+import { TableLandscapeComponent } from "../../../../component/table/table-landscape/table-landscape.component";
 
 @Component({
   selector: 'app-dtr-upload',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, MatDialogModule, MatSnackBarModule, DtrBannerComponent, FormsModule],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, MatDialogModule, MatSnackBarModule, DtrBannerComponent, FormsModule, TableLandscapeComponent],
   templateUrl: './dtr-upload.component.html',
   styleUrl: './dtr-upload.component.scss',
 })
 export class DtrUploadComponent implements OnDestroy, OnInit {
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-
+  headers: any = ["id", "name", "late", "present", "absent", "actions"]
   isDragging = signal(false);
   file_name: any = "";
   saving = false;
@@ -97,7 +98,6 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
       for (let i = 0; i < this.employees.length; i++) {
         const employee = this.employees[i];
       }
-      console.log(this.employees)
     })
   }
 
@@ -140,17 +140,29 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
     this.file_name = file.name;
     await this.parser.parseFile(file);
 
-    const employeeMap = new Map(
-      this.employees.map((e: any) => [e.lname.trim().toUpperCase(), e.id])
-    );
+    for (const parser_data of this.parser.employees as any[]) {
+      parser_data.late = this.getLates(parser_data);
+      parser_data.present = this.getDaysPresent(parser_data);
+      parser_data.absent = this.getDaysAbsent(parser_data);
+    }
 
-    return this.parser.employees.map(employee => {
-      const key = employee.name.trim().toUpperCase();
-      return {
-        ...employee,
-        id: employeeMap.get(key) ?? employee.id
-      };
-    });
+    for (let i = 0; i < this.employees.length; i++) {
+      const employee = this.employees[i];
+      const lname = (employee.lname ?? '').trim().toUpperCase();
+
+      for (let j = 0; j < this.parser.employees.length; j++) {
+        const parser_data: any = this.parser.employees[j];
+        const parsed_name = (parser_data.name ?? '').trim().toUpperCase();
+
+        if (lname === parsed_name) {
+          parser_data.id = employee.id;
+          parser_data.name = employee.lname.charAt(0) + ". " + employee.fname;
+          break;
+        }
+      }
+    }
+
+    console.log(this.parser.employees);
   }
 
   getLates(emp: any): number {
@@ -163,7 +175,17 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
   }
 
   getDaysPresent(emp: any): number {
-    return emp.logs.filter((log: any) => log.amIn || log.amOut || log.pmIn || log.pmOut).length;
+    return emp.logs.filter((log: any) => {
+      if (log.status) return log.status !== 'Absent';
+      return !!(log.amIn || log.amOut || log.pmIn || log.pmOut);
+    }).length;
+  }
+
+  getDaysAbsent(emp: any): number {
+    return emp.logs.filter((log: any) => {
+      if (log.status) return log.status === 'Absent';
+      return !log.amIn && !log.amOut && !log.pmIn && !log.pmOut;
+    }).length;
   }
 
   toMinutes(val: any): number | null {
@@ -184,8 +206,12 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
     });
     ref.afterClosed().subscribe((result: any) => {
       if (!result) return;
-      Object.assign(this.parser.employees[index], result.employee);
+      const updated: any = this.parser.employees[index];
+      Object.assign(updated, result.employee);
       this.parser.applyHoliday(result.holidaysAdded, result.holidaysRemoved);
+      updated.late = this.getLates(updated);
+      updated.present = this.getDaysPresent(updated);
+      updated.absent = this.getDaysAbsent(updated);
     });
   }
   get filteredBanner() {
@@ -199,8 +225,16 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
   next_view() {
     this.view_number_data = 2;
   }
-  submit() {
 
+  remove_data(index: number) {
+    this.parser.removeEmployee(index);
+  }
+
+  submit() {
+    for (let i = 0; i < this.parser.employees.length; i++) {
+
+    }
+    console.log()
   }
 
   select_year(data: any) {
@@ -217,4 +251,6 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
     this.month_id = data;
     console.log(this.month_id);
   }
+
+
 }

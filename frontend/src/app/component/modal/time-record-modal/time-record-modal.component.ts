@@ -9,28 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
-
-type FieldKey = 'amIn' | 'amOut' | 'pmIn' | 'pmOut' | 'otIn' | 'otOut';
-type Session = 'AM' | 'PM' | 'OT';
-type FieldStatus = 'late' | 'ontime' | 'blank-required' | 'blank-optional' | 'neutral';
-
-interface FieldDef {
-  key: FieldKey;
-  label: string; 
-  session: Session; 
-  required: boolean; 
-  lateAfter: number | null; 
-  fillValue?: string;
-}
-
-interface StatusMeta { 
-  icon: string; 
-  locked: boolean; 
-  halfDay?: boolean; 
-  tooltip: string; 
-  badgeClass: string; 
-  rowClass: string;
-}
+import { FieldDef, StatusMeta, FieldStatus } from './time-record-modal.interface';
 
 @Component({
   selector: 'app-time-record-modal',
@@ -52,16 +31,12 @@ interface StatusMeta {
 })
 export class TimeRecordModalComponent {
   employee: any;
-
-  /** pristine snapshot used to detect edited fields */
+ 
   private original: any;
-
-  /** tracks cells filled automatically by fillAllBlank — key: "<logIndex>-<fieldKey>" */
+ 
   private autoFilledCells = new Set<string>();
 
-  saving = false;
-
-  /** standard government schedule: 08:00 in, 12:00 out, 13:00 in, 17:00 out */
+  saving = false; 
   private readonly AM_START = 8 * 60;   // 08:00
   private readonly PM_START = 13 * 60;  // 13:00
 
@@ -109,7 +84,7 @@ export class TimeRecordModalComponent {
   // OT In / OT Out are intentionally not shown; their values are folded into
   // PM Out on parse (see ParserService.resolvePmOut).
   readonly fields: FieldDef[] = [
-    { key: 'amIn',  label: 'AM In',  session: 'AM', required: true,  lateAfter: this.AM_START },
+    { key: 'amIn',  label: 'AM In',  session: 'AM', required: false, lateAfter: this.AM_START },
     { key: 'amOut', label: 'AM Out', session: 'AM', required: false, lateAfter: null, fillValue: '12:00' },
     { key: 'pmIn',  label: 'PM In',  session: 'PM', required: false, lateAfter: this.PM_START, fillValue: '13:00' },
     { key: 'pmOut', label: 'PM Out', session: 'PM', required: true,  lateAfter: null },
@@ -383,8 +358,8 @@ export class TimeRecordModalComponent {
     if (this.isHalfDay(log)) {
       const worked = this.halfSession(log);
       return worked === 'PM'
-        ? this.fields.filter(f => f.key === 'pmIn' || f.key === 'pmOut')
-        : this.fields.filter(f => f.key === 'amIn' || f.key === 'amOut');
+        ? this.fields.filter(f => f.key === 'pmOut')
+        : this.fields.filter(f => f.key === 'amOut');
     }
     return this.fields.filter(f => f.required);
   } 

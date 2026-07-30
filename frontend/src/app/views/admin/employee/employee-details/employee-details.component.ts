@@ -12,6 +12,12 @@ import { ValidationService } from '../../../../services/validation/validation.se
 import { BreadcrumbsComponent } from '../../../../component/parts/breadcrumbs/breadcrumbs.component';
 import { EmployeeService } from '../../../../services/employee/employee.service';
 import { ConfirmationService } from '../../../../services/general/confirmation.service';
+import { AdminDashboardCardComponent } from "../../../../component/parts/admin-dashboard-card/admin-dashboard-card.component";
+import { TableLandscapeComponent } from "../../../../component/table/table-landscape/table-landscape.component";
+import { MonthService } from '../../../../services/month/month.service';
+import { SalaryTypeService } from '../../../../services/salary-type/salary-type.service';
+import { Month } from '../../../../component/models/month.model';
+import { SalaryType } from '../../../../component/models/salary-type.model';
 
 
 @Component({
@@ -26,29 +32,21 @@ import { ConfirmationService } from '../../../../services/general/confirmation.s
     FormsModule,
     ReactiveFormsModule,
     MatMenuModule,
-    BreadcrumbsComponent
-
+    BreadcrumbsComponent,
+    AdminDashboardCardComponent,
+    TableLandscapeComponent
   ],
   templateUrl: './employee-details.component.html',
   styleUrl: './employee-details.component.scss'
 })
 export class EmployeeDetailsComponent {
-  table_headers: any[] = [
-    { field: 'name', text: 'Name', sort: true },
-    { field: 'status', text: 'Status', sort: true },
-    { field: 'action', text: 'Action' },
-  ];
- 
+  headers: any[] = ["month", "lates", "absent", "action"];
+  dtr_data: any[] = [];
+  new_number: any;
+  employee_id: any;
   isMobile = signal(false)
   url_id: any = null;
-  errors: any = {};
-  view_number_data: any = 1;
   banner: any;
-
-  @ViewChild('email_address_content') email_address_content!: TemplateRef<any>;
-  @ViewChild('email_address_buttons') email_address_buttons!: TemplateRef<any>;
-  @ViewChild('qr_content') qr_content!: TemplateRef<any>;
-  @ViewChild('qr_buttons') qr_buttons!: TemplateRef<any>;
   email_reg: any = '';
   fname: any = '';
   lname: any = '';
@@ -60,31 +58,11 @@ export class EmployeeDetailsComponent {
   email: any;
   user_id: any;
   file_id: any;
-  templateMap!: {
-    [key: string]: { content: TemplateRef<any>, buttons: TemplateRef<any> }
-  };
+
   birth_month: any = 0;
   month: any;
-  months = [
-    { number: 1, month: 'January' },
-    { number: 2, month: 'February' },
-    { number: 3, month: 'March' },
-    { number: 4, month: 'April' },
-    { number: 5, month: 'May' },
-    { number: 6, month: 'June' },
-    { number: 7, month: 'July' },
-    { number: 8, month: 'August' },
-    { number: 9, month: 'September' },
-    { number: 10, month: 'October' },
-    { number: 11, month: 'November' },
-    { number: 12, month: 'December' }
-  ];
-  salary_type = [
-    { number: 1, value: 'Monthly' },
-    { number: 2, value: 'Semi-monthly' },
-    { number: 3, value: 'Bi-weekly' },
-    { number: 4, value: 'Weekly' },
-  ];
+  months: Month[] = [];
+  salary_type: SalaryType[] = [];
 
 
   salary_id: any = 0;
@@ -95,166 +73,59 @@ export class EmployeeDetailsComponent {
 
 
 
+
+
+
   constructor(
-    private fb: FormBuilder,
     public router: Router,
     public activeRoute: ActivatedRoute,
     private dialog: MatDialog,
-    private breakpointObserver: BreakpointObserver,
     public validation_service: ValidationService,
     public employee_service: EmployeeService,
-    private confirmation_service: ConfirmationService
+    private confirmation_service: ConfirmationService,
+    private month_service: MonthService,
+    private salary_type_service: SalaryTypeService
   ) {
+    this.months = this.month_service.get_months();
+    this.salary_type = this.salary_type_service.get_salary_types();
+    this.activeRoute.paramMap.subscribe((params: any) => {
+      this.employee_id = params.get('id');
+    });
   }
   ngOnInit(): void {
-    this.breakpointObserver
-      .observe([Breakpoints.HandsetPortrait, Breakpoints.Small, Breakpoints.Medium])
-      .pipe(map((result) => result.matches))
-      .subscribe((matches) => {
-        this.isMobile.set(matches)
-      })
-    this.activeRoute.params.subscribe((paramsId: any) => {
-      this.url_id = paramsId.id;
-    });
+
     this.banner = [
       { text: null, icon: "home", value: 0, link: "/admin/employees", },
-      { text: "Personal Information", icon: null, value: 1 },
-      { text: "Compensation Details", icon: null, value: 2 },
     ];
-  }
-  view_number(data: any) {
-    console.log(data);
-    this.view_number_data = data.value;
+    this.load_employee_data();
   }
 
 
-
-  get filteredBanner() {
-    return this.banner.filter((item: any) => item.value <= this.view_number_data);
-  }
-  get_username() {
-    const first = this.fname?.trim().charAt(0).toLowerCase() ?? '';
-    const last = this.lname?.trim().toLowerCase().replace(/\s+/g, '') ?? '';
-    this.username = first && last ? `${first}.${last}` : first || last;
-  }
-
-
-
-  select_month(data: any) {
-    this.month = data;
-  }
-
-  block_numbers = (e: KeyboardEvent) => this.validation_service.validate_text_only(e);
-  block_letters = (e: KeyboardEvent) => this.validation_service.block_letters(e);
-
-  onNameInput(field: 'fname' | 'lname' | 'mname') {
-    const map: { [key: string]: () => string } = {
-      fname: () => this.validation_service.validateFirstName(this.fname),
-      lname: () => this.validation_service.validateLastName(this.lname),
-      mname: () => this.validation_service.validateMiddleName(this.mname),
-    };
-    this.errors[field] = map[field]();
-    console.log(this.errors)
-  }
-
-  onDateInput() {
-    const dateErrors = this.validation_service.validateDateFields({
-      birth_month: this.birth_month,
-      birth_day: this.birth_day,
-      birth_year: this.birth_year,
-    });
-    this.errors = { ...this.errors, ...dateErrors };
-  }
-
-  submit() {
-    this.errors = {
-      ...this.errors,
-      salary_id: this.salary_id === 0 ? '* Select a salary type' : '',
-      salary: this.validation_service.validate_required_number_only(this.salary, 'Basic salary'),
-    };
-
-    if (!this.validation_service.isValid(this.errors)) return;
-
+  load_employee_data() {
     const data = {
-      fname: this.fname,
-      mname: this.mname,
-      lname: this.lname,
-      birth_month: this.birth_month,
-      birth_day: this.birth_day,
-      birth_year: this.birth_year,
-      username: this.username,
-      salary: this.salary,
-      salary_id: this.salary_id,
-      sss: this.sss,
-      pag_ibig: this.pag_ibig,
-      phil_health: this.phil_health,
-    };
-
-    return this.employee_service.add_employee(data).subscribe({
-      next: (res: any) => {
-        if (res.success) {
-          this.confirmation_service.confirm({
-            title: 'Employee Added',
-            message: 'Employee has been successfully added.',
-            confirmText: 'OK',
-            type: 'success',
-          }).subscribe((confirmed: boolean) => {
-            if (confirmed) {
-              this.router.navigate(['/admin/employees']);
-            }
-          });
-        }
-      },
-      error: (err: any) => {
-        if (err.status === 409) {
-          // Duplicate user or employee
-          this.confirmation_service.confirm({
-            title: 'Already Exists',
-            message: err.error.message,  
-            confirmText: 'OK', 
-          });
-        } else { 
-          this.confirmation_service.confirm({
-            title: 'Something went wrong',
-            message: 'An error occurred while saving the employee. Please try again.',
-            confirmText: 'OK',
-            type: 'danger',
-          });
-        }
-      }
-    });
-  }
-  next_view() {
-    if (this.view_number_data === 1) {
-      this.errors = {
-        ...this.validation_service.validateNameFields({
-          fname: this.fname,
-          lname: this.lname,
-          mname: this.mname,
-        }),
-        ...this.validation_service.validateDateFields({
-          birth_month: this.birth_month,
-          birth_day: this.birth_day,
-          birth_year: this.birth_year,
-        }),
-      };
-
-      if (!this.validation_service.isValid(this.errors)) return;
+      id: this.employee_id,
     }
-
-    if (this.view_number_data === 2) {
-      this.errors = {
-        ...this.errors,
-        salary_id: this.salary_id === 0 ? '* Select a salary type' : '',
-        salary: this.validation_service.validate_required_number_only(this.salary, 'Basic salary'),
-      };
-
-      if (!this.validation_service.isValid(this.errors)) return;
-    }
-
-    this.view_number_data++;
+    return this.employee_service.get_employee_data(data).subscribe((res: any) => {
+      const result = res?.data?.[0];
+      if (!result) return;
+      const birthday = result.birthday ? new Date(result.birthday) : null;
+      this.fname = result.fname ?? '';
+      this.mname = result.mname ?? '';
+      this.lname = result.lname ?? '';
+      this.birth_month = result.birth_month ?? (birthday ? birthday.getMonth() + 1 : 0);
+      this.birth_day = result.birth_day ?? (birthday ? String(birthday.getDate()).padStart(2, '0') : '');
+      this.birth_year = result.birth_year ?? (birthday ? String(birthday.getFullYear()) : '');
+      this.username = result.username ?? '';
+      this.salary = result.salary ?? '';
+      this.salary_id = result.salary_id ?? 0;
+      this.sss = result.sss ?? '';
+      this.pag_ibig = result.pag_ibig ?? '';
+      this.phil_health = result.phil_health ?? '';
+    })
   }
-  prev_view() {
-    this.view_number_data = this.view_number_data - 1;
+
+  view_data(data: any) {
+    this.router.navigateByUrl('/admin/employees/details/' + data.id);
   }
+
 }

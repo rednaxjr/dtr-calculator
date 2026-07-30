@@ -45,10 +45,7 @@ const add_employee = async (req, res) => {
 
         if (existing_employee.length > 0) {
             await conn.rollback();
-            return res.status(409).json({
-                success: false,
-                message: "Employee already exists"
-            });
+            return res.status(409).json({ success: false, message: "Employee already exists" });
         }
         const password = data.lname + "1234"
         const hashed_password = hash.encrypt(password);
@@ -66,16 +63,9 @@ const add_employee = async (req, res) => {
         );
         if (add_user.insertId) {
             const employee_values = [
-                (data.fname || "").toUpperCase(),
-                (data.mname || "").toUpperCase(),
-                (data.lname || "").toUpperCase(),
-                birthday,
-                data.salary,
-                data.salary_id,
-                data.sss,
-                data.pag_ibig,
-                data.phil_health,
-                add_user.insertId
+                (data.fname || "").toUpperCase(), (data.mname || "").toUpperCase(),  (data.lname || "").toUpperCase(),
+                birthday, data.salary,data.salary_id, data.sss, data.pag_ibig,
+                data.phil_health, add_user.insertId
             ];
 
             await conn.query(
@@ -84,24 +74,13 @@ const add_employee = async (req, res) => {
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
                 employee_values
             );
-        }
-
-        await conn.commit();
-
-        return res.json({
-            success: true,
-            message: "Employee saved successfully!",
-        });
-
+        } 
+        await conn.commit(); 
+        return res.json({ success: true, message: "Employee saved successfully!", }); 
     } catch (error) {
         if (conn) await conn.rollback();
-        console.error("Transaction error:", error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Error saving employee"
-        });
-
+        console.error("Transaction error:", error); 
+        return res.status(500).json({ success: false, message: "Error saving employee" }); 
     } finally {
         if (conn) conn.release();
     }
@@ -111,39 +90,58 @@ const get_employees = async (req, res) => {
     let conn;
     try {
         const data = req.body;
-        if (!data) {
-            return res.status(400).json({ message: "Missing data" });
-        }
-
+        if (!data) { return res.status(400).json({ message: "Missing data" }); } 
         const pool = connection.promise();
         conn = await pool.getConnection();
-        await conn.beginTransaction();
-
+        await conn.beginTransaction(); 
         const users = await conn.query(
-            `SELECT * from employees`
-        );
-
-        await conn.commit();
-
-        return res.json({
-            success: true,
-            data: users
-        });
-
+            `SELECT * from employees `,
+        ); 
+        await conn.commit(); 
+        return res.json({ success: true, data: users }); 
     } catch (error) {
         if (conn) await conn.rollback();
-        console.error("Transaction error:", error);
-
+        console.error("Transaction error:", error); 
         return res.status(500).json({
             success: false,
             message: "Error saving employee"
-        });
+        }); 
+    } finally {
+        if (conn) conn.release();
+    }
+};
 
+const get_employee_data = async (req, res) => {
+    let conn;
+    try {
+        const data = req.body;
+        console.log(data)
+        if (!data) { return res.status(400).json({ message: "Missing data" }); } 
+        const pool = connection.promise();
+        conn = await pool.getConnection();
+        await conn.beginTransaction(); 
+        const [user] = await conn.query(
+            `SELECT * from employees where id = ?`,
+            [data.id]
+         );
+        await conn.commit();
+        return res.json({
+            success: true,
+            data: user
+        });
+    } catch (error) {
+        if (conn) await conn.rollback();
+        console.error("Transaction error:", error); 
+        return res.status(500).json({
+            success: false,
+            message: "Error saving employee"
+        }); 
     } finally {
         if (conn) conn.release();
     }
 };
 module.exports = {
     add_employee,
-    get_employees
+    get_employees,
+    get_employee_data
 }

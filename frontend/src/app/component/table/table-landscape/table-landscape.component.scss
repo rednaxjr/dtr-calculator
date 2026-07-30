@@ -35,9 +35,9 @@ thead {
         text-align: left;
         font-size: 11px;
         font-weight: 700;
-        color: var(--green);
+
         background: #F1F8F1;
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid #DCE8DC;
         white-space: nowrap;
     }
 }
@@ -48,48 +48,44 @@ tbody {
     unicode-bidi: isolate;
     border-color: inherit;
 
+    tr {
+        width:100%;
+        transition: background-color .15s;
+
+        &:nth-child(odd) {
+            background-color: #FFFFFF;
+        }
+
+        &:nth-child(even) {
+            background-color: #F8FBF8;
+        }
+
+        &:nth-child(odd):hover {
+            background-color: #F1F8F1;
+        }
+
+        &:nth-child(even):hover {
+            background-color: #E6F1E6;
+        }
+    }
+
     td {
-        font-size: 0.75rem
-            /* 12px */
-        ;
-        line-height: 1rem
-            /* 16px */
-        ;
-        padding: 10px 14px;
-        font-size: 13px;
-        color: var(--text);
-        border-bottom: 1px solid #F4F8F4;
+        font-size: 12px !important;  
+        line-height: 1.25rem !important ;
+
+        padding: 4px 14px; 
+        color: #1a3020;
+        border-bottom: 1px solid #DCE8DC; 
         vertical-align: middle;
         display: table-cell;
         vertical-align: inherit;
         unicode-bidi: isolate;
     }
 }
-
-.btn-link {
-    color: var(--green);
-    font-size: 12px;
-    font-weight: 500;
-    padding: 0;
-    cursor: pointer;
-    background: none;
-    border: none;
-}
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px; 
-    border-radius: 7px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all .15s;
-    border: none;
-}
+ 
 
 .tbl-foot {
-    padding: 10px 16px;
+
     border-top: 1px solid var(--border);
     display: flex;
     align-items: center;

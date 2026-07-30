@@ -55,10 +55,18 @@ body {
         margin: 0;
     }
 }
+ 
+@media (max-width: 1024px) {
+    .fullscreen-dialog.cdk-overlay-pane {
+        width: 95vw !important;
+        height: 95vh !important;
+        max-width: 95vw !important;
+        max-height: 95vh !important;
+    }
+}
 
-@media (max-width: 768px) {
-
-    // tablet / mobile: take the full screen so the table stays usable
+@media (max-width: 768px) { 
+    
     .time-record-dialog.cdk-overlay-pane {
         width: 100vw !important;
         height: 100vh !important;
@@ -145,5 +153,17 @@ body {
         box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.4);
     }
 
-   
+
+}
+
+
+.search-field {
+    .search-icon {
+        transition: color .15s;
+        color: var(--muted, #6b7280);
+    }
+
+    &:focus-within .search-icon {
+        color: green;
+    }
 }

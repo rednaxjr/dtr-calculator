@@ -1,0 +1,29 @@
+<ol class="flex items-center h-full gap-1">
+    <li *ngFor="let item of data; let i = index" class="flex flex-row items-center gap-1">
+
+        <mat-icon *ngIf="i > 0" class="material-symbols-sharp text-gray-300 select-none"
+            style="font-size: 24px; width: 24px; height: 24px;" aria-hidden="true">
+            chevron_right
+        </mat-icon>
+
+        <div class="flex items-center gap-1.5 px-2 py-1 rounded-md transition-colors duration-150" [ngClass]="item.value === view_number
+          ? '  text-black'
+          : 'text-gray-500 hover:text-gray-700 cursor-pointer'"
+            (click)="item.value !== view_number && select_data(item)">
+
+            <mat-icon *ngIf="item.icon" class="material-symbols-sharp"
+                style="font-size: 24px; width: 24px; height: 24px;" aria-hidden="true"
+                (click)="router.navigate([item.link])">
+                {{ item.icon }}
+            </mat-icon>
+
+            <span class="text-lg font-medium text-black whitespace-nowrap" [ngClass]="item.value === view_number
+          ? '  text-black'
+          : 'text-gray-500  hover:text-gray-700 cursor-pointer'"
+                (click)="item.value !== view_number && select_data(item)">{{
+                item.text
+                }}</span>
+
+        </div>
+    </li>
+</ol>

@@ -45,6 +45,12 @@ export class ParserService {
     logsEnd: 42,
   };
 
+  removeEmployee(index: number): void {
+    this.employees.splice(index, 1);
+    this.provenance.splice(index, 1);
+    console.log(this.provenance)
+  }
+
   clear() {
     this.employees = [];
     this.error = null;

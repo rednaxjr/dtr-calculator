@@ -1,275 +1,114 @@
 <div class="w-full h-full flex flex-col gap-4">
-    <app-breadcrumbs [data]="filteredBanner" [view_number]="view_number_data"
-        (select_view)="view_number($event)" />
+    <app-breadcrumbs [data]="banner" [view_number]="new_number" />
 
-    <div class="flex flex-col lg:xl:2xl:flex-row w-full h-fit pb-10  gap-4">
-
-        <div
-            class="bg-white rounded-lg shadow-md border p-4 pb-10  w-full   h-fit"
-            *ngIf="view_number_data == 1">
-
-            <div class="mb-0.5">
-                <h3 class="text-lg font-bold text-green">Employee's
-                    Information</h3>
-            </div>
-            <p class="text-sm  ">Personal
-                Information</p>
+    <div class="flex flex-row w-full gap-x-4">
+        <div class="profile-panel flex flex-col w-[285px] h-full gap-y-3">
             <div
-                class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
-                <div
-                    class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
-                    <div class="input-fields">
-                        <label for="fname">First name</label>
-                        <input name="fname" [(ngModel)]="fname" type="text"
-                            (ngModelChange)="get_username(); onNameInput('fname')"
-                            (keypress)="block_numbers($event)"
-                            class="input-text uppercase"
-                            [ngClass]="{'input-error': errors.fname}" />
-                        <div *ngIf="errors.fname"
-                            class="w-full text-red-400 text-xs mt-1">
-                            {{ errors.fname }}
-                        </div>
-                    </div>
-                    <div class="input-fields">
-                        <label for="mname">Middle name
-                            <span class="text-sm">(Optional)</span>
-                        </label>
-                        <input name="mname" [(ngModel)]="mname" type="text"
-                            (keypress)="block_numbers($event)"
-                            (ngModelChange)="onNameInput('mname')"
-                            class="input-text uppercase"
-                            [ngClass]="{'input-error': errors.mname}" />
-                        <div *ngIf="errors.mname"
-                            class="w-full text-red-400 text-xs mt-1">
-                            {{ errors.mname }}
-                        </div>
-                    </div>
-                    <div class="input-fields">
-                        <label for="lname">Last name</label>
-                        <input name="lname" [(ngModel)]="lname" type="text"
-                            (ngModelChange)="get_username(); onNameInput('lname')"
-                            (keypress)="block_numbers($event)"
-                            class="input-text uppercase"
-                            [ngClass]="{'input-error': errors.lname}" />
-                        <div *ngIf="errors.lname"
-                            class="w-full text-red-400 text-xs mt-1">
-                            {{ errors.lname }}
-                        </div>
-                    </div>
-                    <div class="input-fields">
-                        <label for="bdate">Birth date</label>
-                        <div class="flex gap-2">
-                            <div class="flex flex-col gap-1 flex-[2]">
-                                <span class="text-sm text-gray-400">Month</span>
-                                <select [(ngModel)]="birth_month"
-                                    (ngModelChange)="onDateInput()"
-                                    class="mt-[5px] h-[30px] w-full p-[5px] text-[12px] font-bold border rounded-md shadow-sm bg-white appearance-none"
-                                    [class.border-red-400]="errors.birth_month"
-                                    [class.border-gray-600]="!errors.birth_month">
-                                    <option [ngValue]="0">Select Month</option>
-                                    <option *ngFor="let month of months"
-                                        [ngValue]="month.number">
-                                        {{ month.month }}
-                                    </option>
-                                </select>
-                                <div *ngIf="errors.birth_month"
-                                    class="w-full text-red-400 text-xs">
-                                    {{ errors.birth_month }}
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <span class="text-sm text-gray-400">Day</span>
-                                <input name="birth_day" [(ngModel)]="birth_day"
-                                    type="text" maxlength="2"
-                                    placeholder="DD"
-                                    (keypress)="block_letters($event)"
-                                    (ngModelChange)="onDateInput()"
-                                    class="input-text"
-                                    [ngClass]="{'input-error': errors.birth_day}" />
-                                <div *ngIf="errors.birth_day"
-                                    class="w-full text-red-400 text-xs">
-                                    {{ errors.birth_day }}
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <span class="text-sm text-gray-400">Year</span>
-                                <input name="birth_year"
-                                    [(ngModel)]="birth_year" type="text"
-                                    maxlength="4"
-                                    placeholder="YYYY"
-                                    (keypress)="block_letters($event)"
-                                    (ngModelChange)="onDateInput()"
-                                    class="input-text"
-                                    [ngClass]="{'input-error': errors.birth_year}" />
-                                <div *ngIf="errors.birth_year"
-                                    class="w-full text-red-400 text-xs">
-                                    {{ errors.birth_year }}
-                                </div>
-                            </div>
+                class="flex flex-col items-center rounded-10 px-4 py-6 border-green-100 border-2 w-full h-auto bg-white shadow-md">
+                <div class="profile-avatar shadow-md">{{ fname | slice:0:1 }}{{
+                    lname | slice:0:1 }}</div>
 
-                        </div>
+                <div class="w-full flex flex-col gap-y-1">
+                    <p
+                        class="text-green text-sm font-bold items-center justify-center text-center">
+                        {{ fname }}
+                        {{ mname ? (mname | slice:0:1) + '.' : '' }}
+                        {{ lname }}
+                    </p>
+                    <p
+                        class=" text-sm  text-muted items-center justify-center text-center">
+                        Employee ID: {{ employee_id }}
+                    </p>
+                    <p
+                        class=" text-sm text-muted  items-center justify-center text-center">
+                        Position: Doggy
+                    </p>
+                </div>
+            </div>
+
+            <div
+                class="flex flex-col rounded-10 p-4 border-2 border-green-100 w-full h-[250px] bg-white shadow-md">
+
+                <h3 class="text-green text-base font-bold mb-4">
+                    Contact Details
+                </h3>
+
+                <div class="flex flex-col gap-4">
+
+                    <div class="flex flex-col  ">
+                        <span class="text-xs text-muted">Contact
+                            Number</span>
+                        <span
+                            class="text-sm text-green font-medium">09**********</span>
+                    </div>
+
+                    <div class="flex flex-col ">
+                        <span class="text-xs text-muted">Email</span>
+                        <span
+                            class="text-sm text-green font-medium">example
+                        </span>
+                    </div>
+
+                    <div class="flex flex-col ">
+                        <span class="text-xs text-muted">Address</span>
+                        <span class="text-sm text-green font-medium">Sample
+                            addres brgy. sample Sample city</span>
                     </div>
 
                 </div>
+
             </div>
-            <p class="text-sm   pt-10">Account
-                Information</p>
+        </div>
+        <div class="information-panel flex flex-col w-full h-full   gap-y-4">
+            <app-admin-dashboard-card> </app-admin-dashboard-card>
             <div
-                class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3  ">
-                <div
-                    class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
-                    <div class="input-fields ">
-                        <label for="username">Username</label>
-                        <input name="username" [(ngModel)]="username" disabled
-                            type="text" class="input-text uppercase">
+                class="flex-1 min-h-0 bg-white rounded-10 shadow-md border border-border overflow-hidden">
+                <div class="flex flex-col w-full  ">
+                    <div
+                        class="flex items-center justify-between  w-full flex-row  gap-2 py-4 px-4 ">
+
+                        <div class="  relative  w-full  search-field">
+                            <div
+                                class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <mat-icon class="search-icon">search</mat-icon>
+                            </div>
+                            <input type="text"
+                                class="searchbar w-full pl-10 pr-4 py-2 border shadow-md text-sm font-normal
+                                        border-green rounded-10 focus:outline-none focus:ring-2
+                                        focus:ring-green-500 focus:border-text"
+                                placeholder="Search " />
+                        </div>
+                        <div
+                            class="table-buttons flex w-[30%] item-center gap-x-4">
+                            <button
+                                class="button-gold px-4  pl-2 pr-5        flex items-center  ">
+                                <mat-icon class="text-lg">add</mat-icon>
+                                <span class="!text-white">Add</span>
+                            </button>
+
+                        </div>
                     </div>
+
+                    <app-table-landscape [labels]="headers"
+                        [data]="dtr_data">
+                        <ng-container>
+                            <ng-template #actions let-default
+                                let-index="index">
+                                <div
+                                    class="flex items-center py-2 ">
+                                    <button
+                                        class="text-green hover:text-opacity-80 font-bold text-sm"
+                                        (click)="view_data(default);">
+                                        View
+                                    </button>
+                                </div>
+                            </ng-template>
+                        </ng-container>
+                    </app-table-landscape>
+
                 </div>
             </div>
         </div>
-
-        <div
-            class="bg-white rounded-lg shadow-md border p-4 pb-10 w-full   h-fit"
-            *ngIf="view_number_data == 2">
-            <div class="mb-0.5">
-                <h3 class="text-lg font-bold text-green">Compensation
-                    Details</h3>
-            </div>
-            <p class="text-sm">Salary Information</p>
-            <div
-                class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
-                <div
-                    class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
-
-                    <div class="input-fields">
-                        <label for="lname">Salary type</label>
-                        <select [(ngModel)]="salary_id"
-                            class="mt-[5px] h-[30px] w-full p-[5px] text-[12px] font-bold border rounded-md shadow-sm bg-white appearance-none"
-                            [class.border-red-400]="errors.salary_id"
-                            [class.border-gray-600]="!errors.salary_id">
-                            <option [ngValue]="0">Select salary type</option>
-                            <option *ngFor="let item of salary_type"
-                                [ngValue]="item.number">
-                                {{ item.value }}
-                            </option>
-                        </select>
-                        <div *ngIf="errors.salary_id"
-                            class="w-full text-red-400 text-xs">
-                            {{ errors.salary_id }}
-                        </div>
-                    </div>
-                    <div class="input-fields">
-                        <label for="salary">Basic Salary</label>
-                        <input name="salary" [(ngModel)]="salary" type="text"
-                            (keypress)="block_letters($event)"
-                            (ngModelChange)="errors['salary'] = validation_service.validate_required_number_only(salary, 'Basic salary')"
-                            class=" input-text uppercase"
-                            [ngClass]="{'input-error': errors.salary}" />
-                        <div *ngIf="errors.salary"
-                            class="w-full text-red-400 text-xs mt-1">
-                            {{ errors.salary }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <p class="text-sm pt-6">Government Contributions</p>
-            <div
-                class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
-                <div
-                    class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
-
-                    <div class="input-fields">
-                        <label>SSS contribution</label>
-                        <div class="relative">
-                            <span
-                                class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs font-bold mt-[3px]">₱</span>
-                            <input name="sss" [(ngModel)]="sss" type="text"
-                                disabled
-                                class="input-text !pl-5" />
-                        </div>
-
-                    </div>
-                    <div class="input-fields">
-                        <label>PhilHealth contribution</label>
-                        <div class="relative">
-                            <span
-                                class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs font-bold mt-[3px]">₱</span>
-                            <input name="philhealth" [(ngModel)]="phil_health"
-                                type="text" disabled
-                                class="input-text !pl-5" />
-                        </div>
-                    </div>
-                    <div class="input-fields">
-                        <label>Pag-IBIG contribution</label>
-                        <div class="relative">
-                            <span
-                                class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs font-bold mt-[3px]">₱</span>
-                            <input name="pagibig" [(ngModel)]="pag_ibig"
-                                type="text" disabled
-                                class="input-text !pl-5" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        @if(isMobile()) {
-        <div class="w-full flex gap-3">
-            <button (click)="prev_view()" *ngIf="view_number_data > 1"
-                class="flex flex-1 bg-green text-white justify-center items-center gap-2
-           px-4 py-2 rounded-md transition-all duration-200 border border-gray-300
-           active:scale-95 active:brightness-90"> 
-                Back
-            </button>
-            <button (click)="next_view()" *ngIf="view_number_data < 2"
-                class="flex flex-1 bg-green text-white justify-center items-center gap-2
-           px-4 py-2 rounded-md transition-all duration-200 border border-gray-300
-           active:scale-95 active:brightness-90">
-                Next 
-            </button>
-            <button (click)="submit()" *ngIf="view_number_data === 3"
-                class="flex flex-1 bg-green text-white justify-center items-center gap-2
-           px-4 py-2 rounded-md transition-all duration-200 border border-gray-300
-           active:scale-95 active:brightness-90"> 
-                Submit
-            </button>
-
-        </div>
-        }
-
     </div>
-    @if(!isMobile()) {
-    <div class="w-full flex justify-between pb-4">
-        <div class="flex pb-4">
-            <button (click)="prev_view()" *ngIf="view_number_data > 1"
-                class="flex shadow-md items-center relative bg-green gap-2 text-white px-5 py-2
-             rounded-md transition-all duration-200 border border-gray-300
-             hover:brightness-110 hover:shadow-lg hover:scale-[1.02]
-             active:scale-95 active:brightness-90
-             focus:outline-none focus:ring-2 focus:ring-green/50 focus:ring-offset-2"> 
-                Back
-            </button>
-        </div>
-        <div class="flex pb-4">
-            <button (click)="next_view()" *ngIf="view_number_data < 2"
-                class="flex shadow-md items-center relative bg-green gap-2 text-white px-5 py-2
-             rounded-md transition-all duration-200 border border-gray-300
-             hover:brightness-110 hover:shadow-lg hover:scale-[1.02]
-             active:scale-95 active:brightness-90
-             focus:outline-none focus:ring-2 focus:ring-green/50 focus:ring-offset-2">
-                Next 
-            </button>
-            <button (click)="submit()" *ngIf="view_number_data === 2"
-                class="flex shadow-md items-center relative bg-green gap-2 text-white px-5 py-2
-             rounded-md transition-all duration-200 border border-gray-300
-             hover:brightness-110 hover:shadow-lg hover:scale-[1.02]
-             active:scale-95 active:brightness-90
-             focus:outline-none focus:ring-2 focus:ring-green/50 focus:ring-offset-2"> 
-                Submit
-            </button>
-        </div>
-
-    </div>
-    }
 
 </div>

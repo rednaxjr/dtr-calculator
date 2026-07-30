@@ -3,7 +3,8 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 // import { ConfirmDialogComponent,  } from './confirm-dialog/confirm-dialog.component';
 // ConfirmationDialogComponent
 import { Observable } from 'rxjs';
-import { ConfirmationDialogComponent,ConfirmDialogData } from '../../component/parts/confirmation-dialog/confirmation-dialog.component'; 
+import { ConfirmationDialogComponent } from '../../component/parts/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmDialogData } from '../../component/parts/confirmation-dialog/confirmation-dialog.interface';
  
 
 @Injectable({

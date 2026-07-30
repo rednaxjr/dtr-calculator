@@ -4,7 +4,8 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import { DtrFile, DtrService } from '../../../../services/dtr/dtr.service';
+import { DtrService } from '../../../../services/dtr/dtr.service';
+import { DtrFile } from '../../../../services/dtr/dtr.interface';
 import { ConfirmationService } from '../../../../services/general/confirmation.service';
 
 @Component({

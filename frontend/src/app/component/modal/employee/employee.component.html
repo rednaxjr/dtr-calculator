@@ -1,0 +1,289 @@
+<div class="flex flex-col h-full">
+<div
+    class="modal-header w-full shrink-0 bg-green flex justify-between items-center px-8  py-4">
+    <div class="header-info flex flex-row items-center gap-3  flex-wrap">
+        <div
+            class="header-icon flex items-center justify-center w-[24px] h-[24px] shrink-0 rounded-full border-2 border-white !text-white">
+            <mat-icon
+                style="display:flex;align-items:center;justify-content:center;font-size:16px;width:16px;height:16px;line-height:16px">person</mat-icon>
+        </div>
+        <p
+            class="header-title text-lg text-white leading-none m-0">{{data.title}}
+            Employee</p>
+    </div>
+    <div class="flex justify-end">
+        <button class="flex items-center text-center"
+            (click)="dialogRef.close()" aria-label="Close dialog">
+            <mat-icon aria-label="Close" class="text-white">close</mat-icon>
+        </button>
+    </div>
+</div>
+
+<div class="modal-body p-4 flex-1 overflow-y-auto">
+    <div class="hidden lg:block">
+        <div class="flex items-center gap-6 border-b border-[#DCE8DC]">
+            <button *ngFor="let section of sections; let i = index"
+                type="button"
+                (click)="selectTab(i)"
+                class="relative pb-3 text-sm font-medium transition-colors"
+                [ngClass]="activeTab === i ? 'text-green' : 'text-gray-500 hover:text-gray-700'">
+                {{ section.title }}
+                <span *ngIf="get_section_error_count(i) > 0"
+                    class="absolute -top-2 -right-3 min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
+                    {{ get_section_error_count(i) }}
+                </span>
+                <span *ngIf="activeTab === i"
+                    class="absolute left-0 -bottom-px h-0.5 w-full bg-green"></span>
+            </button>
+        </div>
+    </div>
+    <div class="lg:hidden">
+        <div class="relative">
+            <button type="button" (click)="dropdownOpen = !dropdownOpen"
+                class="relative w-full flex items-center justify-between px-4 py-2.5 border rounded-10 bg-white text-sm font-medium text-green transition-colors"
+                [ngClass]="dropdownOpen ? 'border-green ring-2 ring-green ring-opacity-20' : 'border-[#DCE8DC]'">
+                <span class="flex items-center gap-2">
+                    {{ sections[activeTab].title }}
+                    <span *ngIf="get_section_error_count(activeTab) > 0"
+                        class="min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
+                        {{ get_section_error_count(activeTab) }}
+                    </span>
+                </span>
+                <mat-icon class="transition-transform duration-200"
+                    [class.rotate-180]="dropdownOpen">expand_more</mat-icon>
+            </button>
+
+            <div *ngIf="dropdownOpen"
+                class="absolute left-0 right-0 top-full mt-1 z-10 rounded-10 border border-[#DCE8DC] bg-white shadow-lg overflow-hidden">
+                <button *ngFor="let section of sections; let i = index"
+                    type="button"
+                    (click)="selectTab(i)"
+                    class="relative w-full text-left px-4 py-2.5 text-sm"
+                    [ngClass]="activeTab === i ? 'bg-green text-white font-medium' : 'text-gray-700 hover:bg-[#F1F8F1]'">
+                    {{ section.title }}
+                    <span *ngIf="get_section_error_count(i) > 0"
+                        class="absolute top-1/2 -translate-y-1/2 right-3 min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
+                        {{ get_section_error_count(i) }}
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div> 
+    <div class="py-4"
+        *ngIf="activeTab == 0">
+        <div class="mb-0.5">
+            <h3 class="text-lg font-bold text-green">Employee's
+                Information</h3>
+        </div>
+        <p class="text-sm  ">Personal
+            Information</p>
+        <div
+            class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
+            <div
+                class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
+                <div class="input-fields">
+                    <label for="fname">First name</label>
+                    <input name="fname" [(ngModel)]="fname" type="text"
+                        (ngModelChange)="get_username(); on_input('fname')"
+                        (keypress)="validation_service.validate_text_only($event)"
+                        class="input-text uppercase"
+                        [ngClass]="{'input-error': errors.fname}" />
+                    <div *ngIf="errors.fname"
+                        class="w-full text-red-400 font-medium mt-2 text-xs italic">
+                        {{ errors.fname }}
+                    </div>
+                </div>
+                <div class="input-fields">
+                    <label for="mname">Middle name
+                        <span class="text-sm">(Optional)</span>
+                    </label>
+                    <input name="mname" [(ngModel)]="mname" type="text"
+                        (keypress)="validation_service.validate_text_only($event)"
+                        (ngModelChange)="on_input('mname')"
+                        class="input-text uppercase"
+                        [ngClass]="{'input-error': errors.mname}" />
+                    <div *ngIf="errors.mname"
+                        class="w-full text-red-400 font-medium mt-2 text-xs  italic">
+                        {{ errors.mname }}
+                    </div>
+                </div>
+                <div class="input-fields">
+                    <label for="lname">Last name</label>
+                    <input name="lname" [(ngModel)]="lname" type="text"
+                        (ngModelChange)="get_username(); on_input('lname')"
+                        (keypress)="validation_service.validate_text_only($event)"
+                        class="input-text uppercase"
+                        [ngClass]="{'input-error': errors.lname}" />
+                    <div *ngIf="errors.lname"
+                        class="w-full text-red-400 font-medium mt-2 text-xs  italic">
+                        {{ errors.lname }}
+                    </div>
+                </div>
+
+                  <div class="input-fields">
+                    <label for="bdate">Birth date</label>
+                    <div class="birthdate_fields flex flex-col lg:flex-row gap-2">
+                        <div class="flex flex-col gap-1 w-full">
+                            <span class="text-sm text-gray-400">Month</span>
+                            <select [(ngModel)]="birth_month"
+                                (ngModelChange)="on_input('month')"
+                                class="mt-[5px] h-[30px] w-full p-[5px] text-[12px] font-bold border rounded-md shadow-sm bg-white appearance-none"
+                                [class.border-red-400]="errors.birth_month"
+                                [class.border-gray-600]="!errors.birth_month">
+                                <option [ngValue]="0">Select Month</option>
+                                <option *ngFor="let month of months"
+                                    [ngValue]="month.number">
+                                    {{ month.month }}
+                                </option>
+                            </select>
+                            <div *ngIf="errors.birth_month"
+                                class="w-full text-red-400 text-xs">
+                                {{ errors.birth_month }}
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1 w-full">
+                            <span class="text-sm text-gray-400">Day</span>
+                            <input name="birth_day" [(ngModel)]="birth_day"
+                                type="text" maxlength="2"
+                                placeholder="DD"
+                                (keypress)="validation_service.block_letters($event)"
+                                (ngModelChange)="on_input('day')"
+                                class="input-text"
+                                [ngClass]="{'input-error': errors.birth_day}" />
+                            <div *ngIf="errors.birth_day"
+                                class="w-full text-red-400 text-xs">
+                                {{ errors.birth_day }}
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1 w-full">
+                            <span class="text-sm text-gray-400">Year</span>
+                            <input name="birth_year"
+                                [(ngModel)]="birth_year" type="text"
+                                maxlength="4"
+                                placeholder="YYYY"
+                                (keypress)="validation_service.block_letters($event)"
+                                (ngModelChange)="on_input('year')"
+                                class="input-text"
+                                [ngClass]="{'input-error': errors.birth_year}" />
+                            <div *ngIf="errors.birth_year"
+                                class="w-full text-red-400 text-xs">
+                                {{ errors.birth_year }}
+                            </div>
+                        </div>
+
+                    </div>
+                </div> 
+
+            </div>
+ 
+              
+        </div>
+        <div
+            class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3  ">
+            <div
+                class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
+                <div class="input-fields ">
+                    <label for="username">Username</label>
+                    <input name="username" [(ngModel)]="username" disabled
+                        type="text" class="input-text uppercase">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="py-4"
+        *ngIf="activeTab == 1">
+        <div class="mb-0.5 flex items-center gap-2">
+            <h3 class="text-lg font-bold text-green">Compensation
+                Details</h3> 
+        </div>
+        <p class="text-sm">Salary Information</p>
+        <div
+            class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
+            <div
+                class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
+
+                <div class="input-fields">
+                    <label for="lname">Salary type</label>
+                    <select [(ngModel)]="salary_id"
+                        class="mt-[5px] h-[30px] w-full p-[5px] text-[12px] font-bold border rounded-md shadow-sm bg-white appearance-none"
+                        [class.border-red-400]="errors.salary_id"
+                        [class.border-gray-600]="!errors.salary_id">
+                        <option [ngValue]="0">Select salary type</option>
+                        <option *ngFor="let item of salary_type"
+                            [ngValue]="item.number">
+                            {{ item.value }}
+                        </option>
+                    </select>
+                    <div *ngIf="errors.salary_id"
+                        class="w-full text-red-400 text-xs">
+                        {{ errors.salary_id }}
+                    </div>
+                </div>
+                <div class="input-fields">
+                    <label for="salary">Basic Salary</label>
+                    <input name="salary" [(ngModel)]="salary" type="text"
+                        (keypress)="validation_service.block_letters($event)" 
+                        (ngModelChange)="errors['salary'] = validation_service.validate_required_number_only(salary, 'Basic salary')"
+                        class=" input-text uppercase"
+                        [ngClass]="{'input-error': errors.salary}" />
+                    <div *ngIf="errors.salary"
+                        class="w-full text-red-400 font-medium mt-2 text-xs mt-1 italic">
+                        {{ errors.salary }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-sm pt-6">Government Contributions</p>
+        <div
+            class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
+            <div
+                class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
+
+                <div class="input-fields">
+                    <label>SSS contribution</label>
+                    <div class="relative">
+                        <span
+                            class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs font-bold mt-[3px]">₱</span>
+                        <input name="sss" [(ngModel)]="sss" type="text"
+                            disabled
+                            class="input-text !pl-5" />
+                    </div>
+
+                </div>
+                <div class="input-fields">
+                    <label>PhilHealth contribution</label>
+                    <div class="relative">
+                        <span
+                            class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs font-bold mt-[3px]">₱</span>
+                        <input name="philhealth" [(ngModel)]="phil_health"
+                            type="text" disabled
+                            class="input-text !pl-5" />
+                    </div>
+                </div>
+                <div class="input-fields">
+                    <label>Pag-IBIG contribution</label>
+                    <div class="relative">
+                        <span
+                            class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs font-bold mt-[3px]">₱</span>
+                        <input name="pagibig" [(ngModel)]="pag_ibig"
+                            type="text" disabled
+                            class="input-text !pl-5" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer shrink-0 w-full flex justify-end gap-3 px-8 py-4 border-t border-[#DCE8DC]">
+    <button type="button" (click)="dialogRef.close()"
+        class="btn px-4 py-2 rounded-10 text-sm font-semibold border border-[#DCE8DC] text-gray-600 hover:bg-[#F1F8F1]">
+        Cancel
+    </button>
+    <button type="button" (click)="submit()"
+        class="button-gold px-6 py-2 flex items-center text-sm font-semibold">
+        Save
+    </button>
+</div>
+</div>

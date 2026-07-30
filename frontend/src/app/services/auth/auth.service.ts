@@ -5,11 +5,8 @@ import { tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt'; 
 import { BehaviorSubject } from 'rxjs';
+import { AuthResponse } from './auth.interface';
 
-
-interface AuthResponse {
-    token: string;
-}
 @Injectable({
     providedIn: 'root',
 })

@@ -7,12 +7,7 @@ import { EmployeeService } from '../../../services/employee/employee.service';
 import { DtrService } from '../../../services/dtr/dtr.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import {AdminDashboardCardComponent} from '../../../component/parts/admin-dashboard-card/admin-dashboard-card.component';
-interface StatCard {
-  label: string;
-  value: number | string;
-  icon: string;
-  color: string;
-}
+import { StatCard } from './dashboard.interface';
 
 @Component({
   selector: 'app-dashboard',

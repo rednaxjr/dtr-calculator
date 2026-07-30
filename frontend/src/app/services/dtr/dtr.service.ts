@@ -2,41 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { ConfigService } from '../config/config.service';
-
-export interface DtrEntry {
-  day: number;
-  date?: string;
-  am_in: string;
-  am_out: string;
-  pm_in: string;
-  pm_out: string;
-  hours_rendered?: number;
-  late_minutes?: number;
-  undertime_minutes?: number;
-  is_absent?: boolean;
-}
-
-export interface EmployeeDtr {
-  id?: string;
-  employee_id?: string;
-  employee_name: string;
-  position?: string;
-  department?: string;
-  period_from: string;
-  period_to: string;
-  entries: DtrEntry[];
-  saved_at?: string;
-}
-
-export interface DtrFile {
-  id: string;
-  filename: string;
-  period_from: string;
-  period_to: string;
-  employee_count: number;
-  uploaded_at: string;
-  records: EmployeeDtr[];
-}
+import { DtrEntry, EmployeeDtr, DtrFile } from './dtr.interface';
 
 @Injectable({ providedIn: 'root' })
 export class DtrService {

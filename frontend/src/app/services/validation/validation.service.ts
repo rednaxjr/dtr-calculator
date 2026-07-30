@@ -23,7 +23,6 @@ export class ValidationService {
   }
 
   validate_required_number_only(value: string, label: string): string {
-    if (!value.trim()) return '* Input field is required';
     if (!/^\d+$/.test(value)) return `* Input field must contain numbers`;
     return '';
   }
@@ -83,26 +82,8 @@ export class ValidationService {
   validateNumbersOnly(value: string, label: string): string {
     if (!/^\d+$/.test(value)) return `* ${label} must be a number`;
     return '';
-  }
-
-
-  validateNameFields(data: any) {
-    return {
-      fname: this.validateFirstName(data.fname),
-      lname: this.validateLastName(data.lname),
-      mname: data.mname ? this.validateMiddleName(data.mname) : '',
-    };
-  }
-
-  validateDateFields(data: any) {
-    return {
-      birth_month: this.validateMonth(data.birth_month),
-      birth_day: this.validateDay(data.birth_day),
-      birth_year: this.validateYear(data.birth_year),
-    };
-  }
-
-
+  } 
+  
   isValid(errors: { [key: string]: string }): boolean {
     return Object.values(errors).every(e => e === '');
   }
