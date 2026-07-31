@@ -1,0 +1,62 @@
+<div class="cal-wrap shadow-md ">
+
+  @if (hasPeriod) {
+
+  <div class="cal-head">
+    <h3 class="cal-title">{{ monthLabel }} {{ year }}</h3>
+
+    <div class="cal-legend">
+      <span class="legend-item">
+        <span class="legend-dot legend-dot--work"></span>Workday
+      </span>
+      <span class="legend-item">
+        <span class="legend-dot legend-dot--weekend"></span>Weekend
+      </span>
+      <span class="legend-item">
+        <span class="legend-dot legend-dot--holiday"></span>Holiday
+      </span>
+    </div>
+  </div>
+
+  <div class="cal-grid cal-dow-row">
+    @for (dow of weekdayHeaders; track dow) {
+    <div class="cal-dow">{{ dow }}</div>
+    }
+  </div>
+
+  <div class="cal-grid cal-body">
+    @for (blank of leadingBlanks; track $index) {
+    <div class="cal-cell cal-cell--blank" aria-hidden="true"></div>
+    }
+
+    @for (day of days; track day.date; let dayIndex = $index) {
+
+    @if (dayTemplate) {
+    <ng-container
+      *ngTemplateOutlet="dayTemplate; context: { $implicit: day, index: dayIndex }"></ng-container>
+    }
+
+    }
+  </div>
+
+  <div class="cal-foot">
+    <span>{{ days.length }} day(s) in {{ monthLabel }}</span>
+    <span class="cal-foot__counts">
+      <span class="cal-foot__count cal-foot__count--work">{{ workdayCount }} workday(s)</span>
+      <span class="cal-foot__count cal-foot__count--weekend">{{ weekendCount }} weekend(s)</span>
+      @if (holidayCount > 0) {
+      <span class="cal-foot__count cal-foot__count--holiday">{{ holidayCount }} holiday(s)</span>
+      }
+    </span>
+  </div>
+
+  } @else {
+
+  <div class="cal-empty">
+    <mat-icon>calendar_month</mat-icon>
+    <p>Select a Year and Month to generate the calendar.</p>
+  </div>
+
+  }
+
+</div>

@@ -29,16 +29,16 @@
   </div>
   <div class="flex-1 overflow-auto px-2">
     <table class="w-full border-collapse">
-      <thead class="bg-[#F1F8F1] sticky top-0 z-10">
+      <thead class="bg-gray-100 sticky top-0 z-10">
         <tr>
           <th
-            class="px-3.5 py-2.5 text-left text-[11px] font-bold text-gray-600 uppercase tracking-wide border-b border-[#DCE8DC] whitespace-nowrap">
+            class="px-3 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wide border-b">
             <span
               class="inline-flex items-center justify-center gap-1 uppercase">Date</span>
           </th>
           @for (f of fields; track f.key) {
           <th
-            class="px-3.5 py-2.5 text-center text-[11px] font-bold uppercase tracking-wide border-b border-[#DCE8DC] whitespace-nowrap "
+            class="px-3 py-3 text-center text-xs font-bold uppercase tracking-wide border-b whitespace-nowrap "
             [ngClass]="{
               'text-blue-600': f.session === 'AM',
               'text-indigo-600': f.session === 'PM',
@@ -73,8 +73,7 @@
         @for (log of employee.logs; track $index; let logIndex = $index) {
         <tr class="tr-row    "  >
           <td
-            class="px-3.5 py-1 text-xs font-semibold whitespace-nowrap border-b border-[#DCE8DC]"
-            style="color:#1a3020">
+            class="px-4 py-2.5 text-sm font-semibold text-gray-700 whitespace-nowrap">
             @if (showStatusOverlay(log)) { 
             <div class="tr-status-overlay">
               <span class="inline-flex gap-2 items-center text-black"    >
@@ -99,7 +98,7 @@
             </div>
           </td>
           @for (f of fields; track f.key) {
-          <td class="px-3.5 py-1 text-center border-b border-[#DCE8DC]">
+          <td class="px-2 py-2.5 text-center">
             <div class="relative inline-block">
               <input type="text" placeholder="—" [(ngModel)]="log[f.key]"
                 [disabled]="isFieldDisabled(log, f)"

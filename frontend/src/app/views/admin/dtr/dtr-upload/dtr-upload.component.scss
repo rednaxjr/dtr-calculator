@@ -28,31 +28,73 @@
 }
 
 @keyframes bounce-up {
-    from { transform: translateY(0); }
-    to   { transform: translateY(-10px); }
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-10px);
+    }
 }
 
 @keyframes pulse-border {
-    0%, 100% { border-color: #1b5e20; }
-    50%       { border-color: #4caf50; }
+
+    0%,
+    100% {
+        border-color: #1b5e20;
+    }
+
+    50% {
+        border-color: #4caf50;
+    }
 }
+
+
 
 input:not([type]),
 input[type="text"],
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+input[type="select"] {
     margin-top: 5px;
     font-size: 12px;
     padding: 5px 5px 5px;
     border: 1px solid rgb(75 85 99);
     border-radius: 6px;
     width: 100%;
+    font-weight: 700;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
     --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+
+    &:focus,
+    &:active {
+        border: 2px solid #16a34a;
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+    }
+}
+
+
+.tr-select {
+    border: 1px solid green;
+    border-radius: 7px;
+    padding: 7px 28px 7px 10px;
+    font-size: 12px;
+    color: var(--green);
+    background: #FAFCFA;
+    cursor: pointer;
+    appearance: none;
+    outline: none;
 }
 
 .input-fields {
     display: flex;
     flex-direction: column;
+    color: black !important;
+
+    label {
+        color: --var(--text-color green) !important;
+    }
 }

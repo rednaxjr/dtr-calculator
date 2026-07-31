@@ -58,15 +58,14 @@
 /* ---- table rows: striping, borders, hover, status tints ------------------ */
 
 .tr-row {
-
-  border-bottom: 1px solid #DCE8DC;
-  position: relative;
+   
+  border-bottom: 1px solid #d1d5db;   
+  position: relative;                 
 
   &:nth-child(odd)  { background-color: #ffffff; }
-  &:nth-child(even) { background-color: #F8FBF8; }
-  &:nth-child(odd):hover  { background-color: #F1F8F1; }
-  &:nth-child(even):hover { background-color: #E6F1E6; }
-
+  &:nth-child(even) { background-color: #f9fafb; }                  // gray-50
+  &:hover           { background-color: #ecfdf5; }                  // emerald-50
+ 
   &.tr-row-absent,  &.tr-row-absent:hover  { background-color: #4b5563 ; } // red-50
   &.tr-row-leave,   &.tr-row-leave:hover   { background-color: #4b5563 ; } // blue-50
   &.tr-row-halfday, &.tr-row-halfday:hover { background-color: #4b5563 ; } // indigo-50

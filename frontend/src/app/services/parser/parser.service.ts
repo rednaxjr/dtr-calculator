@@ -76,6 +76,23 @@ export class ParserService {
     }
   }
 
+  /**
+   * Push the calendar's date statuses onto every parsed attendance log.
+   * The calendar is the source of truth, so a date the calendar no longer
+   * calls a Holiday has that label taken back off its logs.
+   */
+  applyCalendarStatuses(statuses: Record<number, string> = {}): void {
+    for (const emp of this.employees) {
+      for (const log of emp.logs ?? []) {
+        const day = Number(this.dayKey(log.date));
+        if (!Number.isFinite(day)) continue;
+
+        if (statuses[day] === 'Holiday') log.status = 'Holiday';
+        else if (log.status === 'Holiday') log.status = 'Present';
+      }
+    }
+  }
+
   dayKey(date: any): string {
     const match = String(date ?? '').match(/\d+/);
     return match ? match[0] : String(date ?? '').trim();

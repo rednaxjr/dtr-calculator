@@ -1,0 +1,353 @@
+/* palette mirrors table-landscape */
+$cal-border: #DCE8DC;
+$cal-head-bg: #F1F8F1;
+$cal-alt-bg: #F8FBF8;
+$cal-hover: #E6F1E6;
+$cal-text: #1a3020;
+$cal-green: #1b5e20;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.cal-wrap {
+  background: #ffffff;
+  border: 1px solid $cal-border;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(26, 48, 32, 0.08);
+}
+
+/* ---- header -------------------------------------------------------------- */
+
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #1b5e20;
+  border-bottom: 1px solid $cal-border;
+}
+
+.cal-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+}
+
+.cal-legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  color:#fff;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  display: inline-block;
+
+  &--work {
+    background: #3b82f6 ;
+  }
+
+  &--weekend {
+    background: #9ca3af;
+  }
+
+  &--holiday {
+    background: #F0B429;
+  }
+}
+
+/* ---- grid ---------------------------------------------------------------- */
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.cal-dow-row {
+  padding: 10px 16px 0;
+}
+
+.cal-dow {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7f6b;
+  padding-bottom: 2px;
+}
+
+.cal-body {
+  padding: 8px 16px 16px;
+}
+
+/* ---- date cards ---------------------------------------------------------- */
+
+/* ::ng-deep so a day-cell template projected in by the parent (see the
+   @ContentChild dayTemplate) picks these up too — projected nodes carry the
+   parent's encapsulation attribute, not this component's. Scoped under :host
+   so nothing leaks past the calendar. */
+:host ::ng-deep {
+
+  .cal-cell {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 78px;
+    padding: 8px 4px;
+    border: 1px solid $cal-border;
+    border-radius: 10px;
+    transition: background-color .15s, box-shadow .15s, transform .15s;
+  }
+
+  .cal-cell--blank {
+    border: 1px dashed rgba(220, 232, 220, 0.9);
+    background: transparent;
+    box-shadow: none;
+    min-height: 78px;
+  }
+
+  .cal-cell__dow {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+
+  .cal-cell__date {
+    font-size: clamp(16px, 2.2vw, 22px);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .cal-cell__badge {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    padding: 3px 7px;
+    border-radius: 9999px;
+    white-space: nowrap;
+  }
+
+  /* workday */
+  .cal-cell--work {
+    background: #ffffff;
+    color: $cal-text;
+
+    .cal-cell__dow {
+      color: #6b7f6b;
+    }
+
+    .cal-cell__badge {
+      background: $cal-hover;
+      color: $cal-green;
+    }
+
+    &:hover {
+      background: $cal-head-bg;
+      box-shadow: 0 2px 6px rgba(26, 48, 32, 0.1);
+      transform: translateY(-1px);
+    }
+  }
+
+  /* holiday — an explicit override, so it outranks weekend/workday below */
+  .cal-cell--holiday {
+    background: #FEF7E6;
+    border-color: #F3D89A;
+    color: #8A6100;
+
+    .cal-cell__dow {
+      color: #B08432;
+    }
+
+    .cal-cell__badge {
+      background: #FBE3B0;
+      color: #8A6100;
+    }
+
+    &:hover {
+      background: #FDF0D3;
+      box-shadow: 0 2px 6px rgba(138, 97, 0, 0.15);
+      transform: translateY(-1px);
+    }
+  }
+
+  /* clickable day cards (parent wires up an action on the projected cell) */
+  .cal-cell--action {
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid $cal-green;
+      outline-offset: 2px;
+    }
+  }
+
+  /* weekend */
+  .cal-cell--weekend {
+    background: #F4F5F4;
+    border-color: #E2E5E2;
+    color: #6b7280;
+
+    .cal-cell__dow {
+      color: #9ca3af;
+    }
+
+    .cal-cell__badge {
+      background: #E5E7EB;
+      color: #4b5563;
+    }
+
+    &:hover {
+      background: #ECEEEC;
+      box-shadow: 0 2px 6px rgba(26, 48, 32, 0.08);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* ---- footer -------------------------------------------------------------- */
+
+.cal-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid $cal-border;
+  background: $cal-alt-bg;
+  font-size: 12px;
+  color: $cal-text;
+}
+
+.cal-foot__counts {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cal-foot__count {
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 9999px;
+
+  &--work {
+    background: $cal-hover;
+    color: $cal-green;
+  }
+
+  &--weekend {
+    background: #E5E7EB;
+    color: #4b5563;
+  }
+
+  &--holiday {
+    background: #FBE3B0;
+    color: #8A6100;
+  }
+}
+
+/* ---- empty state --------------------------------------------------------- */
+
+.cal-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 16px;
+  color: #6b7f6b;
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: #b7c9b7;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
+/* ---- responsive ---------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .cal-grid {
+    gap: 6px;
+  }
+
+  :host ::ng-deep {
+    .cal-cell,
+    .cal-cell--blank {
+      min-height: 68px;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+
+  .cal-dow-row {
+    padding: 8px 10px 0;
+  }
+
+  .cal-body {
+    padding: 6px 10px 12px;
+  }
+
+  .cal-grid {
+    gap: 4px;
+  }
+
+  :host ::ng-deep {
+    .cal-cell,
+    .cal-cell--blank {
+      min-height: 54px;
+      border-radius: 8px;
+      padding: 6px 2px;
+    }
+
+    /* keep the calendar readable on phones: the colour + weekday carry
+       the workday/weekend meaning once the badge no longer fits */
+    .cal-cell__badge {
+      display: none;
+    }
+
+    .cal-cell__dow {
+      font-size: 9px;
+    }
+  }
+
+  .cal-foot {
+    font-size: 11px;
+  }
+}

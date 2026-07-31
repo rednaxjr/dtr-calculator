@@ -81,6 +81,9 @@ export class TimeRecordModalComponent {
     },
   };
 
+  /** Every time column stored on a log, including the two with no UI column. */
+  private readonly TIME_KEYS = ['amIn', 'amOut', 'pmIn', 'pmOut', 'otIn', 'otOut'];
+
   // OT In / OT Out are intentionally not shown; their values are folded into
   // PM Out on parse (see ParserService.resolvePmOut).
   readonly fields: FieldDef[] = [
@@ -121,6 +124,28 @@ export class TimeRecordModalComponent {
     if (this.isWeekend(log)) return;
     log.status = value;
     if (value !== 'Half Day') delete log.halfSession;
+    if (this.clearsTimes(value)) this.clearTimeFields(log);
+  }
+
+  /** Statuses where no time was worked, so the row must carry no times. */
+  private clearsTimes(status: string): boolean {
+    return status === 'Absent' || status === 'Holiday';
+  }
+
+  /**
+   * Blank every time column on a row, whatever the value came from — the
+   * imported file, fillAllBlank, or a manual edit. OT In / OT Out are cleared
+   * too even though they have no column here, since they are folded into
+   * PM Out on parse and would otherwise be written back on export.
+   */
+  private clearTimeFields(log: any): void {
+    const index = this.employee.logs.indexOf(log);
+
+    for (const key of this.TIME_KEYS) {
+      log[key] = '';
+      // the value is gone, so it is no longer an auto-fill that can be undone
+      if (index >= 0) this.autoFilledCells.delete(`${index}-${key}`);
+    }
   }
  
   setHalfDay(log: any, session: 'AM' | 'PM'): void {

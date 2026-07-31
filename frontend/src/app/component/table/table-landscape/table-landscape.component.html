@@ -8,13 +8,13 @@
         </thead>
 
         <tbody>
-            <tr *ngFor="let item of data">
+            <tr *ngFor="let item of data; let i = index">
                 <ng-container *ngFor="let header of labels">
                     <td>
                         <ng-container
                             *ngIf="header === 'actions' && actions; else defaultCell">
                             <ng-container
-                                *ngTemplateOutlet="actions; context: { $implicit: item }"></ng-container>
+                                *ngTemplateOutlet="actions; context: { $implicit: item, index: i }"></ng-container>
                         </ng-container>
                         <ng-template #defaultCell>
                             {{ item[header] }}
