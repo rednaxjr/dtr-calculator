@@ -41,11 +41,7 @@ export class EmployeeComponent {
   errors: any = {};
   view_number_data: any = 1;
   banner: any;
-
-  @ViewChild('email_address_content') email_address_content!: TemplateRef<any>;
-  @ViewChild('email_address_buttons') email_address_buttons!: TemplateRef<any>;
-  @ViewChild('qr_content') qr_content!: TemplateRef<any>;
-  @ViewChild('qr_buttons') qr_buttons!: TemplateRef<any>;
+ 
   email_reg: any = '';
   fname: any = '';
   lname: any = '';

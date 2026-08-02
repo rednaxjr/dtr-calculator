@@ -1,3 +1,5 @@
+<!-- <div
+  class="flex-1 min-h-0 bg-white rounded-10 shadow-md border border-gray-600 overflow-hidden">
 <div class="flex items-center justify-between mb-6">
   <div class="relative  w-full md:w-96 lg:w-96  mt-2">
     <div
@@ -22,8 +24,62 @@
     focus:outline-none focus:ring-1  focus:ring-yellow-500  flex items-center gap-x-2"
     (click)="add_dtr()">
     <mat-icon class="text-lg">add</mat-icon>
-    <span class="!text-white">Upload</span>
+    <span class="!text-white">Add</span>
   </button>
+
 </div>
+</div> -->
 
  
+<div
+  class="flex-1 min-h-0 bg-white rounded-10 shadow-md border border-gray-600 overflow-hidden">
+
+  <div class="flex flex-col w-full  ">
+    <div
+      class="flex items-center justify-between  w-full flex-row  gap-2 py-4 px-4 ">
+      <div class="  relative  w-full  search-field">
+        <div
+          class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <mat-icon class="search-icon">search</mat-icon>
+        </div>
+        <input type="text"
+          class="searchbar w-full pl-10 pr-4 py-2 border shadow-md text-sm font-normal
+           border-green rounded-10 focus:outline-none focus:ring-2
+           focus:ring-green-500 focus:border-text"
+          placeholder="Search " />
+      </div>
+      <div class="table-buttons flex w-[30%] item-center gap-x-4">
+        <button class="button-gold px-4  pl-2 pr-5        flex items-center  "
+          (click)="add_dtr()">
+          <mat-icon class="text-lg">add</mat-icon>
+          <span class="!text-white">Add</span>
+        </button>
+
+      </div>
+    </div>
+    <app-table-landscape [labels]="headers" [data]="dtr_list">
+      <ng-container>
+        <ng-template #actions let-default let-index="index">
+          <div
+            class="flex items-center py-2 ">
+            <button class="text-green hover:text-opacity-80 font-bold text-sm"
+              (click)="view_data(default);">
+              View
+            </button>
+            <button
+              class="text-blue-600 hover:text-opacity-80 font-bold text-sm ml-10"
+              (click)="edit_data(default);">
+              Edit
+            </button>
+            <button
+              class="text-red-600 hover:text-opacity-80 font-bold text-sm ml-10"
+              (click)="delete_data(default)">
+              Delete
+            </button>
+          </div>
+        </ng-template>
+      </ng-container>
+    </app-table-landscape>
+  </div>
+
+</div>

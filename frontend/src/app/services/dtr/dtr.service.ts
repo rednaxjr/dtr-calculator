@@ -29,6 +29,9 @@ export class DtrService {
     }
   }
 
+  get_all_dtr(data: any) {
+    return this.httpClient.post(this.url + "/get_all_dtr", data, this.headers);
+  }
   async saveFile(filename: string, records: EmployeeDtr[]): Promise<DtrFile> {
     const periods = records.filter(r => r.period_from);
     const file: DtrFile = {
@@ -49,6 +52,8 @@ export class DtrService {
       return file;
     }
   }
+
+
 
 
 

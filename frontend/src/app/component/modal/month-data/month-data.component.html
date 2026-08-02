@@ -1,0 +1,91 @@
+<div class="flex flex-col h-full">
+  <div class="modal-header w-full shrink-0 bg-green flex justify-between items-center px-8  py-4">
+    <div class="header-info flex flex-row items-center gap-3  flex-wrap">
+      <div
+        class="header-icon flex items-center justify-center w-[24px] h-[24px] shrink-0 rounded-full border-2 border-white !text-white">
+        <mat-icon
+          style="display:flex;align-items:center;justify-content:center;font-size:16px;width:16px;height:16px;line-height:16px">person</mat-icon>
+      </div>
+      <p class="header-title text-lg text-white leading-none m-0">{{data.title}}
+        Month</p>
+    </div>
+    <div class="flex justify-end">
+      <button class="flex items-center text-center" (click)="dialog.close()" aria-label="Close dialog">
+        <mat-icon aria-label="Close" class="text-white">close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="modal-body p-4 flex-1 overflow-y-auto">
+
+    <div class="mb-0.5">
+      <h3 class="text-lg font-bold text-green">Log's Information</h3>
+    </div>
+    <div class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
+      <div class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
+
+        <div class="input-fields">
+          <label>Year</label>
+          <select name="year" [ngModel]="year_id" (ngModelChange)="on_year_change($event)" class="tr-select w-full py-2 px-4 shadow-md border border-border font-medium  
+             text-text rounded-lg cursor-pointer transition-colors duration-150 hover:bg-[#E6F1E6] bg-white ">
+            <option [ngValue]="null" class="text-green" disabled>Select year</option>
+            <option *ngFor="let item of year_list" [ngValue]="item.id" class="text-green cursor-pointer">
+              {{ item.name }}
+            </option>
+          </select>
+        </div>
+        <div class="input-fields">
+          <label> Month</label>
+          <select name="month" [ngModel]="month_id" (ngModelChange)="on_month_change($event)"
+            [disabled]="year_id === null || !has_selectable_month"
+            class="tr-select w-full py-2 px-4 shadow-md border border-border font-medium   text-text rounded-lg cursor-pointer transition-colors duration-150 hover:bg-[#E6F1E6] focus:outline-none focus:ring-2 focus:ring-green/30 focus:border-green disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#F8FBF8]">
+            <option [ngValue]="null" disabled>
+              {{ month_placeholder }}
+            </option>
+            <option class="text-green cursor-pointer" *ngFor="let item of month_list" [ngValue]="item.id"
+              [disabled]="is_month_disabled(item)">
+              {{ month_option_label(item) }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
+      <div class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-2">
+        <div class="input-fields">
+          <label class="text-sm font-medium text-black tracking-wide">Month's
+            Calendar</label>
+          <app-month-calendar [year]="year_value" [month]="month_number" [statuses]="calendar_statuses">
+            <ng-container>
+              <ng-template #dayCell let-day let-index="index">
+                <div class="cal-cell cal-cell--action" tabindex="0" [class.cal-cell--holiday]="day.status === 'Holiday'"
+                  [class.cal-cell--weekend]="day.status === 'Weekend'"
+                  [class.cal-cell--work]="day.status === 'Work Day'"
+                  [attr.aria-label]="day.weekdayFull + ' ' + day.date + ' — ' + day.status + ', click to change status'">
+
+                  <span class="cal-cell__dow">{{ day.weekdayLabel }}</span>
+                  <span class="cal-cell__date">{{ day.date }}</span>
+                  <span class="cal-cell__badge">{{ day.status }}</span>
+                </div>
+              </ng-template>
+            </ng-container>
+          </app-month-calendar>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+
+
+  <div class="modal-footer shrink-0 w-full flex justify-end gap-3 px-8 py-4 border-t border-[#DCE8DC]">
+    <button type="button" (click)="dialog.close()"
+      class="btn px-4 py-2 rounded-10 text-sm font-semibold border border-[#DCE8DC] text-gray-600 hover:bg-[#F1F8F1]">
+      Cancel
+    </button>
+    <button type="button" (click)="submit()" class="button-gold px-6 py-2 flex items-center text-sm font-semibold">
+      Save
+    </button>
+  </div>
+</div>
