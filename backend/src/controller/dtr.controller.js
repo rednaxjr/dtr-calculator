@@ -45,7 +45,7 @@ const add_dtr = async (req, res) => {
             });
         }
         const created_at = new Date();
- 
+
         const month_values = [
             year_id,
             month_id,
@@ -80,7 +80,7 @@ const add_dtr = async (req, res) => {
             [dtr_values]
         );
 
-       
+
 
         await conn.commit();
 
@@ -112,10 +112,39 @@ const add_dtr = async (req, res) => {
     }
 }
 
+const get_all_dtr = async (req, res) => {
+    let conn;
+    try {
+        const { data, calendar } = req.body;
+        const year_id = calendar.year_id;
+        const month_id = calendar.month_id;
+        const days = Array.isArray(calendar.days) ? calendar.days : [];
 
+
+        const pool = connection.promise();
+        conn = await pool.getConnection();
+        await conn.beginTransaction();
+        const [existing] = await conn.query(
+            `SELECT * FROM month_data`,
+            [year_id, month_id]
+        );
+        await conn.commit();
+
+    } catch (error) {
+        if (conn) await conn.rollback();
+        console.error("Transaction error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error saving DTR"
+        });
+    } finally {
+        if (conn) conn.release();
+    }
+}
 
 
 
 module.exports = {
     add_dtr,
+    get_all_dtr
 }
