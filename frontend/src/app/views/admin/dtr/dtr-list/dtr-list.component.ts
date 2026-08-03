@@ -10,18 +10,32 @@ import { ConfirmationService } from '../../../../services/general/confirmation.s
 import { TableLandscapeComponent } from "../../../../component/table/table-landscape/table-landscape.component";
 import { MonthDataComponent } from '../../../../component/modal/month-data/month-data.component';
 import { MatDialog } from '@angular/material/dialog';
+import { YearService } from '../../../../services/year/year.service';
+import { MonthService } from '../../../../services/month/month.service';
+import { MonthDataService } from '../../../../services/month_data/month-data.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-dtr-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, MatTableModule, TableLandscapeComponent],
+  imports: [CommonModule, RouterModule, FormsModule, MatButtonModule, MatIconModule, MatTableModule, TableLandscapeComponent],
   templateUrl: './dtr-list.component.html',
   styleUrl: './dtr-list.component.scss',
 })
 export class DtrListComponent implements OnInit {
   dtr_list: any = [];
   loading = true;
-  headers = ['filename', 'period', 'employees', 'uploaded_at', 'actions'];
+  headers = ['month', 'year', 'logs', 'actions'];
+  year_list: any = [];
+  month_data_list: any = [];
+  all_month_data: any = [];
+  month_list: any = []
+
+  /** current filter values — today's year, and every month */
+  filter_year: any = new Date().getFullYear();
+  filter_month: any = 'all';
+
+  filter_month_list: any = [];
 
   constructor(
     private dtr_service: DtrService,
@@ -29,35 +43,98 @@ export class DtrListComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
+    private year_service: YearService,
+    private month_service: MonthService,
+    private month_data_service: MonthDataService
   ) { }
 
 
 
   async ngOnInit() {
-    await this.load_dtrs();
+    this.filter_month_list = this.month_service.get_months();
+
+    this.get_year();
+    this.get_month();
+    this.get_all_month_data();
   }
 
-  async load_dtrs() {
+  /** every saved month across all years, used to block re-adding one */
+  get_all_month_data() {
+    this.month_data_service.get_all_month_data(null).subscribe((res: any) => {
+      this.all_month_data = res.data;
+    });
+  }
+  get_year() {
+    this.year_service.get_year().subscribe((res: any) => {
+      this.year_list = res.data ?? [];
+      const today = new Date().getFullYear();
+      const current = this.year_list.find((item: any) => Number(item.name) === today);
+      const newest = this.year_list.reduce(
+        (a: any, b: any) => (Number(b.name) > Number(a?.name ?? -Infinity) ? b : a),
+        null
+      );
 
-    return this.dtr_service.get_all_dtr(null).subscribe((res: any) => {
+      this.filter_year = (current ?? newest)?.name ?? today;
+      this.get_month_data();
+    });
 
+  }
+  get_month() {
+    return this.month_service.get_month().subscribe((res: any) => {
+      this.month_list = res.data;
+    })
+  }
+  get_month_data() {
+    const data = {
+      year: this.filter_year
+    }
+    return this.month_data_service.get_month_data(data).subscribe((res: any) => {
+      this.month_data_list = res.data ?? [];
+      console.log("month_data_list", this.month_data_list);
     })
   }
 
-
-  // add_dtr() {
-  //   this.router.navigate(['/admin/dtr/upload']);
-  // }
-  edit_data(data: any) {
-
+  filter_by_year(year: any) {
+    this.filter_year = year;
+    this.get_month_data();
   }
-  view_data(data: any) {
 
+  filter_by_month(month: any) {
+    this.filter_month = month;
+  }
+
+  get filtered_month_data(): any[] {
+    if (this.filter_month === 'all') return this.month_data_list;
+    return this.month_data_list.filter(
+      (item: any) => Number(item.month_number) === Number(this.filter_month)
+    );
+  }
+ 
+  view_data(data: any) {
+    const title = "Update"
+    let dialogRef = this.dialog.open(MonthDataComponent, {
+      width: '75vw',
+      maxWidth: '75vw',
+      height: '75vh',
+      maxHeight: '75vh',
+      panelClass: 'fullscreen-dialog',
+      autoFocus: true,
+      disableClose: true,
+      data: {
+        title: title,
+        year_list: this.year_list,
+        month_list: this.month_list,
+        month_data_list: this.all_month_data
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+
+    });
   }
   delete_data(data: any) {
 
   }
-  add_dtr() {
+  add_month_data() {
     const title = "Add"
     let dialogRef = this.dialog.open(MonthDataComponent, {
       width: '75vw',
@@ -67,9 +144,15 @@ export class DtrListComponent implements OnInit {
       panelClass: 'fullscreen-dialog',
       autoFocus: true,
       disableClose: true,
-      data: { title: title, }
+      data: {
+        title: title,
+        year_list: this.year_list,
+        month_list: this.month_list,
+        month_data_list: this.all_month_data
+      }
     });
     dialogRef.afterClosed().subscribe(res => {
+
     });
 
   }

@@ -1,37 +1,4 @@
-<!-- <div
-  class="flex-1 min-h-0 bg-white rounded-10 shadow-md border border-gray-600 overflow-hidden">
-<div class="flex items-center justify-between mb-6">
-  <div class="relative  w-full md:w-96 lg:w-96  mt-2">
-    <div
-      class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-      <svg xmlns="http://www.w3.org/2000/svg"
-        class="h-5 w-5 text-gray-400" fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          stroke-width="2"
-          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-      </svg>
-    </div>
-    <input
-      type="text"
-      class="w-full pl-10 pr-4 py-2 border shadow-md border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-      placeholder="Search " />
-  </div>
-  <button
-    class=" pl-2 pr-4  py-1 border shadow-md border-gray-300 rounded-lg   bg-gold text-white
-    hover:bg-opacity-90
-    focus:outline-none focus:ring-1  focus:ring-yellow-500  flex items-center gap-x-2"
-    (click)="add_dtr()">
-    <mat-icon class="text-lg">add</mat-icon>
-    <span class="!text-white">Add</span>
-  </button>
-
-</div>
-</div> -->
-
- 
-<div
+ <div
   class="flex-1 min-h-0 bg-white rounded-10 shadow-md border border-gray-600 overflow-hidden">
 
   <div class="flex flex-col w-full  ">
@@ -49,15 +16,31 @@
           placeholder="Search " />
       </div>
       <div class="table-buttons flex w-[30%] item-center gap-x-4">
+        <select name="filter_year"
+          class="sel-filter px-4  pl-2 pr-5  flex items-center "
+          [ngModel]="filter_year" (ngModelChange)="filter_by_year($event)">
+          <option [ngValue]="'all'">All Years</option>
+          <option *ngFor="let item of year_list" [ngValue]="item.name">
+            {{ item.name }}
+          </option>
+        </select>
+        <select name="filter_month"
+          class="sel-filter px-4  pl-2 pr-5        flex items-center  "
+          [ngModel]="filter_month" (ngModelChange)="filter_by_month($event)">
+          <option [ngValue]="'all'">All Months</option>
+          <option *ngFor="let item of filter_month_list" [ngValue]="item.number">
+            {{ item.month }}
+          </option>
+        </select>
         <button class="button-gold px-4  pl-2 pr-5        flex items-center  "
-          (click)="add_dtr()">
+          (click)="add_month_data()">
           <mat-icon class="text-lg">add</mat-icon>
           <span class="!text-white">Add</span>
         </button>
 
       </div>
     </div>
-    <app-table-landscape [labels]="headers" [data]="dtr_list">
+    <app-table-landscape [labels]="headers" [data]="month_data_list">
       <ng-container>
         <ng-template #actions let-default let-index="index">
           <div
@@ -65,12 +48,7 @@
             <button class="text-green hover:text-opacity-80 font-bold text-sm"
               (click)="view_data(default);">
               View
-            </button>
-            <button
-              class="text-blue-600 hover:text-opacity-80 font-bold text-sm ml-10"
-              (click)="edit_data(default);">
-              Edit
-            </button>
+            </button> 
             <button
               class="text-red-600 hover:text-opacity-80 font-bold text-sm ml-10"
               (click)="delete_data(default)">

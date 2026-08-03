@@ -207,8 +207,7 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
 
     console.log(this.parser.employees);
   }
-
-  /** Statuses where the employee did not work, so the day is not "present". */
+ 
   private readonly NON_WORKING_STATUSES = ['Absent', 'Leave', 'Holiday'];
 
   /** Log dates read like "1 Mo" / "7 Sa" — the suffix is the weekday. */
@@ -452,10 +451,7 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
     }
   }
 
-  /**
-   * Pull the latest statuses out of the service and push them onto any
-   * attendance data already parsed, keeping the two in step.
-   */
+ 
   private sync_calendar_statuses() {
     this.calendar_statuses = this.calendar_status_service.month_map(this.year_value, this.month_number);
     this.parser.applyCalendarStatuses(this.calendar_statuses);

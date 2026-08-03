@@ -37,7 +37,7 @@
         <div class="input-fields">
           <label> Month</label>
           <select name="month" [ngModel]="month_id" (ngModelChange)="on_month_change($event)"
-            [disabled]="year_id === null || !has_selectable_month"
+            [disabled]="year_id === null  "
             class="tr-select w-full py-2 px-4 shadow-md border border-border font-medium   text-text rounded-lg cursor-pointer transition-colors duration-150 hover:bg-[#E6F1E6] focus:outline-none focus:ring-2 focus:ring-green/30 focus:border-green disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#F8FBF8]">
             <option [ngValue]="null" disabled>
               {{ month_placeholder }}
@@ -51,14 +51,16 @@
       </div>
     </div>
     <div class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
-      <div class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-2">
+      <div class="grid gap-x-10 gap-y-4 md:grid-cols-1 lg:xl:2xl:grid-cols-1">
         <div class="input-fields">
           <label class="text-sm font-medium text-black tracking-wide">Month's
             Calendar</label>
           <app-month-calendar [year]="year_value" [month]="month_number" [statuses]="calendar_statuses">
             <ng-container>
               <ng-template #dayCell let-day let-index="index">
-                <div class="cal-cell cal-cell--action" tabindex="0" [class.cal-cell--holiday]="day.status === 'Holiday'"
+                <div class="cal-cell cal-cell--action" tabindex="0"
+                  (click)="update_status(day)" (keydown.enter)="update_status(day)"
+                  [class.cal-cell--holiday]="day.status === 'Holiday'"
                   [class.cal-cell--weekend]="day.status === 'Weekend'"
                   [class.cal-cell--work]="day.status === 'Work Day'"
                   [attr.aria-label]="day.weekdayFull + ' ' + day.date + ' — ' + day.status + ', click to change status'">

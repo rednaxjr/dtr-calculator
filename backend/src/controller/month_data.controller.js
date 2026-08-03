@@ -1,0 +1,115 @@
+const connection = require('../../dbconfig/config')
+const hash = require('../middleware/crypto');
+const mailController = require('../mailer/mailer.controller');
+const { encrypt } = require('crypto-js/aes');
+const shared = require('../middleware/shared');
+const archiver = require('archiver');
+
+var paths = require("path");
+const fs = require('fs');
+const mime = require('mime-types');
+const created_at = new Date();
+const get_month_data = (req, res) => {
+    const data = req.body ?? {};
+    console.log("Received data:", data);
+
+    // "all" (or no year at all) drops the filter and returns every year
+    const all_years = !data.year || data.year === 'all';
+
+    const query = `
+        SELECT
+            md.*,
+            y.name   AS year,
+            m.name   AS month,
+            m.number AS month_number,
+            COUNT(dtr.id) AS logs
+        FROM month_data md
+        LEFT JOIN year  y ON md.year_id  = y.id
+        LEFT JOIN month m ON md.month_id = m.id
+        LEFT JOIN dtr_logs dtr ON md.id = dtr.month_data_id
+        ${all_years ? '' : 'WHERE y.name = ?'}
+        GROUP BY md.id, y.name, m.name, m.number
+        ORDER BY y.name DESC, m.number DESC
+    `;
+
+    const params = all_years ? [] : [data.year];
+
+    connection.query(query, params, (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: "SQL error", error: err });
+        }
+        return res.status(200).json({ data: result });
+    });
+};
+
+const get_all_month_data
+    = (req, res) => {
+        const data = req.body;
+        const query = `
+        SELECT
+            md.*,
+            y.name   AS year,
+            m.name   AS month,
+            m.number AS month_number,
+            COUNT(dtr.id) AS logs
+        FROM month_data md
+        LEFT JOIN year  y ON md.year_id  = y.id
+        LEFT JOIN month m ON md.month_id = m.id
+        LEFT JOIN dtr_logs dtr ON md.id = dtr.month_data_id 
+        GROUP BY md.id, y.name, m.name, m.number
+        ORDER BY y.name DESC, m.number DESC
+    `;
+        connection.query(query, (err, result) => {
+            if (err) {
+                return res.status(500).json({ message: "SQL error", error: err });
+            }
+            return res.status(200).json({ data: result });
+        });
+    };
+
+const add_month_data = async (req, res) => {
+    let conn;
+    try {
+        const data = req.body; 
+        if (!data) { return res.status(400).json({ message: "Missing data" }); }
+
+
+        const pool = connection.promise();
+        conn = await pool.getConnection();
+        await conn.beginTransaction();
+
+        const month_values = [
+            data.year_id,
+            data.month_id,
+            data.month_name,
+            data.workday_count,
+            data.holiday_count,
+            created_at,
+            JSON.stringify(data.days)
+        ];
+        const [insert_month_data] = await conn.query(
+            `INSERT INTO month_data (year_id, month_id, name, work_days, holidays, created_at, days)
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            month_values
+        );
+        await conn.commit();
+        return res.json({ success: true, data: insert_month_data });
+    } catch (error) {
+        if (conn) await conn.rollback();
+        console.error("Transaction error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error saving month data"
+        });
+    } finally {
+        if (conn) conn.release();
+    }
+}
+
+
+
+module.exports = {
+    get_month_data,
+    get_all_month_data,
+    add_month_data
+}

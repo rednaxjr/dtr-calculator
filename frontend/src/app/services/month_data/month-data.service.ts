@@ -4,12 +4,11 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
-
 @Injectable({
   providedIn: 'root'
 })
-export class YearService {
-  private url = `${environment.api}/year`;
+export class MonthDataService {
+  private url = `${environment.api}/month_data`;
   headers = {
     headers: new HttpHeaders().set('Content-Type', "application/json")
   }
@@ -18,15 +17,14 @@ export class YearService {
 
   ) { }
 
-  get_year() {
-    return this.httpClient.post(this.url + "/get_year", {}, this.headers);
+  get_month_data(data:any) {
+    return this.httpClient.post(this.url + "/get_month_data", data, this.headers);
   }
-  get_year_month(data: any) {
-    return this.httpClient.post(this.url + "/get_year_month", data, this.headers);
-  }
-  get_all_month_data(data:any){
+
+  get_all_month_data(data:any) {
     return this.httpClient.post(this.url + "/get_all_month_data", data, this.headers);
   }
-
-
+  add_month_data(data:any) {
+    return this.httpClient.post(this.url + "/add_month_data", data, this.headers);
+  }
 }

@@ -151,9 +151,17 @@ body {
     &:focus-visible {
         outline: none;
         box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.4);
-    }
+    } 
+}
 
-
+.sel-filter {
+    border: 1px solid #C8E6C9;
+    border-radius: 7px;
+    padding: 7px 28px 7px 10px;
+    font-size: 12px;
+    color: #1b5e20;
+    background: #FAFCFA;
+    cursor: pointer; 
 }
 
 

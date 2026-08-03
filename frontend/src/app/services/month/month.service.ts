@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Month } from '../../component/models/month.model';
+import { HttpClient, HttpEvent, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
+import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
@@ -19,8 +23,19 @@ export class MonthService {
     { number: 11, month: 'November' },
     { number: 12, month: 'December' }
   ];
+  private url = `${environment.api}/month`;
+  headers = {
+    headers: new HttpHeaders().set('Content-Type', "application/json")
+  }
+  constructor(
+    private httpClient: HttpClient,
+
+  ) { }
 
   get_months(): Month[] {
     return this.months;
+  }
+  get_month() {
+    return this.httpClient.post(this.url + "/get_month", {}, this.headers);
   }
 }
