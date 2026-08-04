@@ -27,4 +27,7 @@ export class MonthDataService {
   add_month_data(data:any) {
     return this.httpClient.post(this.url + "/add_month_data", data, this.headers);
   }
+  update_month_data(data:any) {
+    return this.httpClient.post(this.url + "/update_month_data", data, this.headers);
+  }
 }

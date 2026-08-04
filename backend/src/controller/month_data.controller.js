@@ -78,13 +78,27 @@ const add_month_data = async (req, res) => {
         conn = await pool.getConnection();
         await conn.beginTransaction();
 
+        // one row per period, so refuse a month that is already recorded
+        const [existing] = await conn.query(
+            `SELECT id FROM month_data WHERE year_id = ? AND month_id = ? LIMIT 1`,
+            [data.year_id, data.month_id]
+        );
+
+        if (existing.length > 0) {
+            await conn.rollback();
+            return res.status(409).json({
+                success: false,
+                message: "This month has already been added."
+            });
+        }
+
         const month_values = [
             data.year_id,
             data.month_id,
             data.month_name,
             data.workday_count,
             data.holiday_count,
-            created_at,
+            new Date(),
             JSON.stringify(data.days)
         ];
         const [insert_month_data] = await conn.query(
@@ -108,8 +122,52 @@ const add_month_data = async (req, res) => {
 
 
 
+const update_month_data = async (req, res) => {
+    let conn;
+    try {
+        const data = req.body;
+        if (!data || !data.id) { return res.status(400).json({ message: "Missing month data id" }); }
+
+        const pool = connection.promise();
+        conn = await pool.getConnection();
+        await conn.beginTransaction();
+
+        // the period itself is fixed once saved; only the calendar can change
+        const [update] = await conn.query(
+            `UPDATE month_data
+                SET name = ?, work_days = ?, holidays = ?, days = ?
+              WHERE id = ?`,
+            [
+                data.month_name,
+                data.workday_count,
+                data.holiday_count,
+                JSON.stringify(data.days),
+                data.id
+            ]
+        );
+
+        if (update.affectedRows === 0) {
+            await conn.rollback();
+            return res.status(404).json({ success: false, message: "Month data not found" });
+        }
+
+        await conn.commit();
+        return res.json({ success: true, data: update });
+    } catch (error) {
+        if (conn) await conn.rollback();
+        console.error("Transaction error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error updating month data"
+        });
+    } finally {
+        if (conn) conn.release();
+    }
+}
+
 module.exports = {
     get_month_data,
     get_all_month_data,
-    add_month_data
+    add_month_data,
+    update_month_data
 }

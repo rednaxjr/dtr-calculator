@@ -56,14 +56,15 @@ export class DtrListComponent implements OnInit {
     this.get_year();
     this.get_month();
     this.get_all_month_data();
-  }
+  } 
 
-  /** every saved month across all years, used to block re-adding one */
   get_all_month_data() {
     this.month_data_service.get_all_month_data(null).subscribe((res: any) => {
       this.all_month_data = res.data;
+      console.log("all_month_data", this.all_month_data)
     });
   }
+
   get_year() {
     this.year_service.get_year().subscribe((res: any) => {
       this.year_list = res.data ?? [];
@@ -109,8 +110,8 @@ export class DtrListComponent implements OnInit {
       (item: any) => Number(item.month_number) === Number(this.filter_month)
     );
   }
- 
-  view_data(data: any) {
+
+  view_data(data: any) { 
     const title = "Update"
     let dialogRef = this.dialog.open(MonthDataComponent, {
       width: '75vw',
@@ -124,12 +125,19 @@ export class DtrListComponent implements OnInit {
         title: title,
         year_list: this.year_list,
         month_list: this.month_list,
-        month_data_list: this.all_month_data
+        month_data_list: this.all_month_data,
+        month_data: data,
       }
     });
     dialogRef.afterClosed().subscribe(res => {
-
+      if (res) this.refresh_month_data();
     });
+  }
+
+  /** reload both the table and the list that blocks re-adding a month */
+  refresh_month_data() {
+    this.get_month_data();
+    this.get_all_month_data();
   }
   delete_data(data: any) {
 
@@ -148,11 +156,12 @@ export class DtrListComponent implements OnInit {
         title: title,
         year_list: this.year_list,
         month_list: this.month_list,
-        month_data_list: this.all_month_data
+        month_data_list: this.all_month_data,
+        month_data: null,
       }
     });
     dialogRef.afterClosed().subscribe(res => {
-
+      if (res) this.refresh_month_data();
     });
 
   }

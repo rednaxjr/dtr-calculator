@@ -61,6 +61,9 @@ export class MonthDataComponent {
   /** months already saved to month_data, so they can't be added twice */
   existing_month_data: any = [];
 
+  /** the month_data row being viewed / updated, null when adding a new one */
+  month_data: any = null;
+
   calendar_statuses: Record<number, string> = {};
 
 
@@ -83,12 +86,39 @@ export class MonthDataComponent {
     this.month_list = data.month_list;
     this.month_list_backup = this.month_list;
     this.existing_month_data = data.month_data_list;
+    this.month_data = data.month_data;
   }
 
   ngOnInit() {
-
+    if (this.month_data) this.load_month_data(this.month_data);
   }
+  private load_month_data(data: any) {
+    this.year_id = Number(data.year_id);
+    this.month_id = Number(data.month_id);
+    console.log(data)
 
+    this.year_value = Number(
+      data.year ?? this.year_list.find((y: any) => y.id === data.year_id)?.name
+    );
+    console.log("year_value", this.year_value)
+    this.month_number = Number(
+      data.month_number ?? this.month_list_backup.find((m: any) => m.id === data.month_id)?.number
+    );
+
+    this.month_list = this.month_list_backup
+      .filter((m: any) => Number(m.year_id) === Number(this.year_id))
+      .sort((a: any, b: any) => Number(a.number) - Number(b.number));
+ 
+    for (const day of JSON.parse(data.days)) {
+      const default_status = day.is_weekend ? 'Weekend' : 'Work Day';
+      if (day.status && day.status !== default_status) {
+        this.calender_status_service.set_status(
+          this.year_value, this.month_number, day.day, day.status
+        );
+      }
+    }
+    console.log()
+  }
   on_year_change(id: any) {
     const item = this.year_list.find((y: any) => y.id === id);
     if (!item) return;
@@ -102,14 +132,16 @@ export class MonthDataComponent {
     this.month_counts = {};
     this.calendar_statuses = {};
 
-    this.month_list = this.month_list_backup
-      .filter((m: any) => Number(m.year_id) === Number(item.id))
+    this.month_list = this.month_list_backup;
+
+    this.month_list = this.month_list.filter((m: any) => Number(m.year_id) === Number(item.id))
       .sort((a: any, b: any) => Number(a.number) - Number(b.number));
     this.year_service.get_year_month(item).subscribe((res: any) => {
       const counts: Record<number, number> = {};
       for (const row of res.data ?? []) counts[row.id] = Number(row.dtr_count ?? 0);
       this.month_counts = counts;
     });
+    console.log("month_counts", this.month_counts);
   }
 
   on_month_change(id: any) {
