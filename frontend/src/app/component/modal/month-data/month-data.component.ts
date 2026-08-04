@@ -44,6 +44,8 @@ export class MonthDataComponent {
     { title: 'File Information', id: 1 },
     { title: 'DTR Records', id: 2 },
   ];
+
+  activeTab = 0;
   dropdownOpen = false;
   year_list: any = [];
   year_list_backup: any = [];
@@ -92,10 +94,10 @@ export class MonthDataComponent {
   ngOnInit() {
     if (this.month_data) this.load_month_data(this.month_data);
   }
-  private load_month_data(data: any) {
+
+  load_month_data(data: any) {
     this.year_id = Number(data.year_id);
     this.month_id = Number(data.month_id);
-    console.log(data)
 
     this.year_value = Number(
       data.year ?? this.year_list.find((y: any) => y.id === data.year_id)?.name
@@ -108,7 +110,7 @@ export class MonthDataComponent {
     this.month_list = this.month_list_backup
       .filter((m: any) => Number(m.year_id) === Number(this.year_id))
       .sort((a: any, b: any) => Number(a.number) - Number(b.number));
- 
+
     for (const day of JSON.parse(data.days)) {
       const default_status = day.is_weekend ? 'Weekend' : 'Work Day';
       if (day.status && day.status !== default_status) {
@@ -302,6 +304,9 @@ export class MonthDataComponent {
       }
     });
   }
-
+  selectTab(index: number) {
+    this.activeTab = index;
+    this.dropdownOpen = false;
+  }
 
 }
