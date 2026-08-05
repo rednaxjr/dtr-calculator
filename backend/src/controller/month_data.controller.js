@@ -9,24 +9,38 @@ var paths = require("path");
 const fs = require('fs');
 const mime = require('mime-types');
 const created_at = new Date();
+
+
+
 const get_month_data = (req, res) => {
     const data = req.body ?? {};
     console.log("Received data:", data);
-
-    // "all" (or no year at all) drops the filter and returns every year
     const all_years = !data.year || data.year === 'all';
 
     const query = `
-        SELECT
-            md.*,
-            y.name   AS year,
-            m.name   AS month,
-            m.number AS month_number,
-            COUNT(dtr.id) AS logs
+    SELECT
+        md.*, 
+        y.name   AS year,
+        m.name   AS month,
+        m.number AS month_number,
+        COUNT(dtr.id) AS logs,
+        CASE 
+            WHEN COUNT(dtr.id) = 0 THEN NULL
+            ELSE JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'id',         dtr.id,
+                    'logs',       CAST(dtr.logs AS JSON),
+                    'created_at', dtr.created_at,
+                    'name',       CONCAT(LEFT(emp.lname, 1), '. ', emp.fname),
+                    'present',    dtr.present_count
+                )
+            )
+        END AS dtr_logs
         FROM month_data md
         LEFT JOIN year  y ON md.year_id  = y.id
         LEFT JOIN month m ON md.month_id = m.id
         LEFT JOIN dtr_logs dtr ON md.id = dtr.month_data_id
+        LEFT JOIN employees emp ON emp.id = dtr.employee_id
         ${all_years ? '' : 'WHERE y.name = ?'}
         GROUP BY md.id, y.name, m.name, m.number
         ORDER BY y.name DESC, m.number DESC
@@ -35,6 +49,18 @@ const get_month_data = (req, res) => {
     const params = all_years ? [] : [data.year];
 
     connection.query(query, params, (err, result) => {
+        const formatted = result.map(row => ({
+            ...row,
+            dtr_logs: (() => {
+                const parsed = typeof row.dtr_logs === 'string'
+                    ? JSON.parse(row.dtr_logs)
+                    : row.dtr_logs;
+                if (!parsed) return null;
+                const filtered = parsed.filter(d => d.id !== null);
+                return filtered.length > 0 ? filtered : null;
+            })()
+        }));
+        console.log(result)
         if (err) {
             return res.status(500).json({ message: "SQL error", error: err });
         }
@@ -70,7 +96,7 @@ const get_all_month_data
 const add_month_data = async (req, res) => {
     let conn;
     try {
-        const data = req.body; 
+        const data = req.body;
         if (!data) { return res.status(400).json({ message: "Missing data" }); }
 
 

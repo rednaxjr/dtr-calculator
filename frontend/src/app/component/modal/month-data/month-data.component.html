@@ -21,6 +21,7 @@
     <div class="hidden lg:block">
       <div class="flex items-center gap-6 border-b border-[#DCE8DC]">
         <button *ngFor="let section of sections; let i = index" type="button" (click)="selectTab(i)"
+          [disabled]="section.title === 'DTR Records' && data.title === 'Add'"
           class="relative pb-3 text-lg font-bold transition-colors"
           [ngClass]="activeTab === i ? 'text-green' : 'text-gray-500 hover:text-gray-700'">
           {{ section.title }}
@@ -53,60 +54,85 @@
         </div>
       </div>
     </div>
+    <ng-container *ngIf="activeTab == 0">
+      <div class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
+        <div class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
 
-    <div class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
-      <div class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
-
-        <div class="input-fields">
-          <label>Year</label>
-          <select name="year" [ngModel]="year_id" (ngModelChange)="on_year_change($event)" class="tr-select w-full py-2 px-4 shadow-md border border-border font-medium  
+          <div class="input-fields">
+            <label>Year</label>
+            <select name="year" [ngModel]="year_id" (ngModelChange)="on_year_change($event)" class="tr-select w-full py-2 px-4 shadow-md border border-border font-medium  
              text-text rounded-lg cursor-pointer transition-colors duration-150 hover:bg-[#E6F1E6] bg-white ">
-            <option [ngValue]="null" class="text-green" disabled>Select year</option>
-            <option *ngFor="let item of year_list" [ngValue]="item.id" class="text-green cursor-pointer">
-              {{ item.name }}
-            </option>
-          </select>
-        </div>
-        <div class="input-fields">
-          <label> Month</label>
-          <select name="month" [ngModel]="month_id" (ngModelChange)="on_month_change($event)"
-            [disabled]="year_id === null  "
-            class="tr-select w-full py-2 px-4 shadow-md border border-border font-medium   text-text rounded-lg cursor-pointer transition-colors duration-150 hover:bg-[#E6F1E6] focus:outline-none focus:ring-2 focus:ring-green/30 focus:border-green disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#F8FBF8]">
-            <option [ngValue]="null" disabled>
-              {{ month_placeholder }}
-            </option>
-            <option class="text-green cursor-pointer" *ngFor="let item of month_list" [ngValue]="item.id"
-              [disabled]="is_month_disabled(item)">
-              {{ month_option_label(item) }}
-            </option>
-          </select>
+              <option [ngValue]="null" class="text-green" disabled>Select year</option>
+              <option *ngFor="let item of year_list" [ngValue]="item.id" class="text-green cursor-pointer">
+                {{ item.name }}
+              </option>
+            </select>
+          </div>
+          <div class="input-fields">
+            <label> Month</label>
+            <select name="month" [ngModel]="month_id" (ngModelChange)="on_month_change($event)"
+              [disabled]="year_id === null  "
+              class="tr-select w-full py-2 px-4 shadow-md border border-border font-medium   text-text rounded-lg cursor-pointer transition-colors duration-150 hover:bg-[#E6F1E6] focus:outline-none focus:ring-2 focus:ring-green/30 focus:border-green disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#F8FBF8]">
+              <option [ngValue]="null" disabled>
+                {{ month_placeholder }}
+              </option>
+              <option class="text-green cursor-pointer" *ngFor="let item of month_list" [ngValue]="item.id"
+                [disabled]="is_month_disabled(item)">
+                {{ month_option_label(item) }}
+              </option>
+            </select>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
-      <div class="grid gap-x-10 gap-y-4 md:grid-cols-1 lg:xl:2xl:grid-cols-1">
-        <div class="input-fields">
-          <label class="text-sm font-medium text-black tracking-wide">Month's
-            Calendar</label>
-          <app-month-calendar [year]="year_value" [month]="month_number" [statuses]="calendar_statuses">
-            <ng-container>
-              <ng-template #dayCell let-day let-index="index">
-                <div class="cal-cell cal-cell--action" tabindex="0" (click)="update_status(day)"
-                  (keydown.enter)="update_status(day)" [class.cal-cell--holiday]="day.status === 'Holiday'"
-                  [class.cal-cell--weekend]="day.status === 'Weekend'"
-                  [class.cal-cell--work]="day.status === 'Work Day'"
-                  [attr.aria-label]="day.weekdayFull + ' ' + day.date + ' — ' + day.status + ', click to change status'">
+      <div class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
+        <div class="grid gap-x-10 gap-y-4 md:grid-cols-1 lg:xl:2xl:grid-cols-1">
+          <div class="input-fields">
+            <label class="text-sm font-medium text-black tracking-wide">Month's
+              Calendar</label>
+            <app-month-calendar [year]="year_value" [month]="month_number" [statuses]="calendar_statuses">
+              <ng-container>
+                <ng-template #dayCell let-day let-index="index">
+                  <div class="cal-cell cal-cell--action" tabindex="0" (click)="update_status(day)"
+                    (keydown.enter)="update_status(day)" [class.cal-cell--holiday]="day.status === 'Holiday'"
+                    [class.cal-cell--weekend]="day.status === 'Weekend'"
+                    [class.cal-cell--work]="day.status === 'Work Day'"
+                    [attr.aria-label]="day.weekdayFull + ' ' + day.date + ' — ' + day.status + ', click to change status'">
 
-                  <span class="cal-cell__dow">{{ day.weekdayLabel }}</span>
-                  <span class="cal-cell__date">{{ day.date }}</span>
-                  <span class="cal-cell__badge">{{ day.status }}</span>
-                </div>
-              </ng-template>
-            </ng-container>
-          </app-month-calendar>
+                    <span class="cal-cell__dow">{{ day.weekdayLabel }}</span>
+                    <span class="cal-cell__date">{{ day.date }}</span>
+                    <span class="cal-cell__badge">{{ day.status }}</span>
+                  </div>
+                </ng-template>
+              </ng-container>
+            </app-month-calendar>
+          </div>
         </div>
       </div>
-    </div>
+    </ng-container>
+    <ng-container *ngIf="activeTab == 1">
+
+      <div class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
+        <div class="grid gap-x-10 gap-y-4 md:grid-cols-1 lg:xl:2xl:grid-cols-1">
+          <div class="input-fields">
+            <app-table-landscape [labels]="headers" [data]="dtr_logs">
+              <ng-container>
+                <ng-template #actions let-default let-index="index">
+                  <div class="flex items-center py-2 ">
+                    <button class="text-green hover:text-opacity-80 font-bold text-sm">
+                      View
+                    </button>
+                    <button class="text-red-600 hover:text-opacity-80 font-bold text-sm ml-10">
+                      Delete
+                    </button>
+                  </div>
+                </ng-template>
+              </ng-container>
+            </app-table-landscape>
+
+          </div>
+        </div>
+      </div>
+    </ng-container>
 
 
   </div>

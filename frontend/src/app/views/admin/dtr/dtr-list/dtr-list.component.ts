@@ -112,6 +112,7 @@ export class DtrListComponent implements OnInit {
   }
 
   view_data(data: any) { 
+    console.log(data)
     const title = "Update"
     let dialogRef = this.dialog.open(MonthDataComponent, {
       width: '75vw',
@@ -127,6 +128,7 @@ export class DtrListComponent implements OnInit {
         month_list: this.month_list,
         month_data_list: this.all_month_data,
         month_data: data,
+        dtr_logs:data.dtr_logs??null
       }
     });
     dialogRef.afterClosed().subscribe(res => {

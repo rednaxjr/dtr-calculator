@@ -2,35 +2,40 @@
     <table class="w-full">
         <thead>
             <tr>
-                <th *ngFor="let header of labels"
-                    class="first-letter:uppercase text-green  ">{{ header }}</th>
+                <th *ngFor="let header of labels" class="first-letter:uppercase text-green  ">{{ header }}</th>
             </tr>
         </thead>
 
         <tbody>
-            <tr *ngFor="let item of data; let i = index">
-                <ng-container *ngFor="let header of labels">
-                    <td>
-                        <ng-container
-                            *ngIf="header === 'actions' && actions; else defaultCell">
-                            <ng-container
-                                *ngTemplateOutlet="actions; context: { $implicit: item, index: i }"></ng-container>
-                        </ng-container>
-                        <ng-template #defaultCell>
-                            {{ item[header] }}
-                        </ng-template>
+            <ng-container *ngIf="  data === null; else hasData">
+                <tr class="w-full h-auto">
+                    <td [attr.colspan]="labels.length" class="text-center py-6 text-gray-400 font-medium">
+                        No Records
                     </td>
-                </ng-container>
-            </tr>
+                </tr>
+            </ng-container>
+
+            <ng-template #hasData>
+                <tr *ngFor="let item of data; let i = index">
+                    <ng-container *ngFor="let header of labels">
+                        <td>
+                            <ng-container *ngIf="header === 'actions' && actions; else defaultCell">
+                                <ng-container *ngTemplateOutlet="actions; context: { $implicit: item, index: i }">
+                                </ng-container>
+                            </ng-container>
+                            <ng-template #defaultCell>
+                                {{ item[header] ?? '—' }}
+                            </ng-template>
+                        </td>
+                    </ng-container>
+                </tr>
+            </ng-template>
         </tbody>
     </table>
     <div class="tbl-foot py-5 px-4 ">
         <span id="recs-count">Showing 10 of 10 records</span>
-        <div class="pagination" id="recs-pg"><button
-                class="pg-btn">‹</button><button
-                class="pg-btn ">1</button><button
-                class="pg-btn active">2</button><button class="pg-btn"
-                disabled>›</button></div>
+        <div class="pagination" id="recs-pg"><button class="pg-btn">‹</button><button class="pg-btn ">1</button><button
+                class="pg-btn active">2</button><button class="pg-btn" disabled>›</button></div>
     </div>
 
 </div>
