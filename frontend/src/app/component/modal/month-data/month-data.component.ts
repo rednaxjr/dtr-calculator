@@ -18,9 +18,6 @@ import { SalaryTypeService } from '../../../services/salary-type/salary-type.ser
 import { YearService } from '../../../services/year/year.service';
 import { CalendarStatusService } from '../../../services/calendar-status/calendar-status.service';
 import { MonthDataService } from '../../../services/month_data/month-data.service';
-import { TableLandscapeComponent } from '../../table/table-landscape/table-landscape.component';
-import { TimeRecordModal2Component } from '../time-record-modal-2/time-record-modal-2.component';
-import { utils, write } from 'xlsx-js-style';
 
 CalendarStatusComponent
 MonthCalendarComponent
@@ -36,8 +33,7 @@ DtrService
 export class MonthDataComponent {
 
 
-  headers: any = ["name", "present", "absent", "actions"]
-  dtr_logs: any = [];
+  headers: any = ["id", "name", "late", "present", "actions"]
   isDragging = signal(false);
   file_name: any = "";
   saving = false;
@@ -61,9 +57,13 @@ export class MonthDataComponent {
   year_value: any = null;
   month_number: any = null;
 
+  /** dtr_count per month id, loaded for the selected year */
   month_counts: Record<number, number> = {};
 
+  /** months already saved to month_data, so they can't be added twice */
   existing_month_data: any = [];
+
+  /** the month_data row being viewed / updated, null when adding a new one */
   month_data: any = null;
 
   calendar_statuses: Record<number, string> = {};
@@ -90,10 +90,6 @@ export class MonthDataComponent {
     this.month_list_backup = this.month_list;
     this.existing_month_data = data.month_data_list;
     this.month_data = data.month_data;
-    this.dtr_logs = (data.dtr_logs ?? []).map((row: any) => ({
-      ...row,
-      logs: this.parse_logs(row.logs),
-    }));
   }
 
   ngOnInit() {

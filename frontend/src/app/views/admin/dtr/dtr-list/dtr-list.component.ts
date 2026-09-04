@@ -124,31 +124,26 @@ export class DtrListComponent implements OnInit, OnDestroy {
 
 
 
-  view_data(data: any) {
-    this.month_data_service.get_dtr_logs_by_month_data_id(data).subscribe((res: any) => {
-      const dtr_logs = res.data ?? [];
-      const title = "View"
-      let dialogRef = this.dialog.open(MonthDataComponent, {
-        width: '75vw',
-        maxWidth: '75vw',
-        height: '75vh',
-        maxHeight: '75vh',
-        panelClass: 'fullscreen-dialog',
-        autoFocus: true,
-        disableClose: true,
-        data: {
-          title: title,
-          year_list: this.year_list,
-          month_list: this.month_list,
-          month_data_list: this.all_month_data,
-          month_data: data,
-          dtr_logs: dtr_logs
-        }
-      });
-
-      dialogRef.afterClosed().subscribe(res => {
-        if (res) this.refresh_month_data(res);
-      });
+  view_data(data: any) { 
+    const title = "Update"
+    let dialogRef = this.dialog.open(MonthDataComponent, {
+      width: '75vw',
+      maxWidth: '75vw',
+      height: '75vh',
+      maxHeight: '75vh',
+      panelClass: 'fullscreen-dialog',
+      autoFocus: true,
+      disableClose: true,
+      data: {
+        title: title,
+        year_list: this.year_list,
+        month_list: this.month_list,
+        month_data_list: this.all_month_data,
+        month_data: data,
+      }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) this.refresh_month_data();
     });
   }
   refresh_month_data(saved?: any) {
