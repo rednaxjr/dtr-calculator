@@ -14,6 +14,8 @@ const add_dtr = async (req, res) => {
     let conn;
     try {
         const { data, calendar } = req.body;
+        console.log(data)
+        console.log(calendar)
 
         if (!Array.isArray(data) || data.length === 0) {
             return res.status(400).json({ success: false, message: "Missing DTR records" });
@@ -27,60 +29,45 @@ const add_dtr = async (req, res) => {
         const month_id = calendar.month_id;
         const days = Array.isArray(calendar.days) ? calendar.days : [];
 
-
         const pool = connection.promise();
         conn = await pool.getConnection();
-        await conn.beginTransaction();
-
-        const [existing] = await conn.query(
+        await conn.beginTransaction(); 
+        const [month_rows] = await conn.query(
             `SELECT id FROM month_data WHERE year_id = ? AND month_id = ? LIMIT 1`,
             [year_id, month_id]
         );
 
-        if (existing.length > 0) {
+        if (month_rows.length === 0) {
             await conn.rollback();
-            return res.status(409).json({
+            return res.status(404).json({
                 success: false,
-                message: "A DTR for this month has already been uploaded."
+                message: "This month has not been set up yet."
             });
         }
-        const created_at = new Date();
 
-        const month_values = [
-            year_id,
-            month_id,
-            calendar.month_name ?? null,
-            calendar.workday_count ?? 0,
-            calendar.holiday_count ?? 0,
-            created_at,
-            JSON.stringify(days)
-        ];
-
-        const [insert_month_data] = await conn.query(
-            `INSERT INTO month_data (year_id, month_id, name, work_days, holidays, created_at, days)
-             VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            month_values
-        );
-
-
-
+        const month_data_id = month_rows[0].id; 
         const dtr_values = data.map(employee => [
+            month_data_id,
             employee.id ?? null,
             JSON.stringify(employee.logs ?? []),
-            year_id,
-            month_id,
-            employee.present,
-            employee.absent,
-            created_at
+            employee.present ?? 0,
+            employee.absent ?? 0
         ]);
 
         const [add_dtr_logs] = await conn.query(
-            `INSERT INTO dtr_logs (employee_id, logs, year_id, month_id,present_count, absent_count, created_at)
+            `INSERT INTO dtr_logs (month_data_id, employee_id, logs, present_count, absent_count)
              VALUES ?`,
             [dtr_values]
+        ); 
+        await conn.query(
+            `UPDATE month_data SET work_days = ?, holidays = ?, days = ? WHERE id = ?`,
+            [
+                calendar.workday_count ?? 0,
+                calendar.holiday_count ?? 0,
+                JSON.stringify(days),
+                month_data_id
+            ]
         );
-
-
 
         await conn.commit();
 
@@ -90,7 +77,7 @@ const add_dtr = async (req, res) => {
             data: {
                 year_id,
                 month_id,
-                month_data_id: insert_month_data.insertId,
+                month_data_id,
                 dtr_saved: add_dtr_logs.affectedRows,
                 // records whose name never matched an employee row
                 unmatched: data.filter(employee => !employee.id).length,
@@ -141,6 +128,7 @@ const get_all_dtr = async (req, res) => {
         if (conn) conn.release();
     }
 }
+
 
 
 

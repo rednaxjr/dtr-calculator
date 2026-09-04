@@ -1,0 +1,194 @@
+<div class="trm">
+
+  <header class="trm-head">
+    <div class="trm-head__info">
+      <h2 class="trm-name">{{ employee.name }}</h2>
+      <p class="trm-meta">
+        <span>ID {{ employee.userId }}</span>
+        @if (period_label) {
+        <span class="trm-sep">·</span>
+        <span>{{ period_label }}</span>
+        }
+        <span class="trm-sep">·</span>
+        <span>{{ work_day_count }} work days</span>
+        @if (holiday_count > 0) {
+        <span class="trm-sep">·</span>
+        <span>{{ holiday_count }} holiday{{ holiday_count > 1 ? 's' : '' }}</span>
+        }
+        @if (missing_count > 0) {
+        <span class="trm-sep">·</span>
+        <span class="trm-meta--warn"
+          matTooltip="These dates are in the month but not in the uploaded file.">
+          {{ missing_count }} without a record
+        </span>
+        }
+      </p>
+    </div>
+
+    <div class="trm-head__actions">
+      @if (edited_count > 0) {
+      <span class="trm-unsaved" matTooltip="You have unsaved changes.">
+        {{ edited_count }} unsaved
+      </span>
+      }
+      <button type="button" class="trm-icon-btn" (click)="close()"
+        aria-label="Close dialog">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <div class="trm-body">
+    <table class="trm-table">
+      <thead>
+        <tr>
+          <th class="trm-th trm-th--date">Date</th>
+
+          @for (field of fields; track field.key) {
+          <th class="trm-th trm-th--time">
+            <span class="trm-th__label">
+              {{ field.label }}
+              @if (field.required) {
+              <span class="trm-req" matTooltip="Required">*</span>
+              }
+              @if (blank_count(field) > 0) {
+              <span class="trm-count"
+                [matTooltip]="blank_count(field) + ' blank in this column'">
+                {{ blank_count(field) }}
+              </span>
+              }
+              @if (is_fillable(field)) {
+              <button type="button" class="trm-col-btn"
+                [matMenuTriggerFor]="columnMenu"
+                [matMenuTriggerData]="{ field: field }" [disabled]="saving"
+                matTooltip="Column actions">
+                <mat-icon>more_horiz</mat-icon>
+              </button>
+              }
+            </span>
+          </th>
+          }
+
+          <th class="trm-th trm-th--status">Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (row of rows; track row.day) {
+        <tr class="trm-row" [class.trm-row--rest]="row.is_weekend"
+          [class.trm-row--holiday]="row.calendar_status === 'Holiday'"
+          [class.trm-row--empty]="!row.log">
+
+          <td class="trm-td trm-td--date">
+            <span class="trm-day">{{ row.day }}</span>
+            <span class="trm-dow" [matTooltip]="row.weekday">{{ row.weekday_short }}</span>
+          </td>
+
+          @for (field of fields; track field.key) {
+          <td class="trm-td trm-td--time">
+            @if (row.log) {
+            <input type="text" placeholder="—" class="trm-input"
+              [(ngModel)]="row.log[field.key]"
+              [ngClass]="input_classes(row, field)"
+              [disabled]="is_field_disabled(row, field)"
+              [matTooltip]="field_tooltip(row, field)" matTooltipPosition="above" />
+            } @else {
+            <span class="trm-blank">—</span>
+            }
+          </td>
+          }
+
+          <td class="trm-td trm-td--status">
+            @if (can_change_status(row)) {
+            <button type="button" class="trm-status trm-status--action"
+              [matMenuTriggerFor]="statusMenu" [matMenuTriggerData]="{ row: row }"
+              matTooltip="Change attendance status">
+              <span class="trm-status__dot" [style.background]="status_dot(row)"></span>
+              <span class="trm-status__label">{{ status_label(row) }}</span>
+              @if (is_half_day(row)) {
+              <span class="trm-status__note">{{ half_session(row) === 'PM' ? 'AM off' : 'PM off' }}</span>
+              }
+            </button>
+            } @else {
+            <span class="trm-status">
+              <span class="trm-status__dot" [style.background]="status_dot(row)"></span>
+              <span class="trm-status__label">{{ status_label(row) }}</span>
+            </span>
+            }
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <mat-menu #statusMenu="matMenu" class="trm-menu">
+    <ng-template matMenuContent let-row="row">
+      @for (option of status_options; track option.value) {
+
+      @if (option.value === 'Half Day') {
+      <button mat-menu-item [matMenuTriggerFor]="halfDayMenu"
+        [matMenuTriggerData]="{ row: row }">
+        <span class="trm-menu__dot" [style.background]="status_meta[option.value].dot"></span>
+        <span>{{ option.label }}</span>
+      </button>
+      } @else {
+      <button mat-menu-item (click)="set_status(row, option.value)">
+        <span class="trm-menu__dot" [style.background]="status_meta[option.value].dot"></span>
+        <span>{{ option.label }}</span>
+        @if (row.log.status === option.value) {
+        <mat-icon class="trm-menu__check">check</mat-icon>
+        }
+      </button>
+      }
+
+      }
+    </ng-template>
+  </mat-menu>
+
+  <mat-menu #halfDayMenu="matMenu" class="trm-menu">
+    <ng-template matMenuContent let-row="row">
+      <button mat-menu-item (click)="set_half_day(row, 'PM')">
+        <span>Morning half day</span>
+        @if (is_half_day(row) && half_session(row) === 'PM') {
+        <mat-icon class="trm-menu__check">check</mat-icon>
+        }
+      </button>
+      <button mat-menu-item (click)="set_half_day(row, 'AM')">
+        <span>Afternoon half day</span>
+        @if (is_half_day(row) && half_session(row) === 'AM') {
+        <mat-icon class="trm-menu__check">check</mat-icon>
+        }
+      </button>
+    </ng-template>
+  </mat-menu>
+
+  <mat-menu #columnMenu="matMenu" class="trm-menu">
+    <ng-template matMenuContent let-field="field">
+      <button mat-menu-item (click)="fill_all_blank(field)"
+        [disabled]="!can_fill_any_blank(field)">
+        <span>Fill all blank with {{ field.fillValue }}</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="clear_auto_filled(field)"
+        [disabled]="!has_auto_filled(field)">
+        <span class="trm-menu__danger">Undo filled values</span>
+      </button>
+    </ng-template>
+  </mat-menu>
+
+  <footer class="trm-foot">
+    <p class="trm-hint">Click a status to change it. Edited fields are marked in gold.</p>
+
+    <div class="trm-foot__actions">
+      <button type="button" class="trm-btn" (click)="close()" [disabled]="saving">
+        Close
+      </button>
+      <button type="button" class="trm-btn trm-btn--primary" (click)="save()"
+        [disabled]="saving">
+        {{ saving ? 'Saving…' : 'Save' }}
+      </button>
+    </div>
+  </footer>
+
+</div>

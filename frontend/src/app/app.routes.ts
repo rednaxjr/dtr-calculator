@@ -28,7 +28,7 @@ export const routes: Routes = [
       { path: 'employees', component: EmployeeListComponent, data: { title: 'Employee' , parent: 'Employees',  description:"Manage the list of employees" } },
       { path: 'employees/details/:id', component: EmployeeDetailsComponent, data: { title: 'Employees Details' , parent: 'Employees', description:null } },
       { path: 'dtr', component: DtrListComponent, data: { title: 'DTR Files', parent: 'DTR Files', description:null } },
-      { path: 'dtr/upload', component: DtrUploadComponent, data: { title: 'Upload DTR', parent: 'DTR Files', description:"Upload and manage employee Daily Time Records" } },
+      { path: 'dtr/upload/:id', component: DtrUploadComponent, data: { title: 'Upload DTR', parent: 'DTR Files', description:"Upload and manage employee Daily Time Records" } },
     ],
   },
 

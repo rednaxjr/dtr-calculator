@@ -1,0 +1,504 @@
+/* palette + type scale mirror the rest of the app (tailwind.config.js) */
+$green: #1b5e20;
+$gold: #F9A825;
+$border: #DCE8DC;
+$text: #1a3020;
+$muted: #6B8F6B;
+$hairline: #ECF1EC;
+$surface: #F8FBF8;
+$hover: #F1F8F1;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.trm {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #ffffff;
+  color: $text;
+}
+
+/* ---- header -------------------------------------------------------------- */
+
+.trm-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-shrink: 0;
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid $border;
+}
+
+.trm-head__info {
+  min-width: 0;
+}
+
+.trm-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: $text;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.trm-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 3px 0 0;
+  font-size: 12px;
+  font-weight: 400;
+  color: $muted;
+
+  span {
+    font-size: 12px;
+    color: inherit;
+  }
+}
+
+.trm-meta--warn {
+  color: #B26A00;
+}
+
+.trm-sep {
+  color: #C4D2C4;
+}
+
+.trm-head__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.trm-unsaved {
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: #FDF3DC;
+  font-size: 11px;
+  font-weight: 600;
+  color: #8A6100;
+  white-space: nowrap;
+}
+
+.trm-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  color: $muted;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    color: inherit;
+  }
+
+  &:hover {
+    background: $hover;
+    color: $text;
+  }
+}
+
+/* ---- table --------------------------------------------------------------- */
+
+.trm-body {
+  flex: 1;
+  overflow: auto;
+}
+
+.trm-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.trm-th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 10px 12px;
+  background: #ffffff;
+  border-bottom: 1px solid $border;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: $muted;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.trm-th--date {
+  text-align: left;
+  padding-left: 20px;
+  width: 84px;
+}
+
+.trm-th--status {
+  text-align: left;
+  width: 170px;
+  padding-right: 20px;
+}
+
+.trm-th__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.trm-req {
+  font-size: 11px;
+  color: #dc2626;
+}
+
+.trm-count {
+  min-width: 16px;
+  padding: 1px 5px;
+  border-radius: 9999px;
+  background: #FEECEC;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: #B42318;
+}
+
+.trm-col-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  color: #B7C4B7;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    color: inherit;
+  }
+
+  &:hover:not([disabled]) {
+    background: $hover;
+    color: $green;
+  }
+
+  &[disabled] {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+.trm-row {
+  border-bottom: 1px solid $hairline;
+  transition: background-color 120ms ease;
+
+  &:hover {
+    background: $surface;
+  }
+}
+
+.trm-row--rest,
+.trm-row--empty {
+  background: #FCFDFC;
+
+  .trm-day,
+  .trm-dow {
+    color: #A9B4A9;
+  }
+}
+
+.trm-row--holiday {
+  background: #FFFCF4;
+
+  &:hover {
+    background: #FDF7E9;
+  }
+}
+
+.trm-td {
+  padding: 6px 12px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.trm-td--date {
+  padding-left: 20px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.trm-day {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text;
+  font-variant-numeric: tabular-nums;
+}
+
+.trm-dow {
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: $muted;
+}
+
+.trm-td--status {
+  text-align: left;
+  padding-right: 20px;
+}
+
+.trm-blank {
+  font-size: 13px;
+  color: #C9D2C9;
+}
+
+/* ---- time inputs --------------------------------------------------------- */
+
+.trm-input {
+  width: 74px;
+  padding: 5px 6px;
+  border: 1px solid transparent;
+  border-bottom-color: $hairline;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: $text;
+  transition: border-color 150ms ease, background-color 150ms ease;
+
+  &::placeholder {
+    color: #C9D2C9;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: $border;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $green;
+    background: #ffffff;
+  }
+
+  &:disabled {
+    border-color: transparent;
+    color: #C2CCC2;
+    cursor: not-allowed;
+  }
+}
+
+/* late — the value stays readable, the marker is the colour, not a box */
+.trm-input--late:not(:disabled) {
+  color: #C0362C;
+  font-weight: 600;
+  border-bottom-color: #F0B4AE;
+}
+
+/* required, and still empty */
+.trm-input--missing {
+  border-bottom-color: #E88C82;
+  background: #FEF7F6;
+
+  &::placeholder {
+    color: #D9695C;
+  }
+}
+
+/* touched in this session */
+.trm-input--edited:not(:disabled) {
+  border-bottom-color: $gold;
+  background: #FFFBF0;
+}
+
+/* ---- status -------------------------------------------------------------- */
+
+.trm-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: $text;
+  white-space: nowrap;
+}
+
+.trm-status--action {
+  cursor: pointer;
+  transition: background-color 150ms ease;
+
+  &:hover {
+    background: $hover;
+  }
+}
+
+.trm-status__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.trm-status__label {
+  font-size: 12px;
+  color: inherit;
+}
+
+.trm-status__note {
+  font-size: 11px;
+  color: $muted;
+}
+
+.trm-row--rest .trm-status__label,
+.trm-row--empty .trm-status__label {
+  color: $muted;
+}
+
+/* ---- menus --------------------------------------------------------------- */
+
+/* a mat-menu renders in an overlay outside this component, so its rules are
+   deliberately global — kept under the .trm-menu panel class */
+::ng-deep .trm-menu {
+
+  .mat-mdc-menu-item {
+    min-height: 36px;
+    font-size: 13px;
+    color: $text;
+  }
+
+  .trm-menu__dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 10px;
+    border-radius: 9999px;
+    flex-shrink: 0;
+  }
+
+  .trm-menu__check {
+    margin-left: auto;
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    color: $green;
+  }
+
+  .trm-menu__danger {
+    color: #B42318;
+  }
+}
+
+/* ---- footer -------------------------------------------------------------- */
+
+.trm-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-shrink: 0;
+  padding: 12px 20px;
+  border-top: 1px solid $border;
+  background: #ffffff;
+}
+
+.trm-hint {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 400;
+  color: $muted;
+}
+
+.trm-foot__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.trm-btn {
+  padding: 7px 16px;
+  border: 1px solid $border;
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  color: $text;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, opacity 150ms ease;
+
+  &:hover:not([disabled]) {
+    background: $hover;
+    border-color: #C7D9C7;
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.trm-btn--primary {
+  border-color: $gold;
+  background: $gold;
+  color: #ffffff;
+
+  &:hover:not([disabled]) {
+    background: #E89C1F;
+    border-color: #E89C1F;
+  }
+}
+
+/* ---- responsive ---------------------------------------------------------- */
+
+@media (max-width: 768px) {
+
+  .trm-head,
+  .trm-foot {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .trm-th--date,
+  .trm-td--date {
+    padding-left: 14px;
+  }
+
+  .trm-th--status,
+  .trm-td--status {
+    padding-right: 14px;
+    width: auto;
+  }
+
+  .trm-th,
+  .trm-td {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .trm-input {
+    width: 60px;
+  }
+
+  .trm-hint {
+    display: none;
+  }
+}

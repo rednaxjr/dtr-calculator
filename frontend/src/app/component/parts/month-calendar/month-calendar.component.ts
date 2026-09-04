@@ -19,13 +19,7 @@ export const WEEKDAY_FULL = [
 export const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'
-];
-
-/**
- * Every date in a month, with its resolved status. Shared by the calendar view
- * and by callers that need the same data while the calendar isn't rendered
- * (the upload submit payload), so both always agree.
- */
+]; 
 export function build_calendar_days(
   year: any,
   month: any,
@@ -35,10 +29,7 @@ export function build_calendar_days(
   const m = Number(month);
 
   if (!Number.isInteger(y) || !Number.isInteger(m)) return [];
-  if (m < 1 || m > 12) return [];
-
-  // day 0 of the next month resolves to the last day of this one,
-  // so leap years and 28/29/30/31 day months are all handled here.
+  if (m < 1 || m > 12) return []; 
   const daysInMonth = new Date(y, m, 0).getDate();
   const days: CalendarDay[] = [];
 
@@ -66,16 +57,9 @@ export function build_calendar_days(
   templateUrl: './month-calendar.component.html',
   styleUrl: './month-calendar.component.scss'
 })
-export class MonthCalendarComponent implements OnChanges {
-
-  /** Four digit year, e.g. 2026 */
-  @Input() year: any = null;
-  /** Month number, 1 = January ... 12 = December */
-  @Input() month: any = null;
-  /**
-   * Status overrides for this month, keyed by day-of-month. Pass a new object
-   * to re-render — the calendar rebuilds whenever this reference changes.
-   */
+export class MonthCalendarComponent implements OnChanges { 
+  @Input() year: any = null; 
+  @Input() month: any = null; 
   @Input() statuses: Record<number, string> | null = null;
   @ContentChild(TemplateRef) dayTemplate?: TemplateRef<any>;
 
@@ -108,7 +92,8 @@ export class MonthCalendarComponent implements OnChanges {
   }
 
   private generate() {
-    this.days = build_calendar_days(this.year, this.month, this.statuses);
+    this.days = build_calendar_days(this.year, this.month, this.statuses);  
+  
     this.leadingBlanks = [];
     this.monthLabel = '';
 

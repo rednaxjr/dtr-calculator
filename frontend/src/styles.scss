@@ -55,7 +55,7 @@ body {
         margin: 0;
     }
 }
- 
+
 @media (max-width: 1024px) {
     .fullscreen-dialog.cdk-overlay-pane {
         width: 95vw !important;
@@ -65,8 +65,8 @@ body {
     }
 }
 
-@media (max-width: 768px) { 
-    
+@media (max-width: 768px) {
+
     .time-record-dialog.cdk-overlay-pane {
         width: 100vw !important;
         height: 100vh !important;
@@ -151,7 +151,29 @@ body {
     &:focus-visible {
         outline: none;
         box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.4);
-    } 
+    }
+}
+
+.button-green {
+    background: #16a34a;
+    color: white;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+
+    &:hover {
+        background: #22c55e ;
+    }
+
+    &:focus,
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.4);
+    }
 }
 
 .sel-filter {
@@ -161,7 +183,7 @@ body {
     font-size: 12px;
     color: #1b5e20;
     background: #FAFCFA;
-    cursor: pointer; 
+    cursor: pointer;
 }
 
 

@@ -1,24 +1,6 @@
 <div class="w-full h-full flex flex-col gap-4">
 
-  <app-dtr-banner [data]="filteredBanner" [view_number]="view_number_data"
-    (select_view)="view_number($event)" />
-
-  <div class="hidden lg:block">
-    <div class="flex items-center gap-6 border-b border-[#DCE8DC]">
-      <button *ngFor="let section of sections; let i = index" type="button"
-        (click)="selectTab(i)"
-        class="relative pb-3 text-sm font-medium transition-colors"
-        [ngClass]="activeTab === i ? 'text-green' : 'text-gray-500 hover:text-gray-700'">
-        {{ section.title }}
-        <span *ngIf="get_section_error_count(i) > 0"
-          class="absolute -top-2 -right-3 min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold leading-none">
-          {{ get_section_error_count(i) }}
-        </span>
-        <span *ngIf="activeTab === i"
-          class="absolute left-0 -bottom-px h-0.5 w-full bg-green"></span>
-      </button>
-    </div>
-  </div>
+  <app-dtr-banner [data]="filteredBanner" [view_number]="view_number_data" />
 
   <div class="lg:hidden">
     <div class="relative">
@@ -55,119 +37,28 @@
   <input #fileInput type="file" accept=".xls,.xlsx" hidden
     (change)="onFileSelected($event)" />
 
-  <div *ngIf="view_number_data === 1" class="w-full h-full flex flex-col gap-6">
-
-    <div
-      class="bg-white rounded-xl shadow-md overflow-hidden border border-green/10   py-6 px-4">
-
-      <div class="mb-0.5">
-        <h3 class="text-lg font-bold text-green">Log's Information</h3>
-      </div>
-      <div
-        class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
-        <div
-          class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-3">
-
-          <div class="input-fields">
-            <label>Year</label>
-            <select name="year" [ngModel]="year_id"
-              (ngModelChange)="on_year_change($event)"
-              class="tr-select w-full py-2 px-4 shadow-md border border-border font-medium  
-             text-text rounded-lg cursor-pointer transition-colors duration-150 hover:bg-[#E6F1E6] bg-white ">
-              <option [ngValue]="null"  class="text-green" disabled>Select year</option>
-              <option *ngFor="let item of year_list" [ngValue]="item.id" class="text-green cursor-pointer">
-                {{ item.name }}
-              </option>
-            </select>
-          </div>
-          <div class="input-fields">
-            <label> Month</label>
-            <select name="month" [ngModel]="month_id"
-              (ngModelChange)="on_month_change($event)"
-              [disabled]="year_id === null || !has_selectable_month"
-              class="tr-select w-full py-2 px-4 shadow-md border border-border font-medium   text-text rounded-lg cursor-pointer transition-colors duration-150 hover:bg-[#E6F1E6] focus:outline-none focus:ring-2 focus:ring-green/30 focus:border-green disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#F8FBF8]">
-              <option [ngValue]="null" disabled>
-                {{ month_placeholder }}
-              </option>
-              <option class="text-green cursor-pointer" *ngFor="let item of month_list" [ngValue]="item.id"
-                [disabled]="is_month_disabled(item)">
-                {{ month_option_label(item) }}
-              </option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div
-        class="relative w-full flex flex-col lg:flex-col lg:justify-between gap-5 mt-3">
-        <div
-                class="grid gap-x-10 gap-y-4 md:grid-cols-2 lg:xl:2xl:grid-cols-2">
-          <div class="input-fields">
-            <label
-              class="text-sm font-medium text-black tracking-wide">Month's
-              Calendar</label>
-            <app-month-calendar [year]="year_value" [month]="month_number"
-              [statuses]="calendar_statuses">
-              <ng-container>
-                <ng-template #dayCell let-day let-index="index">
-                  <div class="cal-cell cal-cell--action"
-                    (click)="update_status(day)" tabindex="0"
-                    (keydown.enter)="update_status(day)"
-                    [class.cal-cell--holiday]="day.status === 'Holiday'"
-                    [class.cal-cell--weekend]="day.status === 'Weekend'"
-                    [class.cal-cell--work]="day.status === 'Work Day'"
-                    [attr.aria-label]="day.weekdayFull + ' ' + day.date + ' — ' + day.status + ', click to change status'">
-
-                    <span class="cal-cell__dow">{{ day.weekdayLabel }}</span>
-                    <span class="cal-cell__date">{{ day.date }}</span>
-                    <span class="cal-cell__badge">{{ day.status }}</span>
-                  </div>
-                </ng-template>
-              </ng-container>
-            </app-month-calendar>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="w-full h-auto flex justify-end  ">
-      <button
-        class="inline-flex items-center gap-2 px-5 py-2 rounded-lg  font-medium
-             bg-green text-white
-             hover:bg-green-600 active:scale-95
-             focus:outline-none focus:ring-2 focus:ring-green-400/50
-             transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed
-             disabled:hover:bg-green disabled:active:scale-100"
-        [disabled]="!canUpload" (click)="next_view()">
-        Next</button>
-    </div>
-  </div>
-  <div *ngIf="view_number_data === 2"
+  <div
     class="w-full h-full flex flex-col gap-4">
     @if (parser.employees.length === 0) {
     <div
       class="drop-zone w-full min-h-full flex flex-col items-center justify-center"
-      [class.dragging]="isDragging()" [class.disabled]="!canUpload"
+      [class.dragging]="isDragging()"
       (dragover)="onDragOver($event)" (dragleave)="isDragging.set(false)"
       (drop)="onDrop($event)"
       (click)="openFilePicker()">
 
-      @if (!canUpload) {
-      <mat-icon class="upload-icon">lock</mat-icon>
-      <p class="text-base font-semibold !text-gray-400">Select a Year and
-        Month
-        before uploading</p>
-      } @else if (parser.isLoading) {
-      <mat-icon class="upload-icon">hourglass_top</mat-icon>
-      <p class="text-base font-semibold !text-green">Parsing file...</p>
-      } @else {
       <mat-icon class="upload-icon">upload_file</mat-icon>
       <p class="text-base font-semibold !text-green">Drag & drop your DTR .xls
         file here</p>
       <span class="text-sm !text-green/70">or click to browse</span>
+
+      @if (parser.isLoading) {
+      <mat-icon class="upload-icon">hourglass_top</mat-icon>
+      <p class="text-base font-semibold !text-green">Parsing file...</p>
       }
     </div>
     }
+
     <div
       class="bg-white rounded-xl shadow-md overflow-hidden border border-green/10">
 

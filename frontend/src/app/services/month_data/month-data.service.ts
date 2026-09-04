@@ -30,4 +30,11 @@ export class MonthDataService {
   update_month_data(data:any) {
     return this.httpClient.post(this.url + "/update_month_data", data, this.headers);
   }
+  get_month_data_by_id(data:any){
+    return this.httpClient.post(this.url + "/get_month_data_by_id", data, this.headers);
+  }
+
+  get_dtr_logs_by_month_data_id(data:any){
+    return this.httpClient.post(this.url + "/get_dtr_logs_by_month_data_id", data, this.headers);
+  }
 }

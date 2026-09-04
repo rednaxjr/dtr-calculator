@@ -1,6 +1,6 @@
 import { Component, signal, OnDestroy, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -8,15 +8,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ParserService } from '../../../../services/parser/parser.service';
-import { TimeRecordModalComponent } from '../../../../component/modal/time-record-modal/time-record-modal.component';
+import { TimeRecordModal2Component } from '../../../../component/modal/time-record-modal-2/time-record-modal-2.component';
 import { DtrBannerComponent } from '../../../../component/parts/dtr-banner/dtr-banner.component';
 import { YearService } from '../../../../services/year/year.service';
 import { EmployeeService } from '../../../../services/employee/employee.service';
 import { TableLandscapeComponent } from "../../../../component/table/table-landscape/table-landscape.component";
-import { MonthCalendarComponent, build_calendar_days, MONTH_NAMES } from '../../../../component/parts/month-calendar/month-calendar.component';
+import { MonthCalendarComponent, MONTH_NAMES } from '../../../../component/parts/month-calendar/month-calendar.component';
 import { DtrService } from '../../../../services/dtr/dtr.service';
 import { CalendarStatusComponent } from '../../../../component/modal/calendar-status/calendar-status.component';
 import { CalendarStatusService } from '../../../../services/calendar-status/calendar-status.service';
+import { MonthDataService } from '../../../../services/month_data/month-data.service';
 
 @Component({
   selector: 'app-dtr-upload',
@@ -36,7 +37,6 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
   view_number_data: any = 1;
   url_id: any = null;
 
-  /** tab strip mirrors the two upload steps, `id` maps to view_number_data */
   sections = [
     { title: 'File Information', id: 1 },
     { title: 'DTR Records', id: 2 },
@@ -75,39 +75,37 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
 
   year_id: any = null;
   month_id: any = null;
-  /** actual calendar values behind the selected ids, used to build the calendar */
   year_value: any = null;
   month_number: any = null;
   employees: any = [];
 
-  /** calendar status overrides for the selected month, keyed by day-of-month */
   calendar_statuses: Record<number, string> = {};
 
+  month_data: any;
 
 
   constructor(
+    private route: ActivatedRoute,
     public parser: ParserService,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
     private year_service: YearService,
     private employee_service: EmployeeService,
     private dtr_service: DtrService,
-    private calendar_status_service: CalendarStatusService
+    private calendar_status_service: CalendarStatusService,
+    private month_data_service: MonthDataService
   ) {
+    this.route.paramMap.subscribe((params) => {
+      this.month_id = params.get('id');
+
+    });
     this.banner = [
       { text: null, icon: "home", value: 0, link: "/admin/dtr", },
-      { text: "Upload File", icon: null, value: 1 },
-      { text: "Review & Submit", icon: null, value: 2 },
+      { text: "Upload File", icon: null, value: null, link: "/admin/dtr", },
     ];
   }
   ngOnInit() {
-    this.get_year();
     this.load_employee();
-  }
-  get_year() {
-    this.year_service.get_year().subscribe((res: any) => {
-      this.year_list = res.data;
-    })
 
   }
   load_employee() {
@@ -117,7 +115,67 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
       for (let i = 0; i < this.employees.length; i++) {
         const employee = this.employees[i];
       }
+      this.get_month_data_by_id();
     })
+  }
+
+  get_month_data_by_id() {
+    const data = {
+      id: this.month_id
+    }
+    return this.month_data_service.get_month_data_by_id(data).subscribe((res: any) => {
+      this.month_data = res.data;
+
+      console.log("month_data: ", this.month_data);
+    })
+  }
+
+  private month_days(): any[] {
+    const raw = this.month_data?.days;
+    if (!raw) return [];
+
+    try {
+      const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private month_data_number(): number | null {
+    const index = MONTH_NAMES.indexOf(String(this.month_data?.name ?? '').trim());
+    return index < 0 ? null : index + 1;
+  }
+
+  private build_calendar_payload() {
+    const days = this.month_days().map((day: any) => {
+      const number = Number(day.day);
+      const is_weekend = !!day.is_weekend;
+
+      return {
+        day: number,
+        weekday: day.weekday ?? null,
+        is_weekend,
+        status: this.calendar_statuses[number]
+          ?? day.status
+          ?? (is_weekend ? 'Weekend' : 'Work Day'),
+      };
+    });
+
+    const count_of = (status: string) => days.filter(day => day.status === status).length;
+
+    return {
+      year_id: this.month_data.year_id,
+      month_id: this.month_data?.month_id,
+      year: this.month_data?.year_name,
+      month: this.month_data.month_number,
+      month_name: this.month_data?.name ,
+      total_days: days.length,
+      workday_count: count_of('Work Day'),
+      weekend_count: count_of('Weekend'),
+      holiday_count: count_of('Holiday'),
+      days,
+    };
   }
 
 
@@ -136,16 +194,7 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
     return !!(this.year_id && this.month_id);
   }
 
-  private ensureUploadAllowed(): boolean {
-    if (!this.canUpload) {
-      this.snackBar.open('Please select Year and Month before uploading a file.', 'Close', { duration: 3000 });
-      return false;
-    }
-    return true;
-  }
-
   openFilePicker() {
-    if (!this.ensureUploadAllowed()) return;
     this.fileInput.nativeElement.click();
   }
 
@@ -163,7 +212,6 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
   async onDrop(e: DragEvent) {
     e.preventDefault();
     this.isDragging.set(false);
-    if (!this.ensureUploadAllowed()) return;
     const file = e.dataTransfer?.files[0];
     if (file) await this.getResult(file);
   }
@@ -173,7 +221,6 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
     const file = input.files?.[0];
     input.value = '';
     if (!file) return;
-    if (!this.ensureUploadAllowed()) return;
     this.getResult(file);
   }
 
@@ -207,10 +254,9 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
 
     console.log(this.parser.employees);
   }
- 
+
   private readonly NON_WORKING_STATUSES = ['Absent', 'Leave', 'Holiday'];
 
-  /** Log dates read like "1 Mo" / "7 Sa" — the suffix is the weekday. */
   private isWeekendLog(log: any): boolean {
     const match = String(log?.date ?? '').trim().match(/([A-Za-z]{2})$/);
     if (!match) return false;
@@ -222,12 +268,6 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
     return !!(log.amIn || log.amOut || log.pmIn || log.pmOut);
   }
 
-  /**
-   * Rest days never count toward any of the three totals. The record modal
-   * stamps a status on every log it touches, so the status is checked first
-   * and the time entries are only a fallback for records it hasn't seen —
-   * otherwise the same record totals differently before and after an edit.
-   */
   private isRestDay(log: any): boolean {
     return this.isWeekendLog(log);
   }
@@ -268,19 +308,16 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
   }
 
   openModal(emp: any, index: number) {
-    const ref = this.dialog.open(TimeRecordModalComponent, {
-      data: emp,
-      width: '98vw',
-      height: '98vh',
-      maxWidth: '98vw',
-      maxHeight: '98vh',
+    const ref = this.dialog.open(TimeRecordModal2Component, {
+      data: { employee: emp, month_data: this.month_data },
+      width: '75vw',
+      height: '92vh',
+      maxWidth: '75vw',
+      maxHeight: '92vh',
       panelClass: 'time-record-dialog',
     });
     ref.afterClosed().subscribe((result: any) => {
       if (!result) return;
-
-      // fall back to the row object itself if the index didn't come through,
-      // so a save can never write onto the wrong record
       const updated: any = this.parser.employees[index] ?? emp;
       if (!updated) return;
 
@@ -314,7 +351,6 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
   selectTab(index: number) {
     const target = this.sections[index]?.id;
     if (!target) return;
-    if (target === 2 && !this.ensureUploadAllowed()) return;
 
     this.view_number_data = target;
     this.dropdownOpen = false;
@@ -331,41 +367,13 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
     return this.parser.employees.filter((emp: any) => !emp.id).length;
   }
 
-  next_view() {
-    if (!this.ensureUploadAllowed()) return;
-    this.view_number_data = 2;
-  }
+
 
   remove_data(index: number) {
     if (!Number.isInteger(index) || index < 0) return;
     this.parser.removeEmployee(index);
   }
 
-  private build_calendar_payload() {
-    const days = build_calendar_days(this.year_value, this.month_number, this.calendar_statuses);
-
-    // a date resolves to exactly one status, so a holiday falling on a weekend
-    // counts only as a holiday and the three totals add up to total_days
-    const count_of = (status: string) => days.filter(day => day.status === status).length;
-
-    return {
-      year_id: this.year_id,
-      month_id: this.month_id,
-      year: this.year_value,
-      month: this.month_number,
-      month_name: this.month_number ? MONTH_NAMES[Number(this.month_number) - 1] : null,
-      total_days: days.length,
-      workday_count: count_of('Work Day'),
-      weekend_count: count_of('Weekend'),
-      holiday_count: count_of('Holiday'),
-      days: days.map(day => ({
-        day: day.date,
-        weekday: day.weekdayFull,
-        is_weekend: day.isWeekend,
-        status: day.status,
-      })),
-    };
-  }
 
   private attach_calendar_to_logs(days: any[]) {
     const by_day = new Map<number, any>(days.map(day => [day.day, day]));
@@ -451,7 +459,7 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
     }
   }
 
- 
+
   private sync_calendar_statuses() {
     this.calendar_statuses = this.calendar_status_service.month_map(this.year_value, this.month_number);
     this.parser.applyCalendarStatuses(this.calendar_statuses);
@@ -527,4 +535,7 @@ export class DtrUploadComponent implements OnDestroy, OnInit {
 
     this.sync_calendar_statuses();
   }
+
+
+
 }

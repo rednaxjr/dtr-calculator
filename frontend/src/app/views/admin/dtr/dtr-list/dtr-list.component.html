@@ -19,7 +19,7 @@
         <select name="filter_year"
           class="sel-filter px-4  pl-2 pr-5  flex items-center "
           [ngModel]="filter_year" (ngModelChange)="filter_by_year($event)">
-          <option [ngValue]="'all'">All Years</option>
+          <option [ngValue]="0">All Years</option>
           <option *ngFor="let item of year_list" [ngValue]="item.name">
             {{ item.name }}
           </option>
@@ -40,7 +40,8 @@
 
       </div>
     </div>
-    <app-table-landscape [labels]="headers" [data]="month_data_list">
+    <app-table-landscape [labels]="headers" [data]="month_data_list"
+      [row_class]="row_flash">
       <ng-container>
         <ng-template #actions let-default let-index="index">
           <div

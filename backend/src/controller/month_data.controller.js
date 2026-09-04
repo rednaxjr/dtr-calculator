@@ -11,14 +11,12 @@ const mime = require('mime-types');
 const created_at = new Date();
 const get_month_data = (req, res) => {
     const data = req.body ?? {};
-    console.log("Received data:", data);
-
-    // "all" (or no year at all) drops the filter and returns every year
     const all_years = !data.year || data.year === 'all';
 
     const query = `
         SELECT
             md.*,
+            md.work_days AS workdays,
             y.name   AS year,
             m.name   AS month,
             m.number AS month_number,
@@ -70,7 +68,7 @@ const get_all_month_data
 const add_month_data = async (req, res) => {
     let conn;
     try {
-        const data = req.body; 
+        const data = req.body;
         if (!data) { return res.status(400).json({ message: "Missing data" }); }
 
 
@@ -126,23 +124,22 @@ const update_month_data = async (req, res) => {
     let conn;
     try {
         const data = req.body;
-        if (!data || !data.id) { return res.status(400).json({ message: "Missing month data id" }); }
+        if (!data || !data.month_id) { return res.status(400).json({ message: "Missing month data id" }); }
 
         const pool = connection.promise();
         conn = await pool.getConnection();
         await conn.beginTransaction();
 
-        // the period itself is fixed once saved; only the calendar can change
         const [update] = await conn.query(
             `UPDATE month_data
                 SET name = ?, work_days = ?, holidays = ?, days = ?
-              WHERE id = ?`,
+              WHERE month_id = ?`,
             [
                 data.month_name,
                 data.workday_count,
                 data.holiday_count,
                 JSON.stringify(data.days),
-                data.id
+                data.month_id
             ]
         );
 
@@ -164,10 +161,91 @@ const update_month_data = async (req, res) => {
         if (conn) conn.release();
     }
 }
+const get_month_data_by_id = async (req, res) => {
+    const data = req.body;
+    if (!data) { return res.status(400).json({ message: "Missing data" }); }
+    const query = `SELECT md.* ,y.name as year_name, m.name as month_name, m.number as month_number FROM 
+    month_data md, year y, month m WHERE 
+    md.month_id = ? AND md.year_id = y.id AND md.month_id = m.id LIMIT 1`;
 
+
+    connection.query(query, [data.id], (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: "SQL error", error: err });
+        }
+        return res.status(200).json({ data: result[0] });
+    });
+}
+
+const get_dtr_logs_by_month_data_id = async (req, res) => {
+    const data = req.body;
+    if (!data) { return res.status(400).json({ message: "Missing data" }); }
+    // the table only stores employee_id, so pull the name in for the listing
+    const query = `
+        SELECT
+            dtr.*,
+            COALESCE(CONCAT(e.lname, ', ', e.fname), 'Unmatched') AS name,
+            dtr.present_count AS present,
+            dtr.absent_count  AS absent
+        FROM dtr_logs dtr
+        LEFT JOIN employees e ON dtr.employee_id = e.id
+        WHERE dtr.month_data_id = ?
+        ORDER BY e.lname, e.fname
+    `;
+
+    connection.query(query, [data.id], (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: "SQL error", error: err });
+        }
+        return res.status(200).json({ data: result });
+    });
+
+}
+
+
+// const get_month_data_by_id = async (req, res) => {
+
+//     let conn;
+//     try {
+//         const data = req.body;
+//         if (!data) { return res.status(400).json({ message: "Missing data" }); }
+
+
+//         const pool = connection.promise();
+//         conn = await pool.getConnection();
+//         await conn.beginTransaction();
+
+//         const [query] = await conn.query(
+//             `SELECT * FROM month_data WHERE month_id = ? LIMIT 1`,
+//             [data.id]
+//         );
+
+//         connection.query(query, (err, result) => {
+//             if (err) {
+//                 return res.status(500).json({ message: "SQL error", error: err });
+//             }
+
+
+//         });
+
+//         await conn.commit();
+//         return res.json({ success: true, data: query });
+//     } catch (error) {
+//         if (conn) await conn.rollback();
+//         console.error("Transaction error:", error);
+//         return res.status(500).json({
+//             success: false,
+//             message: "Error updating month data"
+//         });
+//     } finally {
+//         if (conn) conn.release();
+//     }
+// }
 module.exports = {
     get_month_data,
     get_all_month_data,
     add_month_data,
-    update_month_data
+    update_month_data,
+    get_month_data_by_id,
+    get_dtr_logs_by_month_data_id
 }
